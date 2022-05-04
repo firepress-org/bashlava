@@ -1,17 +1,12 @@
-# What do you want to do next? (1/2 or t/h)
+```
+ _               _     _
+| |__   __ _ ___| |__ | | __ ___   ____ _
+| '_ \ / _` / __| '_ \| |/ _` \ \ / / _` |
+| |_) | (_| \__ \ | | | | (_| |\ V / (_| |
+|_.__/ \__,_|___/_| |_|_|\__,_| \_/ \__,_|
+```
 
-- 1 ..... `test`
-- 2 ..... `help`
-- 3 ..... `show`
+- `1`,`h` ... | `help`
+- `2`,`t` ... | `test`
 
-<br>
-
-**Suggestion**
-
-- `bashlava test`
-- `bashlava help` _or_ `bashlava h`
-
-**About**
-
-- https://github.com/firepress-org/bashlava
-- Follow me on twitter: https://twitter.com/askpascalandy
+Call these directly: `bashlava h`,`bashlava test`
