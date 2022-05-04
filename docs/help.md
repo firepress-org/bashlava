@@ -1,24 +1,35 @@
-# help
+```
+ _               _     _
+| |__   __ _ ___| |__ | | __ ___   ____ _
+| '_ \ / _` / __| '_ \| |/ _` \ \ / / _` |
+| |_) | (_| \__ \ | | | | (_| |\ V / (_| |
+|_.__/ \__,_|___/_| |_|_|\__,_| \_/ \__,_|
+```
 
-**Classic workflow**
+**git workflow**
 
-- `e` ............ create a branch `edge` from main_branch (no attribut)
-- `c` ............ `commit` | usage: c "my feature is great"
-- `sq` ........... `squash` commits | usage: sq 3 "Add: feat xyz - issue 123"
-- `pr` ........... create `pull request` (no attribut)
-- `ci` ........... show `ci status` on GitHub Actions (no attribut)
-- `mrg` .......... `merge` to mainbranch (no attribut)
-- `m` ............ checkout to `main_branch` (no attribut)
-- `v` ............ `version` code | usage: v 1.12.4 | (works without attributs)
-- `t` ............ `tag` and opens the release page on GitHub (no attribut)
+- `e` ....... | create a branch`edge`from main ........ | _standalone_
+- `c` ....... |`commit`................................ | c "my feature is great"
+- `sq` ...... |`squash`commits ........................ | usage: sq 3 "Add: feat xyz, issue 123"
+- `pr` ...... | create`pull request` .................. | _standalone_
+- `ci` ...... | show`ci status`on GitHub Actions ...... | _standalone_
+- `mrg` ..... |`merge`to mainbranch ................... | _standalone_
+- `m` ....... | checkout to`main_branch` .............. | _standalone_
+- `v` ....... |`version`code .......................... | v 1.12.4 _(or standalone)_
+- `t` ....... |`tag`+ release GUI on GitHub ........... | _standalone_
 
-**More commands**
+**more commands**
 
-- `s` ............ `show` every functions per categories (no attribut)
-- `h` ............ `help` (no attribut)
-- `test` ......... `test` if bashLaVa works properly (no attribut)
-- `l` ............ show `log` (no attribut)
-- `oe` ........... check`out` to branch edge
-- `om` ........... check`out` to main_branch
-- `mdv` .......... markdown viewer | usage: mdv README.md
-- `gitio` ........ git.io shortner, works only with GitHub URLs
+- `s` ....... |`show`every functions per categories ... | _standalone_
+- `h` ....... |`help`.................................. | _standalone_
+- `test` .... |`test`if bashLaVa works properly ....... | _standalone_
+- `l` ....... | show`log`.............................. | _standalone_
+- `oe` ...... | check`out`edge ........................ | _standalone_
+- `om` ...... | check`out`mainbranch .................. | _standalone_
+- `mdv` ..... | markdown`viewer` ...................... | mdv README.md
+- `gitio` ... | URL`shortner`for GitHub ............... | _standalone_
+
+**About**
+
+- Source, pr, issues, clone: https://github.com/firepress-org/bashlava
+- Follow me on twitter ..... https://twitter.com/askpascalandy
