@@ -2,45 +2,76 @@
 
 # See bashlava for all details https://github.com/firepress-org/bashlava
 
-# There are 20 flags TODO in the code /
+# There are 16 TODO in the code
 
-# the idea was to create App_List_All_Fct
-# it had many impacts on the code and I renamed a lot of fct
-# one of the ripple effect is that we now have a fct show().
-# show() is work in progress.
+# TODO Core_Input_Checkpoint
+# make it slick: create a fct
+
+# TODO show()
+# show() is work in progres. All about UX and prompt / case
+# Show_All() .. prompt options
+
+# TODO NEXT STEP suggestions
+# use mdv() when Prompt
+
+# TODO edge()
+# have this branch created with a unique ID to avoid conflicts with other developers edge_sunny
+# prompt which name to use:
+# by default use edge_DOCKERHUB_USER
+
+# TODO edge()
+# make it slick: check if branch edge exist before delete it from remote
+
+# TODO Show_Release()
+#to refactor duplication with Show_Version()
 
 # TODO
-# better management core vars
-# rename DEFAULT_BRANCH to MAIN_BRANCH_NAME="master"
-# file to check VS file to source
+# better management core vars / group them, avoid having multiple place to define them
+# file to check VERSUS file to source
+
+# TODO Core_Load_Vars_General()
+# we have few array that are configs. They should be all together under the same block of code.
+# source files under /components
+# code optimization 0o0o / Need logic to manage file under /private/* 
+
+# TODO main()
+# set a new config flag: debug="true"
+
+# TODO /private
 # logical flags to manage under /private/*
 # source "${_path_components}/private/
-# Need to check if files exist
+# Need to check if files exist /private/* when DIR private exist
+# manage private vars https://github.com/firepress-org/bashlava/issues/83
+
+# TODO dummy commits
+# create a dummy commit as test quickly the whole workflow
+# branch out dummy
+# commit dummy message
+# commit dummy message again
+# sq 2 "dummy message"
+# prompt : do you want to delete dummy branch ?
+
+# TODO Show_Docs()
+# this is not clean, but it works 'mdv' / 'Show_Docs'
+  # we can't provide an abosolute path to the file because the Docker container can't the absolute path
+  # I also DONT want to provide two arguments when using glow
+  # I might simply stop using a docker container for this
+  # but as a priciiple, I like to call a docker container
 
 # TODO
-# dummy to create a dummy commit as test quickly the whole workflow
-
-# TODO
-# rename color Print_Green << Print_Green
-
-# Core_Reset_Custom_Path << Core_Reset_Bashlava_Path
+### App check brew + git-crypt + gnupg, shellcheck
+#if brew ls --versions myformula > /dev/null; then
+   # The package is installed
+#else
+   # The package is not installed
+#fi
 
 # TODO
 # glitch, release function is not stable when we tag. Sometimes it show the older release
 
 # TODO
 # create ci for using shellcheck
-
-# TODO
-# manage private vars https://github.com/firepress-org/bashlava/issues/83
-
-# TODO
-### App check brew + git-crypt + gnupg
-#if brew ls --versions myformula > /dev/null; then
-   # The package is installed
-#else
-   # The package is not installed
-#fi
+# run test()
 
 function mainbranch { # User_
   Condition_Attr_2_Must_Be_Empty
@@ -57,8 +88,6 @@ function mainbranch { # User_
 }
 
 function edge { # User_
-# TODO
-# have this branch created with a unique ID to avoid conflicts with other developers edge_sunny
 
 ### it assumes there will be no conflict with anybody else
 ### as I'm the only person using 'edge'.
@@ -70,8 +99,6 @@ function edge { # User_
   git branch -D edge || true
 
 ### delete branch so there is no need to use the github GUI to delete it
-# TODO
-# check if branch edge exist (more slick)
   git push origin --delete edge || true
 
   git checkout -b edge
@@ -308,7 +335,6 @@ function help { # User_
   _doc_name="help.md" Show_Docs
 }
 
-# TODO
 function show { # User_
   Prompt_All_Available_Fct
     #Show_Version
@@ -378,7 +404,6 @@ function Prompt_YesNo_ci {
   esac
 }
 
-# TODO
 function Show_All { 
   Show_Version
   echo "WIP"
@@ -425,22 +450,12 @@ function Show_Version {
   echo
 }
 
-# TODO
-# to refactor, too much duplication
-
 function Show_Release {
   release_latest=$(curl -s https://api.github.com/repos/${github_user}/${app_name}/releases/latest | \
     grep tag_name | awk -F ': "' '{ print $2 }' | awk -F '",' '{ print $1 }')
   _var_name="release_latest" _is_it_empty="${release_latest}" && Condition_Vars_Must_Be_Not_Empty
   open "https://github.com/${github_user}/${app_name}/releases/tag/${release_latest}"
 }
-
-# TODO
-# this is not clean, but it works 'mdv' / 'Show_Docs'
-  # we can't provide an abosolute path to the file because the Docker container can't the absolute path
-  # I also DONT want to provide two arguments when using glow
-  # I might simply stop using a docker container for this
-  # but as a priciiple, I like to call a docker container
 
 function Show_Docs {
   # idempotent checkpoint
@@ -544,9 +559,6 @@ function Condition_No_Commits_Pending {
   Condition_Vars_Must_Be_Equal
 }
 
-# TODO 1
-# refactor this function
-# compare var to var
 function Condition_Attr_2_Must_Be_Provided {
 ### ensure the second attribute is not empty to continue
   if [[ "${input_2}" == "not_set" ]]; then
@@ -558,7 +570,6 @@ function Condition_Attr_2_Must_Be_Provided {
   fi
 }
 
-# TODO 2
 function Condition_Attr_3_Must_Be_Provided {
 ### ensure the third attribute is not empty to continue
   if [[ "${input_3}" == "not_set" ]]; then
@@ -571,10 +582,9 @@ function Condition_Attr_3_Must_Be_Provided {
 }
 
 function Condition_Attr_4_Must_Be_Provided {
-  echo "fct: not needed yet"
+  my_message="Condition_Attr_4_Must_Be_Provided() not needed yet" && Print_Warning
 }
 
-# TODO 3
 function Condition_Attr_2_Must_Be_Empty {
 ### Stop if 2 attributes are passed.
   if [[ "${input_2}" != "not_set" ]]; then
@@ -798,8 +808,6 @@ function Core_Load_Vars_General {
 
 ### source PUBLIC scripts
 
-# TODO
-# we have few array that are configs. They should be all together under the same block of code.
 ### source files under /components
   arr=( "alias.sh" "sidecars.sh")
   for action in "${arr[@]}"; do
@@ -807,9 +815,6 @@ function Core_Load_Vars_General {
     # code optimization 0o0o, add logic: _to_source="true"
     source "${_file_path_is}"
   done
-
-# TODO
-# code optimization 0o0o / Need logic to manage file under /private/* 
 
 ### source PRIVATE / custom scripts
   # the user must create /private/_entrypoint.sh file
@@ -870,6 +875,7 @@ function main() {
   Core_Load_Vars_Dockerfile
   Core_Check_Which_File_Exist
 
+# Core_Input_Checkpoint
   if [[ -z "$2" ]]; then    #if empty
     input_2="not_set"
   elif [[ -n "$2" ]]; then    #if not empty
@@ -902,9 +908,6 @@ function main() {
 ### Ensure there are no more than three attrbutes
   Condition_Attr_4_Must_Be_Empty
 
-# TODO
-# set as configs ex: debug="true"
-
 ### optional
   # lock_init system
 
@@ -918,12 +921,6 @@ function main() {
 
 ### Calling 'main' function by default
 main "$@"
-
-  # TODO This logic was probably creating issues
-  ### Invoke main with args if not sourced. Approach via: https://stackoverflow.com/a/28776166/8787985
-  #  if ! (return 0 2> /dev/null); then
-  #      main "$@"
-  #  fi
 
 ### When no arg are provided
 input_1=$1
