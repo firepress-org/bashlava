@@ -49,7 +49,6 @@ var-config.sh
 ######################
 .DS_Store
 .DS_Store?
-.vscode
 .Trashes
 ehthumbs.db
 Thumbs.db
