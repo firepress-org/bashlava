@@ -165,6 +165,7 @@ function mrg { # User_
     1 | v) version;;
     2 | t) tag;;
     3 | ci) ci;;
+    4 | e) edge;;
     *) my_message="Aborted" && Print_Gray;;
   esac
 }
