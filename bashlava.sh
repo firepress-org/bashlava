@@ -4,7 +4,9 @@
 
 # There are 14 TO-DO in the code
 
-# DONE Next Move Suggestions
+# TODO try shell-format in vs code
+
+# TODO Decouple release() from tag
 
 # TODO show()
 # show() is work in progres. All about UX and prompt / case
@@ -461,7 +463,7 @@ function Show_Docs {
   _file_is="${_doc_name}" _file_path_is="${_path_docs}/${_doc_name}" && Condition_File_Must_Be_Present
 
   cd ${_path_docs} || { echo "FATAL: Show_Docs / cd"; exit 1; }
-  docker run --rm -it -v "$(pwd)":/sandbox -w /sandbox ${docker_img_glow} glow -w 110 ${_doc_name}
+  docker run --rm -it -v "$(pwd)":/sandbox -w /sandbox ${docker_img_glow} glow -w 110 "${_doc_name}"
   cd ${_present_path_is} || { echo "FATAL: Show_Docs / cd"; exit 1; }
 }
 
