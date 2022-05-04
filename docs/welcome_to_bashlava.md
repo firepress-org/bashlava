@@ -6,7 +6,7 @@
 |_.__/ \__,_|___/_| |_|_|\__,_| \_/ \__,_|
 ```
 
-- `1`,`h` ... | `help`
-- `2`,`t` ... | `test`
+- `1`,`h` .... | `help`
+- `2`,`tt` ... | `test`
 
 Call these directly: `bashlava h`,`bashlava test`
