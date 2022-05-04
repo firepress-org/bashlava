@@ -2,14 +2,13 @@
 
 # See bashlava for all details https://github.com/firepress-org/bashlava
 
-# There are 16 TODO in the code
+# There are 14 TO-DO in the code
+
+# DONE Next Move Suggestions
 
 # TODO show()
 # show() is work in progres. All about UX and prompt / case
 # Show_All() .. prompt options
-
-# TODO NEXT STEP suggestions
-# use mdv() when Prompt
 
 # TODO edge()
 # have this branch created with a unique ID to avoid conflicts with other developers edge_sunny
@@ -47,7 +46,6 @@
   # this will use a fct available to public
   # else it will use a 
 
-
 # TODO dummy commits
 # create a dummy commit as test quickly the whole workflow
 # branch out dummy
@@ -55,13 +53,6 @@
 # commit dummy message again
 # sq 2 "dummy message"
 # prompt : do you want to delete dummy branch ?
-
-# TODO Show_Docs()
-# this is not clean, but it works 'mdv' / 'Show_Docs'
-  # we can't provide an abosolute path to the file because the Docker container can't the absolute path
-  # I also DONT want to provide two arguments when using glow
-  # I might simply stop using a docker container for this
-  # but as a priciiple, I like to call a docker container
 
 # TODO
 ### App check brew + git-crypt + gnupg, shellcheck
@@ -79,74 +70,74 @@
 # create ci for using shellcheck
 # run test()
 
+# TODO Show_Docs()
+# works but not clean, but it works 'mdv' / 'Show_Docs'
+  # we can't provide an abosolute path to the file because the Docker container can't the absolute path
+  # I also DONT want to provide two arguments when using glow
+  # I might simply stop using a docker container for this
+  # but as a priciiple, I like to call a docker container
+
 function mainbranch { # User_
   Condition_Attr_2_Must_Be_Empty
   Condition_No_Commits_Pending
   Condition_Apps_Must_Be_Installed
-
   Show_Version
-
-### Update our local state
+#
   git checkout ${default_branch}
-  git pull origin ${default_branch}
-  echo
+  git pull origin ${default_branch} && echo
   log
 }
 
 function edge { # User_
-
 ### it assumes there will be no conflict with anybody else
 ### as I'm the only person using 'edge'.
   Condition_Attr_2_Must_Be_Empty       # fct without attributs
   Condition_No_Commits_Pending
   Condition_Apps_Must_Be_Installed
-
 ### delete branch
   git branch -D edge || true
-
 ### delete branch so there is no need to use the github GUI to delete it
   git push origin --delete edge || true
-
+#
   git checkout -b edge
   git push --set-upstream origin edge -f
   Show_Version
-  # UX fun
-  my_message="Done! checkout edge from ${default_branch}" Print_Gray
-  echo && my_message="NEXT MOVE suggestion: code something and 'c' " Print_Green
+  _doc_name="next_move_fct_edge.md" && Show_Docs
 }
 
 function commit { # User_
   Condition_Attr_2_Must_Be_Provided
-  git status
-  git add -A
-  git commit -m "${input_2}"
-  git push
-  # UX fun
-  echo && my_message="NEXT MOVE suggestion: 1) 'c' 2) 'pr' " Print_Green
+  git status && git add -A && git commit -m "${input_2}" && git push
+  _doc_name="next_move_fct_c.md" && Show_Docs
 }
 
 function pr { # User_
   Condition_Branch_Must_Be_Edge
   Condition_Attr_2_Must_Be_Empty
   Condition_No_Commits_Pending
-
+#
   _pr_title=$(git log --format=%B -n 1 "$(git log -1 --pretty=format:"%h")" | cat -)
   _var_name="_pr_title" _is_it_empty="${_pr_title}" && Condition_Vars_Must_Be_Not_Empty
-  
+#
   gh pr create --fill --title "${_pr_title}" --base "${default_branch}"
-  gh pr view --web
-  Prompt_YesNo_ci
-
-  echo && my_message="NEXT MOVE suggestion: 1='ci' 2='mrg' 9=cancel (or any key)" && Print_Green
+  gh pr view --web    # if there is a bug see: /docs/debug_upstream.md
+#
+  _doc_name="prompt_show_ci_status.md" && Show_Docs
   input_2="not_set"   #reset input_2
   read -r user_input;
   case ${user_input} in
-    1 | ci) ci;;
-    2 | mrg) mrg;;
-    *) my_message="Cancelled" && Print_Gray;;
+    1 | y | Y | ci) ci;;
+    *) my_message="Aborted" && Print_Gray;;
   esac
-
-  #see debug_upstream.md
+#
+  _doc_name="next_move_fct_pr.md" && Show_Docs
+  input_2="not_set"   #reset input_2
+  read -r user_input;
+  case ${user_input} in
+    1 | mrg) mrg;;
+    2 | ci) ci;;
+    *) my_message="Aborted" && Print_Gray;;
+  esac
 }
 
 function mrg { # User_
@@ -154,44 +145,27 @@ function mrg { # User_
   Condition_Branch_Must_Be_Edge
   Condition_No_Commits_Pending
   Condition_Attr_2_Must_Be_Empty
-
+#
   gh pr merge
-  Prompt_YesNo_ci
-  Show_Version
-
-  echo && my_message="NEXT MOVE suggestion: 1='ci' 2='sv' 3='v' 4='t' 9=cancel (or any key)" && Print_Green
+#
+  _doc_name="prompt_show_ci_status.md" && Show_Docs
   input_2="not_set"   #reset input_2
   read -r user_input;
   case ${user_input} in
-    1 | ci) ci;;
-    2 | sv) sv;;
-    3 | v) version;;
-    4 | t) tag;;
-    *) my_message="Cancelled" && Print_Gray;;
+    1 | y | Y | ci) ci;;
+    *) my_message="Aborted" && Print_Gray;;
   esac
-}
-
-function ci { # User_
-  # continuous integration status
-  Condition_Attr_2_Must_Be_Empty
-  Condition_No_Commits_Pending
-
-### show latest build and open webpage on Github Actions
-  #gh run list && sleep 1
-  _run_id=$(gh run list | head -1 | awk '{print $11}')
-  _var_name="_run_id" _is_it_empty="${_run_id}" && Condition_Vars_Must_Be_Not_Empty
-### Opening the run id cuase issues. Lets stick to /actions/
-  open https://github.com/${github_user}/${app_name}/actions/
-
-  # Follow status within the terminal
-  gh run watch
-
-  echo && my_message="NEXT MOVE suggestion: 1='mrg' 9=cancel (y/n)" && Print_Green
+#
+  Show_Version
+#
+  _doc_name="next_move_fct_mrg.md" && Show_Docs
   input_2="not_set"   #reset input_2
   read -r user_input;
   case ${user_input} in
-    1 | y | mrg) mrg;;
-    *) my_message="Cancelled" && Print_Gray;;
+    1 | v) version;;
+    2 | t) tag;;
+    3 | ci) ci;;
+    *) my_message="Aborted" && Print_Gray;;
   esac
 }
 
@@ -211,7 +185,7 @@ function version { # User_
     read -r user_input;
     case ${user_input} in
       1 | y) echo "Good, lets continue" > /dev/null 2>&1;;
-      *) my_message="Cancelled" && Print_Gray;;
+      *) my_message="Aborted" && Print_Gray;;
     esac
   elif [[ "${input_2}" != "not_set" ]]; then
     echo "Good, lets continue" > /dev/null 2>&1
@@ -230,13 +204,13 @@ function version { # User_
   git push && echo
   Show_Version
 
-  echo && my_message="NEXT MOVE suggestion: 1='pr' 2='t' 9=cancel (or any key)" && Print_Green
+  _doc_name="next_move_fct_v.md" && Show_Docs
   input_2="not_set"   #reset input_2
   read -r user_input;
   case ${user_input} in
-    1 | pr) pr;;
-    2 | t) tag;;
-    *) my_message="Cancelled" && Print_Gray;;
+    1 | t) tag;;
+    2 | pr) pr;;
+    *) my_message="Aborted" && Print_Gray;;
   esac
 }
 
@@ -247,19 +221,19 @@ function tag { # User_
   git tag ${app_version} && git push --tags && echo
   Show_Version
 
-  echo && my_message="Next, prepare release" Print_Gray
-  my_message="To quit the release notes: type ':qa + enter'" Print_Gray && echo
+  # echo && my_message="Next, prepare release" Print_Gray
+  # my_message="To quit the release notes: type ':qa + enter'" Print_Gray && echo
 
   gh release create && sleep 5
   Show_Version
   Show_Release
 
-  echo && my_message="NEXT MOVE suggestion: 'e' (y/n)" && Print_Green
+  _doc_name="next_move_fct_tag.md" && Show_Docs
   input_2="not_set"   #reset input_2
   read -r user_input;
   case ${user_input} in
-    1 | y | e) edge;;
-    *) my_message="Abord" && Print_Gray;;
+    1 | e) edge;;
+    *) my_message="Aborted" && Print_Gray;;
   esac
 }
 
@@ -280,8 +254,32 @@ function squash { # User_
   git commit -m "${input_3} /sq"
   git push
   log
-  # UX fun
-  echo && my_message="NEXT MOVE suggestion: 'c' - 'pr' " Print_Green
+
+  _doc_name="next_move_fct_sq.md" && Show_Docs
+}
+
+function ci { # User_
+  # continuous integration status
+  Condition_Attr_2_Must_Be_Empty
+  Condition_No_Commits_Pending
+
+### show latest build and open webpage on Github Actions
+  #gh run list && sleep 1
+  _run_id=$(gh run list | head -1 | awk '{print $11}')
+  _var_name="_run_id" _is_it_empty="${_run_id}" && Condition_Vars_Must_Be_Not_Empty
+### Opening the run id cuase issues. Lets stick to /actions/
+  open https://github.com/${github_user}/${app_name}/actions/
+
+  # Follow status within the terminal
+  gh run watch
+
+  _doc_name="next_move_fct_ci.md" && Show_Docs
+  input_2="not_set"   #reset input_2
+  read -r user_input;
+  case ${user_input} in
+    1 | y | mrg) mrg;;
+    *) my_message="Aborted" && Print_Gray;;
+  esac
 }
 
 function log { # User_
@@ -321,7 +319,7 @@ function test { # User_
   # PRINT OPTION 2
   echo
   my_message="Test mdv:" && Print_Blue
-  _doc_name="test.md" Show_Docs
+  _doc_name="test.md" && Show_Docs
 #
   # PRINT OPTION 3
   # 'App_test_color' it bypassed as it does an 'exit 0'
@@ -338,7 +336,7 @@ function test { # User_
 function help { # User_
   Condition_Attr_3_Must_Be_Empty
   clear
-  _doc_name="help.md" Show_Docs
+  _doc_name="help.md" && Show_Docs
 }
 
 function show { # User_
@@ -375,7 +373,7 @@ function gitio { # User_
   read -r user_input;
   case ${user_input} in
     y | Y) sub_short_url;;
-    *) my_message="Operation cancelled" && Print_Fatal;;
+    *) my_message="Aborted" && Print_Fatal;;
   esac
 }
 
@@ -398,16 +396,6 @@ function App_test_color {
   Print_Warning
   Print_Gray
   Print_Fatal
-}
-
-function Prompt_YesNo_ci {
-  # called by fct like: pr, mrg
-  echo && my_message="Want to see 'ci' status? (y/n)" && Print_Blue
-  read -r user_input;
-  case ${user_input} in
-    y | Y) ci;;
-    *) my_message="Abord 'ci' status" && Print_Green;;
-  esac
 }
 
 function Show_All { 
@@ -941,7 +929,7 @@ main "$@"
       # Dont use the shortcut 't' here! Its used for fct 'tag'
       1 | h) clear && help;;
       2 | tt) clear && test;;
-      *) my_message="Invalid input" Print_Fatal;; 
+      *) my_message="Aborted - Invalid input." Print_Fatal;; 
     esac
 
   elif [[ -n "$1" ]]; then
