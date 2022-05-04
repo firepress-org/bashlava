@@ -4,9 +4,6 @@
 
 # There are 16 TODO in the code
 
-# TODO Core_Input_Checkpoint
-# make it slick: create a fct
-
 # TODO show()
 # show() is work in progres. All about UX and prompt / case
 # Show_All() .. prompt options
@@ -74,8 +71,9 @@
    # The package is not installed
 #fi
 
-# TODO
+# TODO release
 # glitch, release function is not stable when we tag. Sometimes it show the older release
+# loop with curl he check if Url is reachable
 
 # TODO
 # create ci for using shellcheck
@@ -927,26 +925,29 @@ function main() {
   $1
 }
 
-### Calling 'main' function by default
+### 'main' function by default
 main "$@"
 
-### When no arg are provided
-input_1=$1
-if [[ -z "$1" ]]; then
-  echo "OK, user did not provide argument. Show options" > /dev/null 2>&1
-  my_message="bashlava" && Print_Banner
-  _doc_name="welcome_to_bashlava.md" && clear && Show_Docs
+### If no attributs were passed / Core_No_Attribut_Passed
+  input_1="$1"
+  _script_name="$0"
 
-  read -r user_input; echo;
-  case ${user_input} in
-    # Dont use the shortcut 't' here! Its used for fct 'tag'
-    1 | h) clear && help;;
-    2 | tt) clear && test;;
-    *) my_message="Invalid input" Print_Fatal;; 
-  esac
+  if [[ -z "$1" ]]; then
+    echo "OK, user did not provide argument. Show options" > /dev/null 2>&1
+    _doc_name="welcome_to_bashlava.md" && clear && Show_Docs
 
-elif [[ -n "$1" ]]; then
-  echo "Good, user did provide argument(s)." > /dev/null 2>&1
-else
-  my_message="FATAL: main (When no arg are provided)" && Print_Fatal
-fi
+    read -r user_input; echo;
+    case ${user_input} in
+      # Dont use the shortcut 't' here! Its used for fct 'tag'
+      1 | h) clear && help;;
+      2 | tt) clear && test;;
+      *) my_message="Invalid input" Print_Fatal;; 
+    esac
+
+  elif [[ -n "$1" ]]; then
+    echo "Good, user did provide argument(s)." > /dev/null 2>&1
+  else
+    my_message="FATAL: main (When no arg are provided)" && Print_Fatal
+  fi
+
+### End
