@@ -176,7 +176,7 @@ function version { # User_
 ### The version is stored within the Dockerfile. For BashLaVa, this Dockerfile is just a config-env file
   Condition_No_Commits_Pending
   Show_Version
-
+#
   if [[ "${input_2}" == "not_set" ]]; then
     # The user did not provide a version
     echo && my_message="What is the version number (ex: 1.12.4)?" && Print_Green
@@ -195,18 +195,17 @@ function version { # User_
   else
     my_message="FATAL: Condition_Attr_2_Must_Be_Provided" && Print_Fatal
   fi
-
+#
   Condition_Attr_2_Must_Be_Provided
   Condition_Version_Must_Be_Valid
-
 ### Apply updates in Dockerfile
   sed -i '' "s/^ARG VERSION=.*$/ARG VERSION=\"${input_2}\"/" Dockerfile
-
+#
   git add .
   git commit . -m "Update ${app_name} to version ${input_2}"
   git push && echo
   Show_Version
-
+#
   _doc_name="next_move_fct_v.md" && Show_Docs
   input_2="not_set"   #reset input_2
   read -r user_input;
@@ -220,17 +219,14 @@ function version { # User_
 function tag { # User_
   Condition_No_Commits_Pending
   Condition_Attr_2_Must_Be_Empty
-
+#
   git tag ${app_version} && git push --tags && echo
   Show_Version
-
-  # echo && my_message="Next, prepare release" Print_Gray
-  # my_message="To quit the release notes: type ':qa + enter'" Print_Gray && echo
-
+#
   gh release create && sleep 5
   Show_Version
   Show_Release
-
+#
   _doc_name="next_move_fct_tag.md" && Show_Docs
   input_2="not_set"   #reset input_2
   read -r user_input;
@@ -259,6 +255,13 @@ function squash { # User_
   log
 
   _doc_name="next_move_fct_sq.md" && Show_Docs
+  input_2="not_set"   #reset input_2
+  read -r user_input;
+  case ${user_input} in
+    1 | c) commit;;
+    2 | pr) pr;;
+    *) my_message="Aborted" && Print_Gray;;
+  esac
 }
 
 function ci { # User_
