@@ -10,6 +10,22 @@ function c {
   commit
 }
 
+function h {
+  help
+}
+function 1 {
+  help
+}
+function te { 
+  test
+}
+function tt { 
+  test
+}
+function 2 {
+  test
+}
+
 ### not shortcuts: pr / ci / mrg
 
 function v {
@@ -30,18 +46,11 @@ function l {
 function sq { 
   squash
 }
-function h {
-  help
-}
+
 function s {
   show
 }
-function 1 {
-  test
-}
-function 2 {
-  help
-}
+
 function hash {
   git rev-parse HEAD && git rev-parse --short HEAD
 }
