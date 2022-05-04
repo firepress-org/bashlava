@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 function m {
-  mainbranch
+ mainbranch
 }
 function e {
   edge
@@ -16,10 +16,10 @@ function h {
 function 1 {
   help
 }
-function te { 
+function te {
   test
 }
-function tt { 
+function tt {
   test
 }
 function 2 {
@@ -31,7 +31,7 @@ function 2 {
 function v {
   version
 }
-function t { 
+function t {
   tag
 }
 function om {
@@ -43,7 +43,7 @@ function oe {
 function l {
   log
 }
-function sq { 
+function sq {
   squash
 }
 
@@ -58,10 +58,10 @@ function Print_Yellow {
   Print_Warning
 }
 ### capture common typos
-function sh { 
+function sh {
   App_invalid_cmd
 }
-function oo { 
+function oo {
   App_invalid_cmd
 }
 function App_invalid_cmd {

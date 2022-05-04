@@ -2,7 +2,7 @@
 
 # /components/example.sh should logically not be sourced
 
-# Now we use 'Condition_File_Must_Be_Present' instead of copy paste this fct
+# Refer to 'Condition_File_Must_Be_Present' instead of copy paste this fct
 function idempotent_file_exist {
   _file_is="somefile.sh"
   if [[ -f "${_path_components}/${_file_is}" ]]; then
@@ -86,8 +86,8 @@ function case_c {
 
   for f in *.wav
   do
-    [[ -e "$f" ]] || break  # handle the case of no *.wav files
-    echo "$f"
+    [[ -e "${f}" ]] || break  # handle the case of no *.wav files
+    echo "${f}"
   done
 }
 
@@ -99,7 +99,7 @@ function case_d {
   echo "[S]arah Snyder"
   echo "[R]ose Armstrong"
   read -r person
-  case "$person" in
+  case "${person}" in
     "C" | "c" ) echo "Chris Ramsey"
   echo "cramsey@email.com"
   echo "27 Railroad Dr. Bayside, NY";;
@@ -158,7 +158,7 @@ function rlwrap_example {
 
   reply=$(rlwrap -S 'Do you want to continue? ' -H ~/.jakob.history -e '' -i -f <(echo "${_choice[@]}") -o cat)
 
-  echo "reply='$reply'"
+  echo "reply='${reply}'"
 }
 
 function lint {
