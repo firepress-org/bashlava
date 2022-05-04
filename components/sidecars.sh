@@ -70,7 +70,7 @@ function App_random_6 { #Side_
 }
 
 function App_array { #Side_
-  arr=( "Hello" "Mr Andy" )
+  arr=( "Looping ..." "an array of string" )
   for i in "${arr[@]}"; do
     my_message="${i}" && Print_Gray
   done
