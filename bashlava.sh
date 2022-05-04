@@ -256,76 +256,55 @@ function log { # User_
 }
 
 function test { # User_
-# test our script & fct. Idempotent bash script
-
-  echo
-  my_message="Check attributes:" Print_Blue
+# PRINT OPTION 1
+  echo && my_message="Check Print_Banner:" && Print_Blue
+  my_message="bashLaVa" && Print_Banner
+#
+  my_message="Random tests: " Print_Blue
   my_message="\$1 value is: ${input_1}" Print_Gray
   my_message="\$2 value is: ${input_2}" Print_Gray
   my_message="\$3 value is: ${input_3}" Print_Gray
   my_message="\$4 value is: ${input_4}" Print_Gray
-
+#
   echo
-  my_message="Check apps required:" Print_Blue
   Condition_Apps_Must_Be_Installed
-
-  echo
-  my_message="Check files and directories:" Print_Blue
+  my_message="Check apps required: All good!" Print_Gray     # else the Condition will stop the script
+#
   Core_Check_Which_File_Exist
-  my_message="All good!" Print_Gray
-
-  echo
-  my_message="Check array from directory components:" Print_Blue
-  App_array
-
-  echo
-  my_message="Check OS" Print_Blue
+  my_message="Check files and directories: All good!" Print_Gray     # else the Condition will stop the script
+#
   if [[ $(uname) == "Darwin" ]]; then
-    my_message="Running on a Mac (Darwin)" Print_Gray
+    my_message="Running on a Mac (Darwin): All good!" Print_Gray
   elif [[ $(uname) != "Darwin" ]]; then
     my_message="bashLaVa is not tested on other machine than Mac OS (Darmin)." && Print_Warning
   else
     my_message="FATAL: Test / Check OS" && Print_Fatal
   fi
-
-  # PRINT OPTION 1
+#
   echo
-  my_message="Check mdv:" && Print_Blue
-  _doc_name="test.md" Show_Docs
-
+  #my_message="Check array from directory components:" Print_Blue
+  App_array
+#
   # PRINT OPTION 2
-  # 'App_test_color' it bypassed as it does an 'exit 0'
-  my_message="Check colors options:" && Print_Blue && echo
-  my_message="bashlava test"
-  Print_Green
-  #Print_Blue
-  Print_Warning
-  Print_Gray
-  #Print_Fatal
-
-  # PRINT OPTION 3
   echo
-  my_message="Check Print_Banner:" && Print_Blue
-  my_message="bashLaVa test" && Print_Banner
-
-  my_message="Check configs:" Print_Blue
-  my_message="${app_name} < app_name" Print_Gray
-  #my_message="${app_version} < app_version" Print_Gray
-  my_message="${github_user} < github_user" Print_Gray
-  my_message="${default_branch} < default_branch" Print_Gray
-  my_message="${github_org} < github_org" Print_Gray
-  my_message="${dockerhub_user} < dockerhub_user" Print_Gray
-  my_message="${github_registry} < github_registry" Print_Gray
-  my_message="${bashlava_executable} < bashlava_executable" Print_Gray
-  my_message="${_path_user} < _path_user" Print_Gray
-
-  input_2="not_set"
+  my_message="Test mdv:" && Print_Blue
+  _doc_name="test.md" Show_Docs
+#
+  # PRINT OPTION 3
+  # 'App_test_color' it bypassed as it does an 'exit 0'
+  my_message="Test color prints:" && Print_Blue
+  my_message="You feel me!?"
+  Print_Green
+  Print_Blue
+  Print_Warning
+  Print_Gray        #Print_Blue #Print_Fatal
+#
   Show_Version
 }
 
 function help { # User_
   Condition_Attr_3_Must_Be_Empty
-
+  clear
   _doc_name="help.md" Show_Docs
 }
 
@@ -406,8 +385,12 @@ function Show_All {
 }
 
 function Show_Version {
-  echo && my_message="Check versions:" && Print_Blue
+  input_2="not_set" input_3="not_set" input_4="not_set"
+  Condition_Attr_2_Must_Be_Empty
+  Condition_Attr_3_Must_Be_Empty
+  Condition_Attr_4_Must_Be_Empty
 
+  echo && my_message="Check versions:" && Print_Blue
   Core_Load_Vars_Dockerfile
 
 ### version in dockerfile
@@ -946,13 +929,14 @@ main "$@"
 input_1=$1
 if [[ -z "$1" ]]; then
   echo "OK, user did not provide argument. Show options" > /dev/null 2>&1
+  my_message="bashlava" && Print_Banner
   _doc_name="welcome_to_bashlava.md" && clear && Show_Docs
 
   read -r user_input; echo;
   case ${user_input} in
     # Dont use the shortcut 't' here! Its used for fct 'tag'
-    1) clear && test;;
-    2 | h) clear && help;;
+    1 | h) clear && help;;
+    2 | tt) clear && test;;
     *) my_message="Invalid input" Print_Fatal;; 
   esac
 
