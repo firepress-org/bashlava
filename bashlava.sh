@@ -42,6 +42,14 @@
 # source "${_path_components}/private/
 # Need to check if files exist /private/* when DIR private exist
 # manage private vars https://github.com/firepress-org/bashlava/issues/83
+# cmd to commit this: "Organising backlog: 16 TODO, issue #4"
+
+# logic to switch between private fct VERSUS public fct
+# custom_fct_opensite="false"
+# custom_fct_help="false"
+  # this will use a fct available to public
+  # else it will use a 
+
 
 # TODO dummy commits
 # create a dummy commit as test quickly the whole workflow
