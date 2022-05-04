@@ -637,13 +637,13 @@ function Condition_Apps_Must_Be_Installed {
   _compare_me=$(docker version | grep -c "Server: Docker Desktop")
   _compare_you="1" _fct_is="Condition_Apps_Must_Be_Installed"
   Condition_Vars_Must_Be_Equal
-  my_message="Docker is installed" && Print_Gray
+  # my_message="Docker is installed" && Print_Gray 
 
 ### gh cli installed
   _compare_me=$(gh --version | grep -c "https://github.com/cli/cli/releases/tag/v")
   _compare_you="1" _fct_is="Condition_Apps_Must_Be_Installed"
   Condition_Vars_Must_Be_Equal
-  my_message="gh cli is installed" && Print_Gray
+  # my_message="gh cli is installed" && Print_Gray 
 }
 
 function Core_Check_Which_File_Exist {
