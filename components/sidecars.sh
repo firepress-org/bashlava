@@ -85,9 +85,9 @@ function App_Curl_url { #Side_
   UPTIME_TEST=$(curl -Is ${url_to_check} | grep -io OK | head -1);
   MATCH_UPTIME_TEST1="OK";
   MATCH_UPTIME_TEST2="ok";
-  if [[ "$UPTIME_TEST" = "$MATCH_UPTIME_TEST1" ]] || [[ "$UPTIME_TEST" = "$MATCH_UPTIME_TEST2" ]]; then
+  if [[ "${UPTIME_TEST}" = "${MATCH_UPTIME_TEST1}" ]] || [[ "${UPTIME_TEST}" = "${MATCH_UPTIME_TEST2}" ]]; then
     my_message="${url_to_check} <== is online" && Print_Green
-  elif [[ "$UPTIME_TEST" != "$MATCH_UPTIME_TEST1" ]] || [[ "$UPTIME_TEST" = "$MATCH_UPTIME_TEST2" ]]; then
+  elif [[ "${UPTIME_TEST}" != "${MATCH_UPTIME_TEST1}" ]] || [[ "${UPTIME_TEST}" = "${MATCH_UPTIME_TEST2}" ]]; then
     my_message="${url_to_check} <== is offline" && Print_Warning
     my_message="The git up repo URL is not responding." && Print_Fatal
   fi
