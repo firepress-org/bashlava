@@ -59,9 +59,9 @@
 # TODO
 ### App check brew + git-crypt + gnupg, shellcheck
 #if brew ls --versions myformula > /dev/null; then
-   # The package is installed
+  # The package is installed
 #else
-   # The package is not installed
+  # The package is not installed
 #fi
 
 # TODO release
@@ -84,25 +84,24 @@ function mainbranch { # User_
   Condition_No_Commits_Pending
   Condition_Apps_Must_Be_Installed
   Show_Version
-#
+
   git checkout ${default_branch}
   git pull origin ${default_branch} && echo
   log
 }
 
 function edge { # User_
-### it assumes there will be no conflict with anybody else
-### as I'm the only person using 'edge'.
   Condition_Attr_2_Must_Be_Empty       # fct without attributs
   Condition_No_Commits_Pending
   Condition_Apps_Must_Be_Installed
-### delete branch
+### delete branch locally
   git branch -D edge || true
-### delete branch so there is no need to use the github GUI to delete it
+### delete branch on remote
   git push origin --delete edge || true
-#
+
   git checkout -b edge
   git push --set-upstream origin edge -f
+
   Show_Version
   _doc_name="next_move_fct_edge.md" && Show_Docs
 }
@@ -117,13 +116,13 @@ function pr { # User_
   Condition_Branch_Must_Be_Edge
   Condition_Attr_2_Must_Be_Empty
   Condition_No_Commits_Pending
-#
+
   _pr_title=$(git log --format=%B -n 1 "$(git log -1 --pretty=format:"%h")" | cat -)
   _var_name="_pr_title" _is_it_empty="${_pr_title}" && Condition_Vars_Must_Be_Not_Empty
-#
+
   gh pr create --fill --title "${_pr_title}" --base "${default_branch}"
   gh pr view --web    # if there is a bug see: /docs/debug_upstream.md
-#
+
   _doc_name="prompt_show_ci_status.md" && Show_Docs
   input_2="not_set"   #reset input_2
   read -r user_input;
@@ -131,7 +130,7 @@ function pr { # User_
     1 | y | Y | ci) ci;;
     *) my_message="Aborted" && Print_Gray;;
   esac
-#
+
   _doc_name="next_move_fct_pr.md" && Show_Docs
   input_2="not_set"   #reset input_2
   read -r user_input;
@@ -147,9 +146,9 @@ function mrg { # User_
   Condition_Branch_Must_Be_Edge
   Condition_No_Commits_Pending
   Condition_Attr_2_Must_Be_Empty
-#
+
   gh pr merge
-#
+
   _doc_name="prompt_show_ci_status.md" && Show_Docs
   input_2="not_set"   #reset input_2
   read -r user_input;
@@ -157,9 +156,9 @@ function mrg { # User_
     1 | y | Y | ci) ci;;
     *) my_message="Aborted" && Print_Gray;;
   esac
-#
+
   Show_Version
-#
+
   _doc_name="next_move_fct_mrg.md" && Show_Docs
   input_2="not_set"   #reset input_2
   read -r user_input;
@@ -176,7 +175,7 @@ function version { # User_
 ### The version is stored within the Dockerfile. For BashLaVa, this Dockerfile is just a config-env file
   Condition_No_Commits_Pending
   Show_Version
-#
+
   if [[ "${input_2}" == "not_set" ]]; then
     # The user did not provide a version
     echo && my_message="What is the version number (ex: 1.12.4)?" && Print_Green
@@ -195,17 +194,19 @@ function version { # User_
   else
     my_message="FATAL: Condition_Attr_2_Must_Be_Provided" && Print_Fatal
   fi
-#
+
   Condition_Attr_2_Must_Be_Provided
   Condition_Version_Must_Be_Valid
-### Apply updates in Dockerfile
+
+### Update version within Dockerfile
   sed -i '' "s/^ARG VERSION=.*$/ARG VERSION=\"${input_2}\"/" Dockerfile
-#
+  # code optimization 0o0o, Add logic for /private scripts
+
   git add .
   git commit . -m "Update ${app_name} to version ${input_2}"
   git push && echo
   Show_Version
-#
+
   _doc_name="next_move_fct_v.md" && Show_Docs
   input_2="not_set"   #reset input_2
   read -r user_input;
@@ -219,14 +220,14 @@ function version { # User_
 function tag { # User_
   Condition_No_Commits_Pending
   Condition_Attr_2_Must_Be_Empty
-#
+
   git tag ${app_version} && git push --tags && echo
   Show_Version
-#
+
   gh release create && sleep 5
   Show_Version
   Show_Release
-#
+
   _doc_name="next_move_fct_tag.md" && Show_Docs
   input_2="not_set"   #reset input_2
   read -r user_input;
@@ -270,10 +271,10 @@ function ci { # User_
   Condition_No_Commits_Pending
 
 ### show latest build and open webpage on Github Actions
-  #gh run list && sleep 1
+  # gh run list && sleep 1
   _run_id=$(gh run list | head -1 | awk '{print $11}')
   _var_name="_run_id" _is_it_empty="${_run_id}" && Condition_Vars_Must_Be_Not_Empty
-### Opening the run id cuase issues. Lets stick to /actions/
+  # Opening the run id cuase issues. Lets stick to /actions/
   open https://github.com/${github_user}/${app_name}/actions/
 
   # Follow status within the terminal
@@ -293,23 +294,23 @@ function log { # User_
 }
 
 function test { # User_
-# PRINT OPTION 1
+  # PRINT OPTION 1
   echo && my_message="Check Print_Banner:" && Print_Blue
   my_message="bashLaVa" && Print_Banner
-#
+
   my_message="Random tests: " Print_Blue
   my_message="\$1 value is: ${input_1}" Print_Gray
   my_message="\$2 value is: ${input_2}" Print_Gray
   my_message="\$3 value is: ${input_3}" Print_Gray
   my_message="\$4 value is: ${input_4}" Print_Gray
-#
+
   echo
   Condition_Apps_Must_Be_Installed
   my_message="Check apps required: All good!" Print_Gray     # else the Condition will stop the script
-#
+
   Core_Check_Which_File_Exist
   my_message="Check files and directories: All good!" Print_Gray     # else the Condition will stop the script
-#
+
   if [[ $(uname) == "Darwin" ]]; then
     my_message="Running on a Mac (Darwin): All good!" Print_Gray
   elif [[ $(uname) != "Darwin" ]]; then
@@ -317,25 +318,24 @@ function test { # User_
   else
     my_message="FATAL: Test / Check OS" && Print_Fatal
   fi
-#
+
   echo
-  #my_message="Check array from directory components:" Print_Blue
   App_array
-#
+
   # PRINT OPTION 2
   echo
   my_message="Test mdv:" && Print_Blue
   _doc_name="test.md" && Show_Docs
-#
+
   # PRINT OPTION 3
-  # 'App_test_color' it bypassed as it does an 'exit 0'
   my_message="Test color prints:" && Print_Blue
   my_message="You feel me!?"
   Print_Green
   Print_Blue
   Print_Warning
-  Print_Gray        #Print_Blue #Print_Fatal
-#
+  Print_Gray
+  # Print_Fatal is bypassed as it does an 'exit 0'
+
   Show_Version
 }
 
@@ -347,7 +347,7 @@ function help { # User_
 
 function show { # User_
   Prompt_All_Available_Fct
-    #Show_Version
+  #Show_Version
 }
 
 function mdv { # User_
@@ -356,16 +356,16 @@ function mdv { # User_
 
 function gitio { # User_
 
-### CMD EXECUTION
+  # CMD EXECUTION
   function sub_short_url {
-  clear
-  curl -i https://git.io -F \
-    "url=https://github.com/${input_2}/${input_3}" \
-    -F "code=${input_3}" &&\
+    clear
+    curl -i https://git.io -F \
+      "url=https://github.com/${input_2}/${input_3}" \
+      -F "code=${input_3}" &&\
 
-### PREVIEW
-  echo && my_message="Let's open: https://git.io/${input_3}" && Print_Blue && sleep 2 &&\
-  open https://git.io/${input_3}
+    # PREVIEW
+    echo && my_message="Let's open: https://git.io/${input_3}" && Print_Blue && sleep 2 &&\
+    open https://git.io/${input_3}
   }
 
   echo
@@ -373,7 +373,7 @@ function gitio { # User_
   my_message="will point to: https://github.com/${github_user}/${app_name}" && Print_Gray
   #output example: https://git.io/bashlava
 
-### PROMPT CONFIRMATION
+  # PROMPT
   echo
   my_message="Do you want to continue? (y/n)" && Print_Gray
   read -r user_input;
@@ -385,7 +385,7 @@ function gitio { # User_
 
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### #
 #
-# App : these are sub functions. They are not called directly by the user
+# Show
 #
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### #
           #
@@ -394,16 +394,6 @@ function gitio { # User_
     #
   #
 #
-
-function App_test_color {
-  my_message="bashlava test"
-  Print_Green
-  Print_Blue
-  Print_Warning
-  Print_Gray
-  Print_Fatal
-}
-
 function Show_All { 
   Show_Version
   echo "WIP"
@@ -470,6 +460,18 @@ function Show_Docs {
   cd ${_present_path_is} || { echo "FATAL: Show_Docs / cd"; exit 1; }
 }
 
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### #
+#
+# Print : better than echo
+#
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### #
+          #
+        #
+      #
+    #
+  #
+#
+
 function Print_mdv {
   clear
   Condition_Attr_2_Must_Be_Provided
@@ -528,7 +530,7 @@ function Print_Fatal {
 
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### #
 #
-# Conditions (idempotent due diligence)
+# Conditions: idempotent, due diligence
 #
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### #
           #
@@ -538,10 +540,8 @@ function Print_Fatal {
   #
 #
 
-
 function Condition_Branch_Must_Be_Mainbranch {
   echo "function not required yet"
-  #
   _compare_me=$(git rev-parse --abbrev-ref HEAD)
   _compare_you="${default_branch}" _fct_is="Condition_Branch_Must_Be_Mainbranch"
   Condition_Vars_Must_Be_Equal
@@ -560,7 +560,7 @@ function Condition_No_Commits_Pending {
 }
 
 function Condition_Attr_2_Must_Be_Provided {
-### ensure the second attribute is not empty to continue
+  # ensure the second attribute is not empty to continue
   if [[ "${input_2}" == "not_set" ]]; then
     my_message="You must provide two attributes. fct: Condition_Attr_2_Must_Be_Provided" && Print_Warning_Stop
   elif [[ "${input_2}" != "not_set" ]]; then
@@ -571,7 +571,7 @@ function Condition_Attr_2_Must_Be_Provided {
 }
 
 function Condition_Attr_3_Must_Be_Provided {
-### ensure the third attribute is not empty to continue
+  # ensure the third attribute is not empty to continue
   if [[ "${input_3}" == "not_set" ]]; then
     my_message="You must provide three attributes. fct: Condition_Attr_3_Must_Be_Provided" && Print_Warning_Stop
   elif [[ "${input_3}" != "not_set" ]]; then
@@ -586,7 +586,7 @@ function Condition_Attr_4_Must_Be_Provided {
 }
 
 function Condition_Attr_2_Must_Be_Empty {
-### Stop if 2 attributes are passed.
+  # Stop if 2 attributes are passed.
   if [[ "${input_2}" != "not_set" ]]; then
       my_message="You can NOT use two attributes. fct: Condition_Attr_2_Must_Be_Empty" && Print_Warning_Stop
   elif [[ "${input_2}" == "not_set" ]]; then
@@ -597,7 +597,7 @@ function Condition_Attr_2_Must_Be_Empty {
 }
 
 function Condition_Attr_3_Must_Be_Empty {
-# Stop if 3 attributes are passed.
+  # Stop if 3 attributes are passed.
   if [[ "${input_3}" != "not_set" ]]; then
       my_message="You can NOT use three attributes. fct: Condition_Attr_3_Must_Be_Empty" && Print_Warning_Stop
   elif [[ "${input_3}" == "not_set" ]]; then
@@ -607,7 +607,7 @@ function Condition_Attr_3_Must_Be_Empty {
   fi
 }
 function Condition_Attr_4_Must_Be_Empty {
-# Stop if 4 attributes are passed.
+  # Stop if 4 attributes are passed.
   if [[ "${input_4}" != "not_set" ]]; then
       my_message="You cannot use four attributes. fct: Condition_Attr_4_Must_Be_Empty" && Print_Warning && echo
   elif [[ "${input_4}" == "not_set" ]]; then
@@ -626,13 +626,13 @@ function Condition_Version_Must_Be_Valid {
 }
 
 function Condition_Apps_Must_Be_Installed {
-### docker running?
+  # docker running?
   _compare_me=$(docker version | grep -c "Server: Docker Desktop")
   _compare_you="1" _fct_is="Condition_Apps_Must_Be_Installed"
   Condition_Vars_Must_Be_Equal
   # my_message="Docker is installed" && Print_Gray
 
-### gh cli installed
+  # gh cli installed
   _compare_me=$(gh --version | grep -c "https://github.com/cli/cli/releases/tag/v")
   _compare_you="1" _fct_is="Condition_Apps_Must_Be_Installed"
   Condition_Vars_Must_Be_Equal
@@ -641,13 +641,13 @@ function Condition_Apps_Must_Be_Installed {
 
 function Core_Check_Which_File_Exist {
 
-### List markdown files under /docs/*
+  # List markdown files under /docs/*
   arr=( "welcome_to_bashlava" "help" "test" "debug_upstream" )
   for action in "${arr[@]}"; do
     _file_is="${action}" _file_path_is="${_path_docs}/${_file_is}.md" && Condition_File_Must_Be_Present
   done
 
-### List files under /components/*
+  # List files under /components/*
   arr=( "sidecars.sh" "alias.sh" "example.sh" "list.txt" )
   for action in "${arr[@]}"; do
     _file_is="${action}" _file_path_is="${_path_components}/${_file_is}" && Condition_File_Must_Be_Present
@@ -673,10 +673,10 @@ function Core_Check_Which_File_Exist {
     my_message="Dockerfile does not exit, let's generate one" && Print_Warning && sleep 2 && App_init_dockerfile && exit 1
   fi
 
-### Warning only
+  # Warning only
   _file_is=".dockerignore" _file_path_is="${_path_bashlava}/${_file_is}" && Condition_File_Optionnally_Present
 
-### Whern it happens, you want to know ASAP
+  # If it happens, you want to know ASAP
   _file_is=".git" dir_path_is="${_path_bashlava}/${_file_is}" && Condition_Dir_Must_Be_Present
   if [[ "${_file_do_not_exist}" == "true" ]]; then
     my_message=".git directory does not exit" && Print_Fatal
@@ -693,8 +693,8 @@ function Condition_File_Must_Be_Present {
   fi
 }
 
-# This fct return the flag '_file_do_not_exist'
 function Condition_File_Optionnally_Present {
+  # This fct return the flag '_file_do_not_exist'
   if [[ -f "${_file_path_is}" ]]; then
     echo "idempotent checkpoint passed" > /dev/null 2>&1
   elif [[ ! -f "${_file_path_is}" ]]; then
@@ -705,8 +705,8 @@ function Condition_File_Optionnally_Present {
   fi
 }
 
-# Think, IF vars are EQUAL, continue else fail the process
 function Condition_Vars_Must_Be_Equal {
+  # Think, IF vars are EQUAL, continue else fail the process
   if [[ "${_compare_me}" == "${_compare_you}" ]]; then
     echo "Good, lets continue" > /dev/null 2>&1
   elif [[ "${_compare_me}" != "${_compare_you}" ]]; then
@@ -715,8 +715,9 @@ function Condition_Vars_Must_Be_Equal {
     my_message="FATAL: Condition_Vars_Must_Be_Equal | ${_fct_is}" && Print_Fatal
   fi
 }
-# Think, IF vars are NOT equal, continue else fail the process
+
 function Condition_Vars_Must_Be_Not_Equal {
+  # Think, IF vars are NOT equal, continue else fail the process
   if [[ "${_compare_me}" == "${_compare_you}" ]]; then
     my_message="Checkpoint failed '${_fct_is}' ( ${_compare_me} and ${_compare_you} )" && Print_Warning_Stop
   elif [[ "${_compare_me}" != "${_compare_you}" ]]; then
@@ -726,8 +727,8 @@ function Condition_Vars_Must_Be_Not_Equal {
   fi
 }
 
-# Think, IF vars is not empty, continue else fail
 function Condition_Vars_Must_Be_Not_Empty {
+  # Think, IF vars is not empty, continue else fail
   # source must send two vars:_is_it_empty AND _var_name
   if [[ -n "${_is_it_empty}" ]]; then    #if not empty
     echo "idempotent checkpoint passed" > /dev/null 2>&1
@@ -738,8 +739,8 @@ function Condition_Vars_Must_Be_Not_Empty {
   fi
 }
 
-# This fct return the flag '_file_do_not_exist'
 function Condition_Dir_Must_Be_Present {
+  # This fct return the flag '_file_do_not_exist'
   if [[ -d "${dir_path_is}" ]]; then
     echo "idempotent checkpoint passed" > /dev/null 2>&1
   elif [[ ! -d "${dir_path_is}" ]]; then
@@ -750,12 +751,12 @@ function Condition_Dir_Must_Be_Present {
 }
 
 function Condition_Dir_Optionnally_Present {
-  echo "function required yet"
+  echo "function not required yet"
 }
 
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### #
 #
-# Core engine
+# Core functions /paths, variables
 #
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### #
           #
@@ -841,7 +842,7 @@ function Core_Load_Vars_General {
 }
 
 function Core_Load_Vars_Dockerfile {
-# Define vars from Dockerfile
+  # Define vars from Dockerfile
   app_name=$(cat Dockerfile | grep APP_NAME= | head -n 1 | grep -o '".*"' | sed 's/"//g')
   app_version=$(cat Dockerfile | grep VERSION= | head -n 1 | grep -o '".*"' | sed 's/"//g')
   github_user=$(cat Dockerfile | grep GITHUB_USER= | head -n 1 | grep -o '".*"' | sed 's/"//g')
@@ -853,7 +854,7 @@ function Core_Load_Vars_Dockerfile {
   _url_to_release="https://github.com/${github_user}/${app_name}/releases/new"
   _url_to_check="https://github.com/${github_user}/${app_name}"
 
-# idempotent checkpoints
+  # idempotent checkpoints
   _var_name="app_name" _is_it_empty="${app_name}" && Condition_Vars_Must_Be_Not_Empty
   _var_name="app_version" _is_it_empty="${app_version}" && Condition_Vars_Must_Be_Not_Empty
   _var_name="github_user" _is_it_empty="${github_user}" && Condition_Vars_Must_Be_Not_Empty
@@ -875,7 +876,7 @@ function main() {
   Core_Load_Vars_Dockerfile
   Core_Check_Which_File_Exist
 
-# Core_Input_Checkpoint
+### Core_Input_Checkpoint
   if [[ -z "$2" ]]; then    #if empty
     input_2="not_set"
   elif [[ -n "$2" ]]; then    #if not empty
@@ -922,7 +923,7 @@ function main() {
 ### 'main' function by default
 main "$@"
 
-### If no attributs were passed / Core_No_Attribut_Passed
+### Prompt if no attributs were passed
   input_1="$1"
   _script_name="$0"
 
@@ -944,4 +945,14 @@ main "$@"
     my_message="FATAL: main (When no arg are provided)" && Print_Fatal
   fi
 
-### End
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### #
+#
+# END OF SCRIPT
+#
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### #
+          #
+        #
+      #
+    #
+  #
+#
