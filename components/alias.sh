@@ -34,6 +34,9 @@ function v {
 function t {
   tag
 }
+function r {
+  release
+}
 function om {
   git checkout ${default_branch}
 }

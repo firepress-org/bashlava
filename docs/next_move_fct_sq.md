@@ -1,5 +1,7 @@
-`sq` was completed. Your **next move** could be:
+`sq` _is done_
+
+💡 Suggestion for your next move:
 
 - `1` ... |`c`
 - `2` ... |`pr`
-- `3` ... |`q`uit, `a`bord
+- `3` ... |`q`uit

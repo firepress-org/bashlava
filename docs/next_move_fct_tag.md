@@ -1,4 +1,6 @@
-`t` and the release were completed. Your **next move** could be:
+`t` _is done_
 
-- `1` ... |`e`
-- `2` ... |`q`uit,`a`bord
+🚀 Do you want to `r`?
+
+- `1` ... |`y`,`r`
+- `2` ... |`n`

@@ -1,4 +1,6 @@
-`ci` was completed. Your **next move** could be:
+`ci` _is done_
 
-- `1` ... |`mrg`
-- `2` ... |`q`uit, `a`bord
+🚀 Do you want to `mrg`?
+
+- `1` ... |`y`,`mrg`
+- `2` ... |`n`

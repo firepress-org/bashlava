@@ -1,4 +1,6 @@
-`c` was completed. Your **next move** could be:
+`c` _is done_
 
-- another `c`
-- create `pr`
+💡 Suggestion for your next move:
+
+- `1` ... | code and`c`
+- `2` ... | create`pr`

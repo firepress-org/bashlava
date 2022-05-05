@@ -1,4 +1,4 @@
-Do you want to see 'ci' status? (y/n)
+Do you want to 📺 watch ci status?
 
 - `1` ... |`y`,`ci`
-- `2` ... |`q`uit, `a`bord
+- `2` ... |`n`

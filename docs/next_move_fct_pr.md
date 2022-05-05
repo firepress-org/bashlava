@@ -1,5 +1,7 @@
-`pr` was completed. Your **next move** could be:
+`pr` _is done_
+
+🚀 What do you want to do next?
 
 - `1` ... |`mrg`
 - `2` ... |`ci`
-- `3` ... |`q`uit, `a`bord
+- `3` ... |`q`uit

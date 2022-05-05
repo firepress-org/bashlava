@@ -4,14 +4,22 @@
 
 # There are 14 TO-DO in the code
 
-# TODO try shell-format in vs code
-
 # TODO Decouple release() from tag
 
 # TODO show()
 # show() is work in progres. All about UX and prompt / case
 # Show_All() .. prompt options
-
+  # sidecars
+  # alias
+  # examples
+  # User facing
+  # Condition
+  # Print
+  # Prompt
+  # App
+  # Core
+  # all function
+  
 # TODO edge()
 # have this branch created with a unique ID to avoid conflicts with other developers edge_sunny
 # prompt which name to use:
@@ -127,7 +135,7 @@ function pr { # User_
   input_2="not_set"   #reset input_2
   read -r user_input;
   case ${user_input} in
-    1 | y | Y | ci) ci;;
+    1 | y | ci) ci;;
     *) my_message="Aborted" && Print_Gray;;
   esac
 
@@ -153,7 +161,7 @@ function mrg { # User_
   input_2="not_set"   #reset input_2
   read -r user_input;
   case ${user_input} in
-    1 | y | Y | ci) ci;;
+    1 | y | ci) ci;;
     *) my_message="Aborted" && Print_Gray;;
   esac
 
@@ -178,15 +186,19 @@ function version { # User_
 
   if [[ "${input_2}" == "not_set" ]]; then
     # The user did not provide a version
-    echo && my_message="What is the version number (ex: 1.12.4)?" && Print_Green
+
+    _doc_name="prompt_fct_v_version_number.md" && Show_Docs
     read -r user_input;
+    echo;
+    my_message="${user_input}" && Print_Green
     input_2="${user_input}"
-    #
-    echo && my_message="You confirm version: ${user_input} is right? (y/n)" && Print_Green
+    
+    _doc_name="prompt_fct_v_confirmation.md" && Show_Docs
     # warning: dont reset input_2
     read -r user_input;
     case ${user_input} in
       1 | y) echo "Good, lets continue" > /dev/null 2>&1;;
+      2 | n) echo "Lets retry" && version;;
       *) my_message="Aborted" && Print_Gray;;
     esac
   elif [[ "${input_2}" != "not_set" ]]; then
@@ -224,15 +236,28 @@ function tag { # User_
   git tag ${app_version} && git push --tags && echo
   Show_Version
 
-  gh release create && sleep 5
-  Show_Version
-  Show_Release
-
   _doc_name="next_move_fct_tag.md" && Show_Docs
   input_2="not_set"   #reset input_2
   read -r user_input;
   case ${user_input} in
-    1 | e) edge;;
+    1 | y | r) release;;
+    *) my_message="Aborted" && Print_Gray;;
+  esac
+}
+
+function release {
+  Condition_No_Commits_Pending
+  Condition_Attr_2_Must_Be_Empty
+
+  gh release create && sleep 5
+  Show_Version
+  Show_Release
+
+  _doc_name="next_move_fct_release.md" && Show_Docs
+  input_2="not_set"   #reset input_2
+  read -r user_input;
+  case ${user_input} in
+    1 | y | e) edge;;
     *) my_message="Aborted" && Print_Gray;;
   esac
 }
