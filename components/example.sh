@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
 
-# /components/example.sh should logically not be sourced
-
+function str_not_eq {
+  # Get this extension: https://marketplace.visualstudio.com/items?itemName=Remisa.shellman
+  # Read her book: https://github.com/yousefvand/shellman-ebook
+  if [[ "${string1}" != "${string2}" ]]; then
+    echo "The two strings are different"
+  fi
+}
 # Refer to 'Condition_File_Must_Be_Present' instead of copy paste this fct
 function idempotent_file_exist {
   _file_is="somefile.sh"
@@ -171,4 +176,7 @@ function demo_set_var_if_empty {
   # Setting variable value (if unset)
   echo ${country:-Greenland}
   echo ${country:=Greenland}
+
+# set only if it has no value currently
+  "${variable:=default}"
 }

@@ -1,13 +1,3 @@
-&nbsp;
-
-<p align="center">
-  <a href="https://github.com/firepress-org/bashlava">
-    <img src="https://user-images.githubusercontent.com/6694151/74113494-746ee100-4b72-11ea-9601-bd7b1d786b41.jpg" width="1024px" alt="FirePress" />
-  </a>
-</p>
-
-&nbsp;
-
 > BashLaVa makes your bash scripts a bunch of pieces of cakes.
 
 # BashLava
@@ -47,8 +37,8 @@ Functions organise in Namespace:
 
 ## Installation
 
-- 1. git **clone** this repo
-- 2. **create a symlink** to your PATH for both files.
+- git **clone** this repo
+- **create a symlink** to your PATH for both files.
 
 ```
 ln -s /Volumes/myuser/Github/firepress-org/bashlava/bashlava.sh /usr/local/bin/bashlava.sh
@@ -58,9 +48,14 @@ ln -s /Volumes/myuser/Github/firepress-org/bashlava/.bashcheck.sh /usr/local/bin
 
 Assuming your $path is `/usr/local/bin`
 
-- 4. Create a file named `/components/_entrypoint.sh`. [Here is how to use it.](https://github.com/firepress-org/bashlava/issues/50)
+- Create a file named `/components/_entrypoint.sh`. [Here is how to use it.](https://github.com/firepress-org/bashlava/issues/50)
 
-- 4. **Test your installation**. run: `bashlava.sh test`
+• Run it with bash command (pass file path to bash): 1. bash test.sh
+• Give it execute permission and run it directly (prefix file name with a ./ without space):
+
+- `chmod +x bashlava.sh`
+
+- **Test your installation**. run: `bashlava.sh`
 
 ## Requirements
 
