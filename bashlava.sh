@@ -42,6 +42,7 @@
 # we have few array that are configs. They should be all together under the same block of code.
 # source files under /components
 # code optimization 0o0o / Need logic to manage file under /private/* 
+# favorite URL could be a great example
 
 # TODO main()
 # set a new config flag: debug="true"
