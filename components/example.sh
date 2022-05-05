@@ -54,6 +54,11 @@ function str_not_eq {
     echo "The two strings are different"
   fi
 }
+
+function random_11 {
+  openssl rand -hex 3
+}
+
 # Refer to 'Condition_File_Must_Be_Present' instead of copy paste this fct
 function idempotent_file_exist {
   _file_is="somefile.sh"

@@ -9,13 +9,13 @@
 **git flow**
 
 - `e` ....... | create a branch`edge`from main ........ | _standalone_
-- `c` ....... |`commit`................................ | c "This feature rocks"
+- `c` ....... |`commit`................................ | usage: c "This feature rocks"
 - `sq` ...... |`squash`commits ........................ | usage: sq 3 "Add: feat xyz, issue 123"
 - `pr` ...... | create`pull request` .................. | _standalone_
 - `ci` ...... | show`ci status`on GitHub Actions ...... | _standalone_
 - `mrg` ..... |`merge`to mainbranch ................... | _standalone_
 - `m` ....... | checkout to`main_branch` .............. | _standalone_
-- `v` ....... |`version`code .......................... | v 1.4.2 _(or standalone)_
+- `v` ....... |`version`code .......................... | _standalone_ or usage: v 1.4.2
 - `t` ....... |`tag` .................................. | _standalone_
 - `r` ....... |`release` and open GUI on GitHub ....... | _standalone_
 
@@ -27,7 +27,7 @@
 - `l` ....... | show`log`.............................. | _standalone_
 - `oe` ...... | check`out`edge ......(does not fetch) . | _standalone_
 - `om` ...... | check`out`mainbranch (does not fetch)...| _standalone_
-- `mdv` ..... | markdown`viewer` ...................... | mdv README.md
+- `mdv` ..... | markdown`viewer` ...................... | usage: mdv README.md
 - `gitio` ... | URL`shortner`for GitHub ............... | _standalone_
 
 **About**

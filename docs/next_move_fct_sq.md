@@ -1,6 +1,6 @@
 `sq` _is done_
 
-💡 Suggestion for your next move:
+🚀 What do you want to do next?
 
 - `1` ... |`c`
 - `2` ... |`pr`

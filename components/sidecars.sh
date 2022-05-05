@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-function Prompt_All_Available_Fct { #Side_
+function Show_Prompt_All { #Side_
   # when you code a fct, often you dont know by heart condition name
   # help advanced
   # it also helps me to see all functions at high level
@@ -8,26 +8,36 @@ function Prompt_All_Available_Fct { #Side_
 
   Core_Check_Which_File_Exist
 
-  _doc_name="Prompt_All_Available_Fct.md" && clear && Show_Docs && sleep 1
-  echo
+  _doc_name="prompt_show_fct.md" && clear && Show_Docs
 
   read -r month
   case ${month} in
-    1 | a)
-      echo "0o0o";;
-    2 | b)
-      echo "0o0o";;
-    3 | c)
-      echo "0o0o";;
+    1 | ali) Show_Category_Alias;;
+    2 | cond) echo "cond";;
+    3 | core) echo "core";;
+    4 | ex) echo "ex";;
+    5 | pri) echo "pri";;
+    6 | user) echo "user";;
+    7 | util) echo "util";;
+    8 | all) echo "all";;
+    f1) echo "f1";;
+    f2) echo "f2";;
     *)
-      echo "cancel" && exit 1;;
+      echo "Aboarded" && exit 1;;
   esac
-  
+}
 
-  # code optimization 0o0o CASE per function's category
+#1
+function Show_Category_Alias {
+  my_message="alias" && Print_Blue && echo
+  my_message="$(cat ${_path_components}/alias.sh | grep "function " | awk '{print $2}')" && Print_Gray && echo
+}
 
+function wip {
   my_message="sidecars" && Print_Blue && echo
   my_message="$(cat ${_path_components}/sidecars.sh | grep "{ #Side_" | awk '{print $2}')" && Print_Gray && echo
+
+  # code optimization 0o0o CASE per function's category
 
   my_message="alias" && Print_Blue && echo
   my_message="$(cat ${_path_components}/alias.sh | grep "function " | awk '{print $2}')" && Print_Gray && echo
@@ -65,11 +75,7 @@ function passgen { #Side_
   docker run --rm devmtl/alpine:3.11_2020-02-26_08H42s20_dec5798 sh "random7.sh"
 }
 
-function App_random_6 { #Side_
-  openssl rand -hex 3
-}
-
-function App_array { #Side_
+function Utility_Array { #Side_
   arr=( "Looping ..." "an array of string" )
   for i in "${arr[@]}"; do
     my_message="${i}" && Print_Gray
@@ -103,60 +109,14 @@ function App_Curl_url { #Side_
   fi
 }
 
-function myfunc_11 () {
-  ls_dir_file=$(ls)
-  echo "${ls_dir_file}"
-
-  echo
-  # you can read last command return value via $?
-  echo "$?"
-
-  if [[ $?! = 0 ]]; then
-    echo "command failed"
-  fi
-  if [[ $?==0 ]]; then
-    echo command succeed
-  fi
-}
-
-function myfunc_12 () {
-  #pdf: page 20
-  
-  POSITIONAL=()
-  while (( $# > 0 )); do
-    case "${1}" in
-      -f|--flag)
-      echo flag: "${1}"
-      shift # shift once since flags have no values
-      ;;
-      -s|--switch)
-      numOfArgs=1 # number of switch arguments
-      if (( $# < numOfArgs + 1 )); then
-        shift $#
-      else
-        echo "switch: ${1} with value: ${2}"
-        shift $((numOfArgs + 1)) # shift 'numOfArgs + 1' to bypass switch and its value
-      fi
-      ;;
-      *) # unknown flag/switch
-      POSITIONAL+=("${1}")
-      shift
-      ;;
-    esac
-  done
-  
-  set -- "${POSITIONAL[@]}" # restore positional params
-  
-}
-
-function App_init_readme { #Side_
+function Init_readme { #Side_
 cat << EOF > README_template.md
 This README is still empty.
 EOF
 }
 
 # optional as not everyone needs this option
-function App_init_dockerignore { #Side_
+function Init_dockerignore { #Side_
 cat << EOF > .dockerignore_template
 .cache
 coverage
@@ -167,7 +127,7 @@ npm-debug
 EOF
 }
 
-function App_init_license { #Side_
+function Init_license { #Side_
 # two things two update here
 # project URL
 # URL to LICENSE.md (you should fork it)
@@ -188,7 +148,7 @@ EOF
 my_message="File created: ${local_path_bashlava}/LICENSE_template" Print_Green
 }
 
-function App_init_dockerfile { #Side_
+function Init_dockerfile { #Side_
 cat << EOF > Dockerfile_template
 ###################################
 # REQUIRED for bashLaVa https://github.com/firepress-org/bashlava
@@ -212,7 +172,7 @@ EOF
 my_message="File created: ${local_path_bashlava}/Dockerfile_template" Print_Green
 }
 
-function App_init_gitignore { #Side_
+function Init_gitignore { #Side_
 cat <<EOF > .gitignore_template
 # Files
 ############
@@ -320,5 +280,5 @@ TheVolumeSettingsFolder
 .FBCSemaphoreFile
 .FBCLockFolder
 EOF
-my_message="File created: ${local_path_bashlava}/App_init_gitignore" Print_Green
+my_message="File created: ${local_path_bashlava}/Init_gitignore" Print_Green
 }

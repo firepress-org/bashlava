@@ -1,4 +1,4 @@
-Do you want to 📺 watch ci status?
+Watch 📺 ci status on Github Actions?
 
 - `1` ... |`y`,`ci`
 - `2` ... |`n`

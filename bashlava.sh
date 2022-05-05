@@ -1,95 +1,147 @@
 #!/usr/bin/env bash
 
-# See bashlava for all details https://github.com/firepress-org/bashlava
-# Pinned: documentation ....... issue #11
-# Pinned: logic & condition ... issue #10
-# Pinned: bugs & fixes . ...... issue #9
-# Pinned: UX Improvements ..... issue #8
-# Pinned: TODO and backlog .... issue #4
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### #
+#
+# TODO for bashlava https://github.com/firepress-org/bashlava/issues/4
+# How many do we have? 16
+#
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### #
 
-# There are 14 TO-DO in the code
+#                                                                         //
+: '
+TODO show()
+Shows all avail functions within bashlava.
+its a way to see all functions at high level
+'
+#                                                                         //
+: '
+TODO edge
+have this branch created with a unique ID to avoid conflicts with other developers edge_sunny
+prompt which name to use:
+by default use edge_DOCKERHUB_USER
+'
+#                                                                         //
+: '
+TODO edge
+make it slick: check if branch edge exist before delete it from remote
+'
+#                                                                         //
+: '
+TODO Core_Load_Vars_General
+better management core vars / group them, avoid having multiple place to define them
+file to check VERSUS file to source
 
-# TODO show()
-# show() is work in progres. All about UX and prompt / case
-# Show_All() .. prompt options
-  # sidecars
-  # alias
-  # examples
-  # User facing
-  # Condition
-  # Print
-  # Prompt
-  # App
-  # Core
-  # all function
-  
-# TODO edge()
-# have this branch created with a unique ID to avoid conflicts with other developers edge_sunny
-# prompt which name to use:
-# by default use edge_DOCKERHUB_USER
+we have few array that are configs. They should be all together under the same block of code.
+source files under /components
+code optimization 0o0o / Need logic to manage file under /private/* 
+favorite URL could be a great example
 
-# TODO edge()
-# make it slick: check if branch edge exist before delete it from remote
+set a new config flag: debug="true"
+'
+#                                                                         //
+: '
+TODO private scripts
 
-# TODO Show_Release()
-#to refactor duplication with Show_Version()
+logical flags to manage under /private/*
+source {_path_components}/private/
+Need to check if files exist /private/* when DIR private exist
+manage private vars https://github.com/firepress-org/bashlava/issues/83
+cmd to commit this: "Organising backlog: 16 TODO, issue #4"
 
-# TODO
-# better management core vars / group them, avoid having multiple place to define them
-# file to check VERSUS file to source
+logic to switch between private fct VERSUS public fct
+custom_fct_opensite="false"
+custom_fct_help="false"
+  this will use a fct available to public
+  else it will use a 
+'
+#                                                                         //
+: '
+TODO dummy commits
 
-# TODO Core_Load_Vars_General()
-# we have few array that are configs. They should be all together under the same block of code.
-# source files under /components
-# code optimization 0o0o / Need logic to manage file under /private/* 
-# favorite URL could be a great example
+create a dummy commit as test quickly the whole workflow
+branch out dummy
+commit dummy message
+commit dummy message again
+sq 2 "dummy message"
+prompt : do you want to delete dummy branch ?
+'
+#                                                                         //
+: '
+TODO
+## App check brew + git-crypt + gnupg, shellcheck
+  if brew ls --versions myformula > /dev/null; then
+    The package is installed
+  else
+    The package is not installed
+  fi
+'
+#                                                                         //
+: '
+TODO
+spell checker in comments, vs code extension ?
+'
+#                                                                         //
+: '
+TODO
+when the user goes into a prompt, he should be able to provide attri to avoid the pop-up.
+ex: ci yes, ci no
+ex: show app, show 3
+need to check if gh cli support this as well
+'
+#                                                                         //
+: '
+TODO release
+glitch, release function is not stable when we tag. Sometimes it show the older release
+loop with curl he check if Url is reachable
+'
+#                                                                         //
+: '
+TODO ci pipeline
+create ci for using shellcheck
+run test()
+'
+#                                                                         //
+: '
+TODO Show_Docs()
+works but not clean, but it works 'mdv' / 'Show_Docs'
+  we cant provide an abosolute path to the file because the Docker container cant the absolute path
+  I also DONT want to provide two arguments when using glow
+  I might simply stop using a docker container for this
+  but as a priciiple, I like to call a docker container
+'
+#                                                                         //
+: '
+TODO squash
+function that search for the same commit messages in previous commits
+then suggestion to do a squash, then prompt user y/n
+'
+#                                                                         //
 
-# TODO main()
-# set a new config flag: debug="true"
+#                                                                         //
+: '
+0o0o
+comment_here
+'
+#                                                                         //
 
-# TODO /private
-# logical flags to manage under /private/*
-# source "${_path_components}/private/
-# Need to check if files exist /private/* when DIR private exist
-# manage private vars https://github.com/firepress-org/bashlava/issues/83
-# cmd to commit this: "Organising backlog: 16 TODO, issue #4"
+#                                                                         //
+: '
+0o0o
+comment_here
+'
+#                                                                         //
 
-# logic to switch between private fct VERSUS public fct
-# custom_fct_opensite="false"
-# custom_fct_help="false"
-  # this will use a fct available to public
-  # else it will use a 
-
-# TODO dummy commits
-# create a dummy commit as test quickly the whole workflow
-# branch out dummy
-# commit dummy message
-# commit dummy message again
-# sq 2 "dummy message"
-# prompt : do you want to delete dummy branch ?
-
-# TODO
-### App check brew + git-crypt + gnupg, shellcheck
-#if brew ls --versions myformula > /dev/null; then
-  # The package is installed
-#else
-  # The package is not installed
-#fi
-
-# TODO release
-# glitch, release function is not stable when we tag. Sometimes it show the older release
-# loop with curl he check if Url is reachable
-
-# TODO ci pipeline
-# create ci for using shellcheck
-# run test()
-
-# TODO Show_Docs()
-# works but not clean, but it works 'mdv' / 'Show_Docs'
-  # we can't provide an abosolute path to the file because the Docker container can't the absolute path
-  # I also DONT want to provide two arguments when using glow
-  # I might simply stop using a docker container for this
-  # but as a priciiple, I like to call a docker container
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### #
+#
+# USER FACING FUNCTIONS
+#
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### #
+          #
+        #
+      #
+    #
+  #
+#
 
 function mainbranch { # User_
   Condition_Attr_2_Must_Be_Empty
@@ -121,7 +173,10 @@ function edge { # User_
 function commit { # User_
   Condition_Attr_2_Must_Be_Provided
   git status && git add -A && git commit -m "${input_2}" && git push
-  _doc_name="next_move_fct_c.md" && Show_Docs
+
+  _doc_name="fct_c_is_done.md" && Show_Docs
+  git --no-pager log --decorate=short --pretty=oneline -n1
+  _doc_name="fct_c_next.md" && Show_Docs
 }
 
 function pr { # User_
@@ -249,7 +304,7 @@ function tag { # User_
   esac
 }
 
-function release {
+function release { # User_
   Condition_No_Commits_Pending
   Condition_Attr_2_Must_Be_Empty
 
@@ -270,6 +325,8 @@ function squash { # User_
   Condition_No_Commits_Pending
   Condition_Attr_2_Must_Be_Provided # how many steps
   Condition_Attr_3_Must_Be_Provided # message
+
+  git --no-pager log --decorate=short --pretty=oneline -n15
 
   if ! [[ "${input_2}" =~ ^[0-9]+$ ]] ; then
     my_message="Oups, syntax error." && Print_Warning_Stop
@@ -318,8 +375,13 @@ function ci { # User_
   esac
 }
 
+function show { # User_
+  Show_Prompt_All # within sidecars.sh
+}
+
 function log { # User_
-  git log --all --decorate --oneline --graph --pretty=oneline | head -n 10
+  #git log --all --decorate --oneline --graph --pretty=oneline | head -n 10
+  echo && git --no-pager log --decorate=short --pretty=oneline -n10
 }
 
 function test { # User_
@@ -349,7 +411,7 @@ function test { # User_
   fi
 
   echo
-  App_array
+  Utility_Array
 
   # PRINT OPTION 2
   echo
@@ -374,19 +436,14 @@ function help { # User_
   _doc_name="help.md" && Show_Docs
 }
 
-function show { # User_
-  Prompt_All_Available_Fct
-  #Show_Version
-}
-
 function mdv { # User_
   Print_mdv
 }
 
 function gitio { # User_
 
-  # CMD EXECUTION
-  function sub_short_url {
+  # depends on the selected option below
+  function child_gitio {
     clear
     curl -i https://git.io -F \
       "url=https://github.com/${input_2}/${input_3}" \
@@ -407,7 +464,7 @@ function gitio { # User_
   my_message="Do you want to continue? (y/n)" && Print_Gray
   read -r user_input;
   case ${user_input} in
-    y | Y) sub_short_url;;
+    y | Y) child_gitio;;
     *) my_message="Aborted" && Print_Fatal;;
   esac
 }
@@ -423,7 +480,8 @@ function gitio { # User_
     #
   #
 #
-function Show_All { 
+
+function Show_All {
   Show_Version
   echo "WIP"
 }
@@ -538,7 +596,7 @@ function Print_Blue {
 }
 
 ### Why do we have Print_Warning and Print_Warning_Stop here ?
-  # Fatal is usually reverse for unexpected erros within bashlava
+  # Fatal is usually reserve for unexpected error within bashlava
   # Warning are expected - sometimes we want to stop the function, sometimes we want to continue
 function Print_Warning {
   _var_name="my_message" _is_it_empty="${my_message}" && Condition_Vars_Must_Be_Not_Empty
@@ -559,7 +617,7 @@ function Print_Fatal {
 
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### #
 #
-# Conditions: idempotent, due diligence
+# Conditions functions
 #
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### #
           #
@@ -669,7 +727,6 @@ function Condition_Apps_Must_Be_Installed {
 }
 
 function Core_Check_Which_File_Exist {
-
   # List markdown files under /docs/*
   arr=( "welcome_to_bashlava" "help" "test" "debug_upstream" )
   for action in "${arr[@]}"; do
@@ -684,22 +741,22 @@ function Core_Check_Which_File_Exist {
 
   _file_is="LICENSE" _file_path_is="${_path_bashlava}/${_file_is}" && Condition_File_Optionnally_Present
   if [[ "${_file_do_not_exist}" == "true" ]]; then
-    my_message="Dockerfile does not exit, let's generate one" && Print_Warning && sleep 2 && App_init_license && exit 1
+    my_message="Dockerfile does not exit, let's generate one" && Print_Warning && sleep 2 && Init_license && exit 1
   fi
 
   _file_is="README.md" _file_path_is="${_path_bashlava}/${_file_is}" && Condition_File_Optionnally_Present
   if [[ "${_file_do_not_exist}" == "true" ]]; then
-    my_message="Dockerfile does not exit, let's generate one" && Print_Warning && sleep 2 && App_init_readme && exit 1
+    my_message="Dockerfile does not exit, let's generate one" && Print_Warning && sleep 2 && Init_readme && exit 1
   fi
 
   _file_is=".gitignore" _file_path_is="${_path_bashlava}/${_file_is}" && Condition_File_Optionnally_Present
   if [[ "${_file_do_not_exist}" == "true" ]]; then
-    my_message="Dockerfile does not exit, let's generate one" && Print_Warning && sleep 2 && App_init_gitignore && exit 1
+    my_message="Dockerfile does not exit, let's generate one" && Print_Warning && sleep 2 && Init_gitignore && exit 1
   fi
 
   _file_is="Dockerfile" _file_path_is="${_path_bashlava}/${_file_is}" && Condition_File_Optionnally_Present
   if [[ "${_file_do_not_exist}" == "true" ]]; then
-    my_message="Dockerfile does not exit, let's generate one" && Print_Warning && sleep 2 && App_init_dockerfile && exit 1
+    my_message="Dockerfile does not exit, let's generate one" && Print_Warning && sleep 2 && Init_dockerfile && exit 1
   fi
 
   # Warning only
@@ -785,7 +842,7 @@ function Condition_Dir_Optionnally_Present {
 
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### #
 #
-# Core functions /paths, variables
+# Core functions
 #
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### #
           #
