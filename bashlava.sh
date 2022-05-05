@@ -43,6 +43,7 @@ set a new config flag: debug="true"
 TODO private scripts
 
 logical flags to manage under /private/*
+adding bashlava_config.sh
 source {_path_components}/private/
 Need to check if files exist /private/* when DIR private exist
 manage private vars https://github.com/firepress-org/bashlava/issues/83
@@ -340,15 +341,6 @@ function squash { # User_
   git commit -m "${input_3} /sq"
   git push
   log
-
-  _doc_name="next_move_fct_sq.md" && Show_Docs
-  input_2="not_set"   #reset input_2
-  read -r user_input;
-  case ${user_input} in
-    1 | c) commit;;
-    2 | pr) pr;;
-    *) my_message="Aborted" && Print_Gray;;
-  esac
 }
 
 function ci { # User_
