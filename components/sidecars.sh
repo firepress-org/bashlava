@@ -74,6 +74,16 @@ function App_array { #Side_
   for i in "${arr[@]}"; do
     my_message="${i}" && Print_Gray
   done
+
+  myArray=("one" "two" "three")
+  myArray2=(
+    "four"
+    "five"
+    "six"
+  )
+
+  echo "${myArray[@]}" 
+  echo "${myArray2[@]}"
 }
 
 function hello { #Side_
@@ -91,6 +101,52 @@ function App_Curl_url { #Side_
     my_message="${url_to_check} <== is offline" && Print_Warning
     my_message="The git up repo URL is not responding." && Print_Fatal
   fi
+}
+
+function myfunc_11 () {
+  ls_dir_file=$(ls)
+  echo "${ls_dir_file}"
+
+  echo
+  # you can read last command return value via $?
+  echo "$?"
+
+  if [[ $?! = 0 ]]; then
+    echo "command failed"
+  fi
+  if [[ $?==0 ]]; then
+    echo command succeed
+  fi
+}
+
+function myfunc_12 () {
+  #pdf: page 20
+  
+  POSITIONAL=()
+  while (( $# > 0 )); do
+    case "${1}" in
+      -f|--flag)
+      echo flag: "${1}"
+      shift # shift once since flags have no values
+      ;;
+      -s|--switch)
+      numOfArgs=1 # number of switch arguments
+      if (( $# < numOfArgs + 1 )); then
+        shift $#
+      else
+        echo "switch: ${1} with value: ${2}"
+        shift $((numOfArgs + 1)) # shift 'numOfArgs + 1' to bypass switch and its value
+      fi
+      ;;
+      *) # unknown flag/switch
+      POSITIONAL+=("${1}")
+      shift
+      ;;
+    esac
+  done
+  
+  set -- "${POSITIONAL[@]}" # restore positional params
+  
 }
 
 function App_init_readme { #Side_
