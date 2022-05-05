@@ -1,5 +1,52 @@
 #!/usr/bin/env bash
 
+
+function myfunc_11 () {
+  ls_dir_file=$(ls)
+  echo "${ls_dir_file}"
+
+  echo
+  # you can read last command return value via $?
+  echo "$?"
+
+  if [[ $?! = 0 ]]; then
+    echo "command failed"
+  fi
+  if [[ $?==0 ]]; then
+    echo command succeed
+  fi
+}
+
+function myfunc_12 () {
+  #pdf: page 20
+  
+  POSITIONAL=()
+  while (( $# > 0 )); do
+    case "${1}" in
+      -f|--flag)
+      echo flag: "${1}"
+      shift # shift once since flags have no values
+      ;;
+      -s|--switch)
+      numOfArgs=1 # number of switch arguments
+      if (( $# < numOfArgs + 1 )); then
+        shift $#
+      else
+        echo "switch: ${1} with value: ${2}"
+        shift $((numOfArgs + 1)) # shift 'numOfArgs + 1' to bypass switch and its value
+      fi
+      ;;
+      *) # unknown flag/switch
+      POSITIONAL+=("${1}")
+      shift
+      ;;
+    esac
+  done
+  
+  set -- "${POSITIONAL[@]}" # restore positional params
+  
+}
+
 function str_not_eq {
   # Get this extension: https://marketplace.visualstudio.com/items?itemName=Remisa.shellman
   # Read her book: https://github.com/yousefvand/shellman-ebook
