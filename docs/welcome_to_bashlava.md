@@ -6,8 +6,8 @@
 |_.__/ \__,_|___/_| |_|_|\__,_| \_/ \__,_|
 ```
 
-- `1`,`h` .... | `help`
-- `2`,`tt` ... | `test`
-- `3` ........ |`q`uit,`a`bord
+- `1` ... |`h`,`help`
+- `2` ... |`tt`,`test`
+- `3` ... |`q`uit,`a`bord
 
-Call these directly: `bashlava h`,`bashlava test`
+Tip 💡: You can execute these commands directly: `bashlava h`,`bashlava test`, etc.

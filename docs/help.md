@@ -6,17 +6,18 @@
 |_.__/ \__,_|___/_| |_|_|\__,_| \_/ \__,_|
 ```
 
-**git workflow**
+**git flow**
 
 - `e` ....... | create a branch`edge`from main ........ | _standalone_
-- `c` ....... |`commit`................................ | c "my feature is great"
+- `c` ....... |`commit`................................ | c "This feature rocks"
 - `sq` ...... |`squash`commits ........................ | usage: sq 3 "Add: feat xyz, issue 123"
 - `pr` ...... | create`pull request` .................. | _standalone_
 - `ci` ...... | show`ci status`on GitHub Actions ...... | _standalone_
 - `mrg` ..... |`merge`to mainbranch ................... | _standalone_
 - `m` ....... | checkout to`main_branch` .............. | _standalone_
-- `v` ....... |`version`code .......................... | v 1.12.4 _(or standalone)_
-- `t` ....... |`tag`+ release GUI on GitHub ........... | _standalone_
+- `v` ....... |`version`code .......................... | v 1.4.2 _(or standalone)_
+- `t` ....... |`tag` .................................. | _standalone_
+- `r` ....... |`release` and open GUI on GitHub ....... | _standalone_
 
 **more commands**
 
@@ -24,8 +25,8 @@
 - `h` ....... |`help`.................................. | _standalone_
 - `test` .... |`test`if bashLaVa works properly ....... | _standalone_
 - `l` ....... | show`log`.............................. | _standalone_
-- `oe` ...... | check`out`edge ........................ | _standalone_
-- `om` ...... | check`out`mainbranch .................. | _standalone_
+- `oe` ...... | check`out`edge ......(does not fetch) . | _standalone_
+- `om` ...... | check`out`mainbranch (does not fetch)...| _standalone_
 - `mdv` ..... | markdown`viewer` ...................... | mdv README.md
 - `gitio` ... | URL`shortner`for GitHub ............... | _standalone_
 

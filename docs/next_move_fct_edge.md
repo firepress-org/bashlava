@@ -1,4 +1,5 @@
-Your now on the `edge` branch. Your **next move** could be:
+`edge` _branch was freshly created_
 
-- `1` ... |`c`
-- `2` ... |`q`uit, `a`bord
+💡 Suggestion for your next move:
+
+- `c`
