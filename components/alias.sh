@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 function m {
- mainbranch
+  mainbranch
 }
 function e {
   edge
