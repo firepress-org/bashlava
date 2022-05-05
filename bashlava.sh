@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 
 # See bashlava for all details https://github.com/firepress-org/bashlava
+# Pinned: documentation ....... issue #11
+# Pinned: logic & condition ... issue #10
+# Pinned: bugs & fixes . ...... issue #9
+# Pinned: UX Improvements ..... issue #8
+# Pinned: TODO and backlog .... issue #4
 
 # There are 14 TO-DO in the code
 
