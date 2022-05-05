@@ -4,8 +4,6 @@
 
 # There are 14 TO-DO in the code
 
-# TODO Decouple release() from tag
-
 # TODO show()
 # show() is work in progres. All about UX and prompt / case
 # Show_All() .. prompt options
@@ -76,7 +74,7 @@
 # glitch, release function is not stable when we tag. Sometimes it show the older release
 # loop with curl he check if Url is reachable
 
-# TODO
+# TODO ci pipeline
 # create ci for using shellcheck
 # run test()
 
