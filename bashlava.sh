@@ -9,11 +9,8 @@
 : '
 // START COMMENT BLOCK
 
-# TODO edge
-Refactor edge() Make it unique to avoid conflicts. ex: edge_sunny_d8b
-
-# TODO use variable 
-TAG     in mainbranch" Print_Gray / line 519
+# TODO Show_Version(): use a var instead of hard coded
+  TAG     in mainbranch
 
 # TODO dummy commits
 create a dummy commit as test quickly the whole workflow
@@ -518,7 +515,7 @@ function Show_Version {
     echo "Logic: new projet don't have any tags. So we must expect that it can be empty" > /dev/null 2>&1
     latest_tag="none "
   fi
-  my_message="${latest_tag} < TAG     in mainbranch" Print_Gray
+  my_message="${latest_tag} < TAG     in ${default_branch}" Print_Gray
 
 ### release
   release_latest=$(curl -s https://api.github.com/repos/${github_user}/${app_name}/releases/latest | \
@@ -534,7 +531,7 @@ function Show_Version {
     my_message="FATAL: Show_Version | release_latest " && Print_Fatal
   fi
 
-  my_message="${release_latest} < RELEASE in https://github.com/${github_user}/${app_name}/releases/tag/${release_latest}" && Print_Gray
+  my_message="${release_latest} < RELEASE on https://github.com/${github_user}/${app_name}/releases/tag/${release_latest}" && Print_Gray
   echo
 }
 
