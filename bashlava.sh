@@ -2,25 +2,29 @@
 
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### #
 #
-# TODO to complete ==> 14
+# To-Do comment section. Total of 15
 #
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### #
 
-: ' #TODO edge
-have this branch created with a unique ID to avoid conflicts with other developers edge_sunny
-prompt which name to use:
-by default use edge_DOCKERHUB_USER'
+: '
+// START COMMENT BLOCK
 
-: ' #TODO dummy commits
+# TODO edge
+Refactor edge() Make it unique to avoid conflicts. ex: edge_sunny_d8b
+
+# TODO use variable 
+TAG     in mainbranch" Print_Gray / line 519
+
+# TODO dummy commits
 create a dummy commit as test quickly the whole workflow
 branch out dummy
 commit dummy message
 commit dummy message again
 sq 2 "dummy message"
 prompt : do you want to delete dummy branch ?
-'
 
-: ' #TODO Core_Load_Vars_General
+
+# TODO Core_Load_Vars_General
 better management core vars / group them, avoid having multiple place to define them
 file to check VERSUS file to source
 
@@ -30,9 +34,9 @@ code optimization 0o0o / Need logic to manage file under /private/*
 favorite URL could be a great example
 
 set a new config flag: debug="true"
-'
 
-: ' #TODO private scripts
+
+# TODO private scripts
 
 logical flags to manage under /private/*
 source {_path_components}/private/
@@ -44,56 +48,55 @@ custom_fct_opensite="false"
 custom_fct_help="false"
   this will use a fct available to public
   else it will use a 
-'
 
-: ' #TODO 
+
+# TODO
 ## App check brew + git-crypt + gnupg, shellcheck
   if brew ls --versions myformula > /dev/null; then
     The package is installed
   else
     The package is not installed
   fi
-'
 
-: ' #TODO 
+# TODO
 spell checker in comments, vs code extension ?
-'
 
-: ' #TODO 
+
+# TODO
 when the user goes into a prompt, he should be able to provide attri to avoid the pop-up.
 ex: ci yes, ci no
 ex: show app, show 3
 need to check if gh cli support this as well
-'
 
-: ' #TODO ci pipeline
+
+# TODO ci pipeline
 create ci for using shellcheck
 run test()
-'
 
-: ' #TODO Show_Docs()
-works but not clean, but it works 'mdv' / 'Show_Docs'
+
+# TODO Show_Docs()
+works but not clean, but it works mdv() / Show_Docs
   we cant provide an abosolute path to the file because the Docker container cant the absolute path
   I also DONT want to provide two arguments when using glow
   I might simply stop using a docker container for this
   but as a priciiple, I like to call a docker container
-'
 
-: ' #TODO squash
+# TODO squash
 function that search for the same commit messages in previous commits
 then suggestion to do a squash, then prompt user y/n
-'
 
-: ' #TODO Show_Fct_Category_F1 , F2
+
+# TODO Show_Fct_Category_F1 , F2
 revisit this function once all file are solid + private logic
-'
 
-: ' #TODO
-idea_here
-'
 
-: ' #TODO
+# TODO
 idea_here
+
+# TODO
+idea_here
+
+// END COMMENT BLOCK
 '
 
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### #
@@ -123,35 +126,65 @@ function edge { # User_
   Condition_Attr_2_Must_Be_Empty       # fct without attributs
   Condition_No_Commits_Pending
   Condition_Apps_Must_Be_Installed
-  _branch_name="edge"
 
-### Local
-  _branch_exist=$(git branch --list "${_branch_name}" | wc -l)
-  # It does not make sens to Condition_Vars_Must_Be_Not_Empty
-    if [[ ${_branch_exist} -eq 0 ]]; then
-    echo "local: OK branch ${_branch_name} do not exist" > /dev/null 2>&1
-  elif [[ ${_branch_exist} -eq 1 ]]; then
-    echo "local: OK branch ${_branch_name} must be deleted"
-    git branch -D "${_branch_name}" 
-  else 
-    my_message="FATAL: ${_branch_name} (local)" && Print_Fatal
-  fi
+### ================================================================================
+### Logic to manage and generate unique edge name
 
-### Remote
-  _branch_exist=$(git ls-remote --heads https://github.com/${github_user}/${app_name}.git "${_branch_name}" | wc -l)
-  # It does not make sens to Condition_Vars_Must_Be_Not_Empty
+### Read _branch_dev_unique
+  _path_dev_unique_name="${HOME}/Library/.bashlava_${app_name}_dev_branch_name_is"
+  _branch_dev_unique=$(cat ${_path_dev_unique_name})
+
+### Local: delete branch if it exists
+  _branch_exist=$(git branch --list "${_branch_dev_unique}" | wc -l)
+    # It does not make sens to Condition_Vars_Must_Be_Not_Empty
   if [[ ${_branch_exist} -eq 0 ]]; then
-    echo "remote: OK branch ${_branch_name} do not exist" > /dev/null 2>&1
+    echo "local: OK branch ${_branch_dev_unique} do not exist" > /dev/null 2>&1
+  
   elif [[ ${_branch_exist} -eq 1 ]]; then
-    echo "remote: OK branch ${_branch_name} must be deleted"
-    git push origin --delete "${_branch_name}"
+    echo "local: OK branch ${_branch_dev_unique} must be deleted"
+    git branch -D "${_branch_dev_unique}"
   else 
-    my_message="FATAL: ${_branch_name} (remote)" && Print_Fatal
+    my_message="FATAL: ${_branch_dev_unique} (local)" && Print_Fatal
   fi
 
-  git checkout -b "${_branch_name}"
-  echo && echo "push ${_branch_name} to origin"
-  git push --set-upstream origin "${_branch_name}" -f
+### Remote: delete branch if it exists
+  _branch_exist=$(git ls-remote --heads https://github.com/${github_user}/${app_name}.git "${_branch_dev_unique}" | wc -l)
+    # It does not make sens to Condition_Vars_Must_Be_Not_Empty
+  if [[ ${_branch_exist} -eq 0 ]]; then
+    echo "remote: OK branch ${_branch_dev_unique} do not exist" > /dev/null 2>&1
+  elif [[ ${_branch_exist} -eq 1 ]]; then
+    echo "remote: OK branch ${_branch_dev_unique} must be deleted"
+    git push origin --delete "${_branch_dev_unique}"
+  else
+    my_message="FATAL: ${_branch_dev_unique} (remote)" && Print_Fatal
+  fi
+
+  ### Reset file where we stored the _branch_dev_unique
+  if [[ -f "${_path_dev_unique_name}" ]]; then
+    echo "File exist. Lets delete it" > /dev/null 2>&1
+    rm ${_path_dev_unique_name}
+  fi
+
+  ### Generate _branch_dev_unique and save the name in a file
+  if [[ -f "${_path_dev_unique_name}" ]]; then
+    my_message="FATAL: File exist, but it should not!" && Print_Fatal
+  elif [[ ! -f "${_path_dev_unique_name}" ]]; then
+    echo "OK, file do not exit" > /dev/null 2>&1
+    _default_edge_prefix="edge" _random_char=$(openssl rand -hex 4 | colrm 4)
+    # Store to file
+    echo "${_default_edge_prefix}_${_random_char}" > "${_path_dev_unique_name}"
+    # Get the new generated _branch_dev_unique
+    _branch_dev_unique=$(cat ${_path_dev_unique_name})
+  else
+    my_message="FATAL: Core_Load_Dev_Branch_Name | ${_path_dev_unique_name}" && Print_Fatal
+  fi
+
+### Logic to manage and generate unique edge name
+### ================================================================================
+
+  git checkout -b "${_branch_dev_unique}"
+  echo && echo "push ${_branch_dev_unique} to origin"
+  git push --set-upstream origin "${_branch_dev_unique}" -f
   echo && log
 
   Show_Version
@@ -336,7 +369,7 @@ function ci { # User_
   Condition_No_Commits_Pending
 
 ### show latest build and open webpage on Github Actions
-  # gh run list && sleep 1
+  # gh run list
   _run_id=$(gh run list | head -1 | awk '{print $11}')
   _var_name="_run_id" _is_it_empty="${_run_id}" && Condition_Vars_Must_Be_Not_Empty
   # Opening the run id cuase issues. Lets stick to /actions/
@@ -635,8 +668,11 @@ function Condition_Branch_Must_Be_Mainbranch {
 }
 
 function Condition_Branch_Must_Be_Edge {
+  _path_dev_unique_name="${HOME}/Library/.bashlava_${app_name}_dev_branch_name_is"
+  _branch_dev_unique=$(cat ${_path_dev_unique_name})
+
   _compare_me=$(git rev-parse --abbrev-ref HEAD)
-  _compare_you="edge" _fct_is="Condition_Branch_Must_Be_Edge"
+  _compare_you="${_branch_dev_unique}" _fct_is="Condition_Branch_Must_Be_Edge"
   Condition_Vars_Must_Be_Equal
 }
 
