@@ -134,7 +134,7 @@ function edge { # User_
     echo "local: OK branch ${_branch_name} must be deleted"
     git branch -D "${_branch_name}" 
   else 
-    my_message="FATAL: edge (local)" && Print_Fatal
+    my_message="FATAL: ${_branch_name} (local)" && Print_Fatal
   fi
 
 ### Remote
@@ -146,12 +146,13 @@ function edge { # User_
     echo "remote: OK branch ${_branch_name} must be deleted"
     git push origin --delete "${_branch_name}"
   else 
-    my_message="FATAL: edge (remote)" && Print_Fatal
+    my_message="FATAL: ${_branch_name} (remote)" && Print_Fatal
   fi
 
-  git checkout -b edge
-  git push --set-upstream origin edge -f
-  log
+  git checkout -b "${_branch_name}" && echo
+  echo "push ${_branch_name} to origin"
+  git push --set-upstream origin "${_branch_name}" -f
+  echo && log
 
   Show_Version
   _doc_name="next_move_fct_edge.md" && Show_Docs
