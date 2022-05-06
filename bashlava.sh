@@ -9,11 +9,8 @@
 : '
 // START COMMENT BLOCK
 
-# TODO edge
-Refactor edge() Make it unique to avoid conflicts. ex: edge_sunny_d8b
-
-# TODO use variable 
-TAG     in mainbranch" Print_Gray / line 519
+# TODO Show_Version(): use a var instead of hard coded
+TAG     in mainbranch / line 519
 
 # TODO dummy commits
 create a dummy commit as test quickly the whole workflow
