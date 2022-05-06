@@ -5,10 +5,11 @@ Show functions by categories:
 - `3`,`core` ... | Core
 - `4`,`ex` ..... | Example
 - `5`,`pri` .... | Print
-- `6`,`user` ... | User facing
-- `7`,`util` ... | Utilities
-- `8`,`a` ...... | All
-- `9`,`q` ...... | quit
+- `6`,`s` ...... | Show
+- `7`,`user` ... | User facing
+- `8`,`util` ... | Utilities
+- `9`,`a` ...... | All
+- `0`,`q` ...... | quit
 
 Show files:
 

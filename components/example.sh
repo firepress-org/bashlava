@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 
-function myfunc_11 () {
+function ex_11 () {
   ls_dir_file=$(ls)
   echo "${ls_dir_file}"
 
@@ -17,7 +17,7 @@ function myfunc_11 () {
   fi
 }
 
-function myfunc_12 () {
+function ex_12 () {
   #pdf: page 20
   
   POSITIONAL=()
@@ -47,7 +47,7 @@ function myfunc_12 () {
   
 }
 
-function str_not_eq {
+function ex_str_not_eq {
   # Get this extension: https://marketplace.visualstudio.com/items?itemName=Remisa.shellman
   # Read her book: https://github.com/yousefvand/shellman-ebook
   if [[ "${string1}" != "${string2}" ]]; then
@@ -55,12 +55,12 @@ function str_not_eq {
   fi
 }
 
-function random_11 {
+function ex_random_11 {
   openssl rand -hex 3
 }
 
 # Refer to 'Condition_File_Must_Be_Present' instead of copy paste this fct
-function idempotent_file_exist {
+function ex_11_idempotent_file_exist {
   _file_is="somefile.sh"
   if [[ -f "${_path_components}/${_file_is}" ]]; then
     echo "idempotent checkpoint passed" > /dev/null 2>&1
@@ -75,7 +75,7 @@ function idempotent_file_exist {
 }
 
 # Now we use 'Condition_Vars_Must_Be_Not_Empty' instead of copy paste this fct
-function idempotent_empty_var {
+function ex_11_idempotent_empty_var {
   if [[ -n "${run_id}" ]]; then    #if not empty
     echo "idempotent checkpoint passed" > /dev/null 2>&1
     my_message="SOME_MESSAGE_HERE" && Print_Blue
@@ -88,8 +88,7 @@ function idempotent_empty_var {
   fi
 }
 
-# Now we use 'App_Does_Var_Notset' instead of copy paste this fct
-function idempotent_compare_var {
+function ex_idempotent_compare_var {
   if [[ "${input_2}" != "not_set" ]]; then
     echo "idempotent checkpoint passed" > /dev/null 2>&1
     my_message="SOME_MESSAGE_HERE" && Print_Blue
@@ -103,7 +102,7 @@ function idempotent_compare_var {
 }
 
 # Example 1: Output a Description for Each Option
-function case_a {
+function ex_case_a {
   echo && echo "Which color do you like best?"
   my_message="1 - Blue" && Print_Blue
   echo "2 - Red"
@@ -122,7 +121,7 @@ function case_a {
 }
 
 # Example 2: Using Multiple Patterns
-function case_b {
+function ex_case_b {
   shopt -s nocasematch
   echo "Enter the name of a month."
   read -r month
@@ -139,7 +138,7 @@ function case_b {
 }
 
 # Example 3: for Loops
-function case_c {
+function ex_case_c {
   
   for f in *.wav
   do
@@ -149,7 +148,7 @@ function case_c {
 }
 
 #Example 4: Create an Address Book
-function case_d {
+function ex_case_d {
   echo "Choose a contact to display information:"
   echo "[C]hris Ramsey"
   echo "[J]ames Gardner"
@@ -174,40 +173,38 @@ function case_d {
 }
 
 # Read: Asking input from the User
-function case_ex1 {
+function ex_read {
   echo "What is your name?"
   read -r name
   echo "Your name is ${name}!"
 }
 
 # Mapfile: Assigning a variable the values of a file's lines
-function case_ex2 {
+function ex_mapfile {
   mapfile -t file_var < ${_path_components}/list.txt
-  
   for i in "${file_var[@]}"; do
     echo "${i}"
   done
 }
 
 # Setting the value when a variable isn't set
-function case_ex3 {
+function ex_case_21 {
   echo "What is your name?"
   read -r name
   echo "Your name is ${name}!"
 }
-
 # Mapfile: Assigning a variable the values of a file's lines
-function case_ex4 {
+function ex_case_22 {
   echo "Hello ${name:-nobody}!"
 }
 
-function var_as_file {
+function ex_case_23 {
   # sometime it's useful to have a variable as a file
   _my_var=(Yes No Maybe)
   cat <(echo "${_my_var[@]}")
 }
 
-function rlwrap_example {
+function ex_rlwrap_example {
   # https://unix.stackexchange.com/questions/278631/bash-script-auto-complete-for-user-input-based-on-array-data#278666
   # works but it's not clean 2022-04-28_20h26
   
@@ -218,13 +215,13 @@ function rlwrap_example {
   echo "reply='${reply}'"
 }
 
-function lint {
+function ex_lint {
   docker run -it --rm \
   -v "$(pwd)"/Dockerfile:/Dockerfile:ro \
   redcoolbeans/dockerlint
 }
 
-function demo_set_var_if_empty {
+function ex_demo_set_var_if_empty {
   # Setting variable value (if unset)
   echo ${country:-Greenland}
   echo ${country:=Greenland}

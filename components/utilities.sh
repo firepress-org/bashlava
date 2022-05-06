@@ -1,81 +1,10 @@
 #!/usr/bin/env bash
 
-function Show_Prompt_All { #Side_
-  # when you code a fct, often you dont know by heart condition name
-  # help advanced
-  # it also helps me to see all functions at high level
-  # useful to debug
-
-  Core_Check_Which_File_Exist
-
-  _doc_name="prompt_show_fct.md" && clear && Show_Docs
-
-  read -r month
-  case ${month} in
-    1 | ali) Show_Category_Alias;;
-    2 | cond) echo "cond";;
-    3 | core) echo "core";;
-    4 | ex) echo "ex";;
-    5 | pri) echo "pri";;
-    6 | user) echo "user";;
-    7 | util) echo "util";;
-    8 | all) echo "all";;
-    f1) echo "f1";;
-    f2) echo "f2";;
-    *)
-      echo "Aboarded" && exit 1;;
-  esac
-}
-
-#1
-function Show_Category_Alias {
-  my_message="alias" && Print_Blue && echo
-  my_message="$(cat ${_path_components}/alias.sh | grep "function " | awk '{print $2}')" && Print_Gray && echo
-}
-
-function wip {
-  my_message="sidecars" && Print_Blue && echo
-  my_message="$(cat ${_path_components}/sidecars.sh | grep "{ #Side_" | awk '{print $2}')" && Print_Gray && echo
-
-  # code optimization 0o0o CASE per function's category
-
-  my_message="alias" && Print_Blue && echo
-  my_message="$(cat ${_path_components}/alias.sh | grep "function " | awk '{print $2}')" && Print_Gray && echo
-
-  my_message="example" && Print_Blue && echo
-  my_message="$(cat ${_path_components}/example.sh | grep "function " | awk '{print $2}')" && Print_Gray && echo
-
-  my_message="User" && Print_Blue && echo
-  my_message="$(cat ${_path_bashlava}/bashlava.sh | grep "{ # User_" | awk '{print $2}')" && Print_Gray && echo
-
-  my_message="Condition" && Print_Blue && echo
-  my_message="$(cat ${_path_bashlava}/bashlava.sh | grep "function Condition_" | awk '{print $2}')" && Print_Gray && echo
-
-  my_message="Show" && Print_Blue && echo
-  my_message="$(cat ${_path_bashlava}/bashlava.sh | grep "function Show_" | awk '{print $2}')" && Print_Gray && echo
-
-  my_message="Print" && Print_Blue && echo
-  my_message="$(cat ${_path_bashlava}/bashlava.sh | grep "function Print_" | awk '{print $2}')" && Print_Gray && echo
-
-  my_message="Prompt" && Print_Blue && echo
-  my_message="$(cat ${_path_bashlava}/bashlava.sh | grep "function Prompt_" | awk '{print $2}')" && Print_Gray && echo
-
-  my_message="App" && Print_Blue && echo
-  my_message="$(cat ${_path_bashlava}/bashlava.sh | grep "function App_" | awk '{print $2}')" && Print_Gray && echo
-
-  my_message="Core" && Print_Blue && echo
-  my_message="$(cat ${_path_bashlava}/bashlava.sh | grep "function Core_" | awk '{print $2}')" && Print_Gray && echo
-
-  # cat ${_path_bashlava}/bashlava.sh | awk '/#util> /' | sed '$ d' | awk '{$1="";$3="";$4="";print $0}' | sort -k2 -n | sed '/\/usr\/local\/bin\//d' && echo
-
-  # code optimization 0o0o / Add logic for private script
-}
-
-function passgen { #Side_
+function Utility_passgen {
   docker run --rm devmtl/alpine:3.11_2020-02-26_08H42s20_dec5798 sh "random7.sh"
 }
 
-function Utility_Array { #Side_
+function Utility_Array {
   arr=( "Looping ..." "an array of string" )
   for i in "${arr[@]}"; do
     my_message="${i}" && Print_Gray
@@ -87,16 +16,10 @@ function Utility_Array { #Side_
     "five"
     "six"
   )
-
-  echo "${myArray[@]}" 
-  echo "${myArray2[@]}"
+  echo "${myArray[@]}" && echo && echo "${myArray2[@]}"
 }
 
-function hello { #Side_
-  echo && my_message="NEXT MOVE suggestion: Say hello to a living soul." Print_Green
-}
-
-function App_Curl_url { #Side_
+function Utility_Curl_URL {
 # must receive var: url_to_check
   UPTIME_TEST=$(curl -Is ${url_to_check} | grep -io OK | head -1);
   MATCH_UPTIME_TEST1="OK";
@@ -109,14 +32,14 @@ function App_Curl_url { #Side_
   fi
 }
 
-function Init_readme { #Side_
+function Utility_readme {
 cat << EOF > README_template.md
 This README is still empty.
 EOF
 }
 
 # optional as not everyone needs this option
-function Init_dockerignore { #Side_
+function Utility_dockerignore {
 cat << EOF > .dockerignore_template
 .cache
 coverage
@@ -127,7 +50,7 @@ npm-debug
 EOF
 }
 
-function Init_license { #Side_
+function Utility_license {
 # two things two update here
 # project URL
 # URL to LICENSE.md (you should fork it)
@@ -148,7 +71,7 @@ EOF
 my_message="File created: ${local_path_bashlava}/LICENSE_template" Print_Green
 }
 
-function Init_dockerfile { #Side_
+function Utility_dockerfile {
 cat << EOF > Dockerfile_template
 ###################################
 # REQUIRED for bashLaVa https://github.com/firepress-org/bashlava
@@ -172,7 +95,7 @@ EOF
 my_message="File created: ${local_path_bashlava}/Dockerfile_template" Print_Green
 }
 
-function Init_gitignore { #Side_
+function Utility_gitignore {
 cat <<EOF > .gitignore_template
 # Files
 ############
@@ -280,5 +203,5 @@ TheVolumeSettingsFolder
 .FBCSemaphoreFile
 .FBCLockFolder
 EOF
-my_message="File created: ${local_path_bashlava}/Init_gitignore" Print_Green
+my_message="File created: ${local_path_bashlava}/Utility_gitignore" Print_Green
 }
