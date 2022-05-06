@@ -1,5 +1,15 @@
 #!/usr/bin/env bash
 
+function ex_random_gen {
+string="$(openssl rand -hex 4)"
+echo ${string}
+echo
+
+# output 3 random characters
+trimmed=$(openssl rand -hex 4 | colrm 4)
+echo ${trimmed}
+
+}
 
 function ex_11 () {
   ls_dir_file=$(ls)
@@ -53,10 +63,6 @@ function ex_str_not_eq {
   if [[ "${string1}" != "${string2}" ]]; then
     echo "The two strings are different"
   fi
-}
-
-function ex_random_11 {
-  openssl rand -hex 3
 }
 
 # Refer to 'Condition_File_Must_Be_Present' instead of copy paste this fct
