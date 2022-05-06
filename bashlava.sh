@@ -18,18 +18,10 @@
       PR Title: 0o0o
       Impact on: #4, #8, #9 #10, #11
 
+# TODO New Feat dummy() create a dummy commit
 
-# TODO mrg() Ensure to checkout to main_branch
-The user maybe did not deleted the PR branch in the previous step (via cli gh pr merge)
-Impact on: #4, #9, #10
-
-# TODO dummy commits
-create a dummy commit as test quickly the whole workflow
-branch out dummy
-commit dummy message
-commit dummy message again
-sq 2 "dummy message"
-prompt : do you want to delete dummy branch ?
+- to quickly test bashlava in a dummy projet
+- Impact on: #4, #8
 
 
 # TODO Core_Load_Vars_General
@@ -395,6 +387,13 @@ function ci { # User_
     1 | y | mrg) mrg;;
     *) my_message="Aborted" && Print_Gray;;
   esac
+}
+
+function dummy { # User_
+  write_dummy_commit_here="README.md"
+  echo "Dummy Commit ${date_sec}" >> "${write_dummy_commit_here}"
+  git add -A && git commit -m "Dummy Commit ${date_sec}" && git push
+  pr
 }
 
 function show { # User_

@@ -16,6 +16,7 @@ oe() { "git checkout edge" ; }
 l() { "log" ; }
 sq() { "squash" ; }
 s() { "show" ; }
+d() { "dummy" ; }
 hash() { "git rev-parse HEAD && git rev-parse --short HEAD" ; }
 Print_Yellow() { "Print_Warning" ; }
 

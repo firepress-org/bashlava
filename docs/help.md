@@ -18,6 +18,7 @@
 - `v` ....... |`version`code .......................... | _standalone_ or usage: v 1.4.2
 - `t` ....... |`tag` .................................. | _standalone_
 - `r` ....... |`release` and open GUI on GitHub ....... | _standalone_
+- `d` ....... |`dummy` commits ........................ | _standalone_
 
 **more commands**
 
