@@ -21,7 +21,7 @@
 
 # TODO mrg() Ensure to checkout to main_branch
 
-The user maybe did not deleted the PR branch in the previous step (via gh cli prom)
+The user maybe did not deleted the PR branch in the previous step (via cli gh pr merge)
 Impact on: #4, #9, #10
 
 # TODO dummy commits
@@ -241,7 +241,7 @@ function mrg { # User_
 echo "wip" > /dev/null 2>&1
 
 # Ensure to checkout to main_branch.
-# The user maybe did not deleted the PR branch in the previous step (via gh cli prom)
+# The user maybe did not deleted the PR branch in the previous step (via cli gh pr merge)
   _branch_exist=$(git branch --list "${default_branch}" | wc -l)
     # It does not make sens to Condition_Vars_Must_Be_Not_Empty
   if [[ ${_branch_exist} -eq 0 ]]; then
