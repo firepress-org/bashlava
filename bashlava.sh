@@ -9,8 +9,18 @@
 : '
 // START COMMENT BLOCK
 
-# TODO Show_Version(): use a var instead of hard coded
-  TAG     in mainbranch
+      #4 TODO & backlog
+      #8 UX 
+      #9 Bugfix
+      #10 Logic & Condition
+      #11 docs
+
+      PR Title: 0o0o
+      Impact on: #4, #8, #9 #10, #11
+
+
+# TODO pr(), mrg() remove prompt that ask if I want to see ci()
+Impact on: #4, #10
 
 # TODO dummy commits
 create a dummy commit as test quickly the whole workflow
@@ -208,14 +218,6 @@ function pr { # User_
   gh pr create --fill --title "${_pr_title}" --base "${default_branch}"
   gh pr view --web    # if there is a bug see: /docs/debug_upstream.md
 
-  _doc_name="prompt_show_ci_status.md" && Show_Docs
-  input_2="not_set"   #reset input_2
-  read -r user_input;
-  case ${user_input} in
-    1 | y | ci) ci;;
-    *) my_message="Aborted" && Print_Gray;;
-  esac
-
   _doc_name="next_move_fct_pr.md" && Show_Docs
   input_2="not_set"   #reset input_2
   read -r user_input;
@@ -233,14 +235,6 @@ function mrg { # User_
   Condition_Attr_2_Must_Be_Empty
 
   gh pr merge
-
-  _doc_name="prompt_show_ci_status.md" && Show_Docs
-  input_2="not_set"   #reset input_2
-  read -r user_input;
-  case ${user_input} in
-    1 | y | ci) ci;;
-    *) my_message="Aborted" && Print_Gray;;
-  esac
 
   Show_Version
 
