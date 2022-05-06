@@ -20,7 +20,6 @@
 
 
 # TODO mrg() Ensure to checkout to main_branch
-
 The user maybe did not deleted the PR branch in the previous step (via cli gh pr merge)
 Impact on: #4, #9, #10
 
