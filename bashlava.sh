@@ -2,33 +2,25 @@
 
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### #
 #
-# TODO for bashlava https://github.com/firepress-org/bashlava/issues/4
-# How many do we have? 16
+# TODO to complete ==> 14
 #
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### #
 
-#__________
-: '
-TODO show()
-'
-
-#__________
-: '
-TODO edge
+: ' #TODO edge
 have this branch created with a unique ID to avoid conflicts with other developers edge_sunny
 prompt which name to use:
-by default use edge_DOCKERHUB_USER
+by default use edge_DOCKERHUB_USER'
+
+: ' #TODO dummy commits
+create a dummy commit as test quickly the whole workflow
+branch out dummy
+commit dummy message
+commit dummy message again
+sq 2 "dummy message"
+prompt : do you want to delete dummy branch ?
 '
 
-#__________
-: '
-TODO edge
-make it slick: check if branch edge exist before delete it from remote
-'
-
-#__________
-: '
-TODO Core_Load_Vars_General
+: ' #TODO Core_Load_Vars_General
 better management core vars / group them, avoid having multiple place to define them
 file to check VERSUS file to source
 
@@ -40,16 +32,12 @@ favorite URL could be a great example
 set a new config flag: debug="true"
 '
 
-#__________
-: '
-TODO private scripts
+: ' #TODO private scripts
 
 logical flags to manage under /private/*
-adding bashlava_config.sh
 source {_path_components}/private/
 Need to check if files exist /private/* when DIR private exist
-manage private vars https://github.com/firepress-org/bashlava/issues/83
-cmd to commit this: "Organising backlog: 16 TODO, issue #4"
+manage private vars https://github.com/firepress-org/bashlava/issues/83;
 
 logic to switch between private fct VERSUS public fct
 custom_fct_opensite="false"
@@ -58,21 +46,7 @@ custom_fct_help="false"
   else it will use a 
 '
 
-#__________
-: '
-TODO dummy commits
-
-create a dummy commit as test quickly the whole workflow
-branch out dummy
-commit dummy message
-commit dummy message again
-sq 2 "dummy message"
-prompt : do you want to delete dummy branch ?
-'
-
-#__________
-: '
-TODO
+: ' #TODO 
 ## App check brew + git-crypt + gnupg, shellcheck
   if brew ls --versions myformula > /dev/null; then
     The package is installed
@@ -81,38 +55,23 @@ TODO
   fi
 '
 
-#__________
-: '
-TODO
+: ' #TODO 
 spell checker in comments, vs code extension ?
 '
 
-#__________
-: '
-TODO
+: ' #TODO 
 when the user goes into a prompt, he should be able to provide attri to avoid the pop-up.
 ex: ci yes, ci no
 ex: show app, show 3
 need to check if gh cli support this as well
 '
 
-#__________
-: '
-TODO release
-glitch, release function is not stable when we tag. Sometimes it show the older release
-loop with curl he check if Url is reachable
-'
-
-#__________
-: '
-TODO ci pipeline
+: ' #TODO ci pipeline
 create ci for using shellcheck
 run test()
 '
 
-#__________
-: '
-TODO Show_Docs()
+: ' #TODO Show_Docs()
 works but not clean, but it works 'mdv' / 'Show_Docs'
   we cant provide an abosolute path to the file because the Docker container cant the absolute path
   I also DONT want to provide two arguments when using glow
@@ -120,29 +79,21 @@ works but not clean, but it works 'mdv' / 'Show_Docs'
   but as a priciiple, I like to call a docker container
 '
 
-#__________
-: '
-TODO squash
+: ' #TODO squash
 function that search for the same commit messages in previous commits
 then suggestion to do a squash, then prompt user y/n
 '
 
-#__________
-: '
-TODO Show_Fct_Category_F1
+: ' #TODO Show_Fct_Category_F1 , F2
 revisit this function once all file are solid + private logic
 '
 
-#__________
-: '
-0o0o
-comment_here
+: ' #TODO
+idea_here
 '
 
-#__________
-: '
-0o0o
-comment_here
+: ' #TODO
+idea_here
 '
 
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### #
@@ -172,13 +123,35 @@ function edge { # User_
   Condition_Attr_2_Must_Be_Empty       # fct without attributs
   Condition_No_Commits_Pending
   Condition_Apps_Must_Be_Installed
-### delete branch locally
-  git branch -D edge || true
-### delete branch on remote
-  git push origin --delete edge || true
+  _branch_name="edge"
+
+### Local
+  _branch_exist=$(git branch --list "${_branch_name}" | wc -l)
+  # It does not make sens to Condition_Vars_Must_Be_Not_Empty
+    if [[ ${_branch_exist} -eq 0 ]]; then
+    echo "local: branch ${_branch_name} do not exist" 
+  elif [[ ${_branch_exist} -eq 1 ]]; then
+    echo "local: OK branch ${_branch_name} must be deleted"
+    git branch -D "${_branch_name}" 
+  else 
+    my_message="FATAL: edge (local)" && Print_Fatal
+  fi
+
+### Remote
+  _branch_exist=$(git ls-remote --heads https://github.com/${github_user}/${app_name}.git "${_branch_name}" | wc -l)
+  # It does not make sens to Condition_Vars_Must_Be_Not_Empty
+  if [[ ${_branch_exist} -eq 0 ]]; then
+    echo "remote: branch ${_branch_name} do not exist" 
+  elif [[ ${_branch_exist} -eq 1 ]]; then
+    echo "remote: OK branch ${_branch_name} must be deleted"
+    git push origin --delete "${_branch_name}"
+  else 
+    my_message="FATAL: edge (remote)" && Print_Fatal
+  fi
 
   git checkout -b edge
   git push --set-upstream origin edge -f
+  log
 
   Show_Version
   _doc_name="next_move_fct_edge.md" && Show_Docs
@@ -351,7 +324,7 @@ function squash { # User_
   git push origin HEAD --force
   git status
   git add -A
-  git commit -m "${input_3} /sq"
+  git commit -m "${input_3}"
   git push
   log
 }
