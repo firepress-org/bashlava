@@ -18,6 +18,7 @@ sq() { "squash" ; }
 s() { "show" ; }
 hash() { "git rev-parse HEAD && git rev-parse --short HEAD" ; }
 Print_Yellow() { "Print_Warning" ; }
+
 Utility_Invalid_Cmd() { "Utility_Invalid_Cmd" ; }
 sh() { "Utility_Invalid_Cmd" ; }
 00() { "Utility_Invalid_Cmd" ; }
