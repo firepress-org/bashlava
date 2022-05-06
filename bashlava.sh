@@ -19,8 +19,10 @@
       Impact on: #4, #8, #9 #10, #11
 
 
-# TODO pr(), mrg() remove prompt that ask if I want to see ci()
-Impact on: #4, #10
+# TODO mrg() Ensure to checkout to main_branch
+
+The user maybe did not deleted the PR branch in the previous step (via gh cli prom)
+Impact on: #4, #9, #10
 
 # TODO dummy commits
 create a dummy commit as test quickly the whole workflow
@@ -236,7 +238,25 @@ function mrg { # User_
 
   gh pr merge
 
+echo "wip" > /dev/null 2>&1
+
+# Ensure to checkout to main_branch.
+# The user maybe did not deleted the PR branch in the previous step (via gh cli prom)
+  _branch_exist=$(git branch --list "${default_branch}" | wc -l)
+    # It does not make sens to Condition_Vars_Must_Be_Not_Empty
+  if [[ ${_branch_exist} -eq 0 ]]; then
+    echo "OK we are on main_branch. Nothing to do"
+  elif [[ ${_branch_exist} -eq 1 ]]; then
+    echo "We are not on main_branch. Lets checkout"
+    mainbranch
+  else 
+    my_message="FATAL: ${_branch_dev_unique} (local)" && Print_Fatal
+  fi
+
   Show_Version
+
+  my_message="Current branch is:" && Print_Blue
+  git rev-parse --abbrev-ref HEAD
 
   _doc_name="next_move_fct_mrg.md" && Show_Docs
   input_2="not_set"   #reset input_2
