@@ -1,72 +1,24 @@
 #!/usr/bin/env bash
 
-function m {
-  mainbranch
-}
-function e {
-  edge
-}
-function c {
-  commit
-}
+m() { "mainbranch" ; }
+e() { "edge" ; }
+c() { "commit" ; }
+h() { "help" ; }
+1() { "help" ; }
+te() { "test" ; }
+tt() { "test" ; }
+2() { "test" ; }
+v() { "version" ; }
+t() { "tag" ; }
+r() { "release" ; }
+om() { "git checkout ${default_branch}" ; }
+oe() { "git checkout edge" ; }
+l() { "log" ; }
+sq() { "squash" ; }
+s() { "show" ; }
+hash() { "git rev-parse HEAD && git rev-parse --short HEAD" ; }
+Print_Yellow() { "Print_Warning" ; }
 
-function h {
-  help
-}
-function 1 {
-  help
-}
-function te {
-  test
-}
-function tt {
-  test
-}
-function 2 {
-  test
-}
-
-### not shortcuts: pr / ci / mrg
-
-function v {
-  version
-}
-function t {
-  tag
-}
-function r {
-  release
-}
-function om {
-  git checkout ${default_branch}
-}
-function oe {
-  git checkout edge
-}
-function l {
-  log
-}
-function sq {
-  squash
-}
-
-function s {
-  show
-}
-
-function hash {
-  git rev-parse HEAD && git rev-parse --short HEAD
-}
-function Print_Yellow {
-  Print_Warning
-}
-### capture common typos
-function sh {
-  App_invalid_cmd
-}
-function oo {
-  App_invalid_cmd
-}
-function App_invalid_cmd {
-  export my_message="Invalid command" && Print_Warning_Stop
-}
+Utility_Invalid_Cmd() { "Utility_Invalid_Cmd" ; }
+sh() { "Utility_Invalid_Cmd" ; }
+00() { "Utility_Invalid_Cmd" ; }

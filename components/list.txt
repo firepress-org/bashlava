@@ -1,3 +1,4 @@
-one
-two
-three
+fct: ex_mapfile:
+  one
+  two
+  three
