@@ -129,7 +129,7 @@ function edge { # User_
   _branch_exist=$(git branch --list "${_branch_name}" | wc -l)
   # It does not make sens to Condition_Vars_Must_Be_Not_Empty
     if [[ ${_branch_exist} -eq 0 ]]; then
-    echo "local: branch ${_branch_name} do not exist" 
+    echo "local: OK branch ${_branch_name} do not exist" > /dev/null 2>&1
   elif [[ ${_branch_exist} -eq 1 ]]; then
     echo "local: OK branch ${_branch_name} must be deleted"
     git branch -D "${_branch_name}" 
@@ -141,7 +141,7 @@ function edge { # User_
   _branch_exist=$(git ls-remote --heads https://github.com/${github_user}/${app_name}.git "${_branch_name}" | wc -l)
   # It does not make sens to Condition_Vars_Must_Be_Not_Empty
   if [[ ${_branch_exist} -eq 0 ]]; then
-    echo "remote: branch ${_branch_name} do not exist" 
+    echo "remote: OK branch ${_branch_name} do not exist" > /dev/null 2>&1
   elif [[ ${_branch_exist} -eq 1 ]]; then
     echo "remote: OK branch ${_branch_name} must be deleted"
     git push origin --delete "${_branch_name}"
@@ -149,8 +149,8 @@ function edge { # User_
     my_message="FATAL: ${_branch_name} (remote)" && Print_Fatal
   fi
 
-  git checkout -b "${_branch_name}" && echo
-  echo "push ${_branch_name} to origin"
+  git checkout -b "${_branch_name}"
+  echo && echo "push ${_branch_name} to origin"
   git push --set-upstream origin "${_branch_name}" -f
   echo && log
 
