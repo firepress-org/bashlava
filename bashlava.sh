@@ -12,19 +12,11 @@ PINNED issues on GH             _
   issue #10 Logic & Condition   _
   issue #11 docs                _
                                 _
-PR Title: New Feat:            
-Impact on: #4, #8, #9 #10
+PR Title: New Feat: 0o0o
+- 0o0o
+- 0o0o
+- Impact on: #4, #8, #9 #10
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-
-
-TODO
-PR Title: New feat: tci(): tag to trigger the CI
-Impact on: #4, #8
-
-- User facing
-- Now, main_branch builds only when pushing tags
-- Now, the CI do not build on every commits on main_branch (its a pain when we merge many PRs)
-- Sometime we work directly on the main_branch (typically for CI work) and we dont want to trigger the CI pipeline
 
 
 TODO edge()
@@ -358,7 +350,7 @@ function tci { # User_
   git tag ${_tag_name} && git push --tags && echo
   Show_Version
 
-  # For docs, see this PR: 0o0o
+  # See this PR: https://github.com/firepress-org/bashlava/pulls?q=is%3Apr+is%3Aclosed+tci
 }
 
 function release { # User_
