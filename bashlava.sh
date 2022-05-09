@@ -20,17 +20,18 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 
 
 # TODO
-- UX: refactoring config_default.sh
-- consider config_custom.sh (which overrides the default)
 
+UX: refactoring config_default.sh
+- consider config_custom.sh (which overrides the default)
+- Impact on: #4, #8
+
+UX show more log() when we commit
+- voir la version short du hash
+- Impact on: #4, #8
 
 # TODO show version is missing
 - need to add it back
 - was delete when we refactor show()
-
-
-# TODO log()
-- voir la version short du hash
 
 
 TODO edge()
@@ -229,7 +230,7 @@ function commit { # User_
   git status && git add -A && git commit -m "${input_2}" && git push
 
   Show_What_Was_Done
-  git --no-pager log --decorate=short --pretty=oneline -n1
+  git --no-pager log --decorate=short --pretty=oneline -n4
 
   _doc_name="fct_c_next.md" && Show_Docs
 }
@@ -486,7 +487,7 @@ function log { # User_
   Condition_Attr_2_Must_Be_Empty
   Condition_No_Commits_Pending
 
-  echo && git --no-pager log --decorate=short --pretty=oneline -n10 && echo
+  echo && git --no-pager log --decorate=short --pretty=oneline -n8 && echo
 }
 
 function test { # User_
