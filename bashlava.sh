@@ -221,7 +221,7 @@ function pr { # User_
   _pr_title=$(git log --format=%B -n 1 "$(git log -1 --pretty=format:"%h")" | cat -)
   _var_name="_pr_title" _is_it_empty="${_pr_title}" && Condition_Vars_Must_Be_Not_Empty
 
-  gh pr create --fill --title "${_pr_title}" --base "${default_branch}"
+  gh pr create --fill --title "${_pr_title}" --base "${default_branch}" && sleep 1
   gh pr view --web    # if there is a bug see: /docs/debug_upstream.md
 
   _doc_name="next_move_fct_pr.md" && Show_Docs
