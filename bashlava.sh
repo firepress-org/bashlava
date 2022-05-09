@@ -18,17 +18,10 @@ PR Title: New Feat: 0o0o
 - Impact on: #4, #8, #9 #10
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 
-TODO
-PR Title: UX: prompt NEXT STEP must shows more details
-- x() is done | app_name: branch_name
-- With the interactivity (next move), we can forget where we were
-- it will help us a lot when shuffling between different projets, branch, pr
-- Impact on: #4, #8
-
 
 # TODO
-- rename config_default.sh
-- consider config_custom (which overrides the default)
+- UX: refactoring config_default.sh
+- consider config_custom.sh (which overrides the default)
 
 
 # TODO show version is missing
