@@ -20,29 +20,13 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 
 
 # TODO
-## Major
-UX: version() during prompt use Print_Green instead
-- Impact on: #4, #8
-
-## Minor 
-- UX: release() Update prompt
-- UX: Print_Blue() update emoji 🧵
-
-
-# TODO show version is missing
-- need to add it back
-- was delete when we refactor show()
+- New Feat: Add Show_version sv()
+- Was probably delete when I refactor show()
 
 
 TODO edge()
 - dynamic edge name creation
 - update path to ~/Library/Application Support/FirePress/bashlava
-
-
-TODO log()
-- see 4 line instead of 1
-- adapt log() to see 10 instead of 8
-- Impact on: #4, #8
 
 
 TODO Core_Load_Vars_General
