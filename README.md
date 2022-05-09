@@ -23,4 +23,3 @@ In other word, the the **agile release cycle** should be something you master. B
 ## License
 
 - This git repo is under the **GNU V3** license.
-Dummy Commit, 2022-05-09_18H19s40, e8bf97aea9abf41147300d1f4f2eed3ab74c4a703e7d7570eb0288cc772fa73d
