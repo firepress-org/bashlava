@@ -19,6 +19,14 @@ PR Title: New Feat: 0o0o
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 
 
+TODO
+PR Title: version(): Add logic to catch the attribut when calling fct 
+- Add logic to consider the fact that user may add the attribut version like /v 1.4.16/
+- Now the attibuts is ignored
+- Fully indepotent, great!
+- Impact on: #4, #8
+- Bug fix: version(), Impact on: #9
+
 TODO edge()
 - dynamic edge name creation
 - update path to ~/Library/Application Support/FirePress/bashlava
@@ -277,14 +285,14 @@ function version { # User_
   Condition_No_Commits_Pending
   Show_Version
 
+  # set input_2 if not provided
   if [[ "${input_2}" == "not_set" ]]; then
-    # The user did not provide a version
-
     _doc_name="prompt_fct_v_version_number.md" && Show_Docs
     read -r user_input;
     echo;
     my_message="${user_input}" && Print_Green
     input_2="${user_input}"
+    Condition_Version_Must_Be_Valid
     
     _doc_name="prompt_fct_v_confirmation.md" && Show_Docs
     # warning: dont reset input_2
@@ -297,29 +305,38 @@ function version { # User_
   elif [[ "${input_2}" != "not_set" ]]; then
     echo "Good, lets continue" > /dev/null 2>&1
   else
-    my_message="FATAL: Condition_Attr_2_Must_Be_Provided" && Print_Fatal
+    my_message="FATAL: (version)" && Print_Fatal
   fi
+  
 
-  Condition_Attr_2_Must_Be_Provided
-  Condition_Version_Must_Be_Valid
+  if [[ "${input_2}" != "not_set" ]]; then
 
-### Update version within Dockerfile
-  sed -i '' "s/^ARG VERSION=.*$/ARG VERSION=\"${input_2}\"/" Dockerfile
-  # code optimization 0o0o, Add logic for /private scripts
+    Condition_Attr_2_Must_Be_Provided
+    Condition_Version_Must_Be_Valid
 
-  git add .
-  git commit . -m "Update ${app_name} to version ${input_2}"
-  git push && echo
-  Show_Version
+  ### Update version within Dockerfile
+    sed -i '' "s/^ARG VERSION=.*$/ARG VERSION=\"${input_2}\"/" Dockerfile
+    # code optimization 0o0o, Add logic for /private scripts
 
-  _doc_name="next_move_fct_v.md" && Show_Docs
-  input_2="not_set"   #reset input_2
-  read -r user_input;
-  case ${user_input} in
-    1 | t) tag;;
-    2 | pr) pr;;
-    *) my_message="Aborted" && Print_Gray;;
-  esac
+    git add .
+    git commit . -m "Update ${app_name} to version ${input_2}"
+    git push && echo
+    Show_Version
+
+    _doc_name="next_move_fct_v.md" && Show_Docs
+    input_2="not_set"   #reset input_2
+    read -r user_input;
+    case ${user_input} in
+      1 | t) tag;;
+      2 | pr) pr;;
+      *) my_message="Aborted" && Print_Gray;;
+    esac
+
+  elif [[ "${input_2}" == "not_set" ]]; then
+    my_message="ERROR: This should not happen (version)" && Print_Warning_Stop
+  else
+    my_message="FATAL (version)" && Print_Fatal
+  fi
 }
 
 function tag { # User_
@@ -533,18 +550,15 @@ function gitio { # User_
 #
 
 function Show_Version {
-  input_2="not_set" input_3="not_set" input_4="not_set"
-  Condition_Attr_2_Must_Be_Empty
-  Condition_Attr_3_Must_Be_Empty
-  Condition_Attr_4_Must_Be_Empty
 
   echo && my_message="Check versions:" && Print_Blue
+  # Need to reload so the user can see before and after version
   Core_Load_Vars_Dockerfile
 
-### version in dockerfile
+  # version in dockerfile
   my_message="${app_version} < VERSION in Dockerfile" Print_Gray
 
-### tag
+  # tag
   if [[ -n $(git tag -l "${app_version}") ]]; then
     echo "Good, a tag is present" > /dev/null 2>&1
     latest_tag="$(git describe --tags --abbrev=0)"
@@ -555,7 +569,7 @@ function Show_Version {
   fi
   my_message="${latest_tag} < TAG     in ${default_branch}" Print_Gray
 
-### release
+  # release
   release_latest=$(curl -s https://api.github.com/repos/${github_user}/${app_name}/releases/latest | \
     grep tag_name | awk -F ': "' '{ print $2 }' | awk -F '",' '{ print $1 }')
 
