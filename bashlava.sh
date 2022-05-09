@@ -1,32 +1,87 @@
 #!/usr/bin/env bash
 
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### #
-#
-# To-Do comment section. Total of 11
-#
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### #
-
 : '
 // START COMMENT BLOCK
+To-Do comment section. Total of 11
 
-PINNED issues on GH
-  issue #4 TODO & backlog
-  issue #8 UX 
-  issue #9 Bugfix
-  issue #10 Logic & Condition
-  issue #11 docs
-  |
-  PR Title: 0o0o
-  Impact on: #4, #8, #9 #10, #11
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+PINNED issues on GH             _
+  issue #4 TODO & backlog       _
+  issue #8 UX                   _
+  issue #9 Bugfix               _
+  issue #10 Logic & Condition   _
+  issue #11 docs                _
+                                _
+PR Title: New Feat:            
+Impact on: #4, #8, #9 #10
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 
-# TODO edge ()
-update path to ~/Library/Application Support/FirePress/bashlava
 
-# TODO
-c() see more than 1 line in git log
+TODO
+PR Title: New feat: tci(): tag to trigger the CI
+Impact on: #4, #8
+
+- User facing
+- Now, main_branch builds only when pushing tags
+- Now, the CI do not build on every commits on main_branch (its a pain when we merge many PRs)
+- Sometime we work directly on the main_branch (typically for CI work) and we dont want to trigger the CI pipeline
+
+
+TODO edge()
+- dynamic edge name creation
+- update path to ~/Library/Application Support/FirePress/bashlava
+
+
+TODO log()
+- see 4 line instead of 1
+- adapt log() to see 10 instead of 8
 - Impact on: #4, #8
 
-# edge() prompt user
+
+TODO Core_Load_Vars_General
+- better management core vars / group them, avoid having multiple place to define them
+- file to check VERSUS file to source
+- we have few array that are configs. They should be all together under the same block of code.
+
+
+TODO private scripts
+
+logical flags to manage under /private/*
+Need to check if files exist /private/* when DIR private exist
+
+Need logic to manage file under /private/*  fct VERSUS public fct
+
+overide like:
+- favorite URL
+- custom_fct_opensite="true" # during pr, merg
+- custom_fct_help="false"
+- set a new config flag: debug="true"
+
+TODO
+## App if app are installed
+  which git-crypt
+  which gnupg
+  which shellcheck
+  which openssl
+  which sha256
+
+  if not propose to install them via brew
+
+  if brew ls --versions myformula > /dev/null; then
+    The package is installed
+  else
+    The package is not installed
+  fi
+
+
+TODO ci pipeline
+- superlinter (includes shellcheck)
+- create ci for using shellcheck
+- run test()
+
+
+TODO
+edge() prompt user
 - Impact on: #4, #8
 
 OPTIONS ARE:
@@ -37,72 +92,30 @@ OPTIONS ARE:
 
 (Your branch name for edge is located .. path here )
 
-# TODO Core_Load_Vars_General
-- better management core vars / group them, avoid having multiple place to define them
-- file to check VERSUS file to source
-- we have few array that are configs. They should be all together under the same block of code.
 
-# TODO
-code optimization 0o0o / Need logic to manage file under /private/* 
-favorite URL could be a great example
-
-# RANDOM NOTES
-- multipass.run / shell
-- var subtitution example
-- GH enviroment (staging, prod)
-- re-use workflow
-
-# TODO private scripts
-
-logical flags to manage under /private/*
-Need to check if files exist /private/* when DIR private exist
-
-logic to switch between private fct VERSUS public fct
-- overide like:
-- custom_fct_opensite="true" # during pr, merg
-- custom_fct_help="false"
-
-# TODO
-set a new config flag: debug="true"
-
-# TODO
-## App if app are installed
-  which git-crypt
-  which gnupg
-  which shellcheck
-  which openssl
-
-  if not propose to install them via brew
-
-  if brew ls --versions myformula > /dev/null; then
-    The package is installed
-  else
-    The package is not installed
-  fi
-
-# TODO
-spell checker in comments, vs code extension ?
-
-# TODO ci pipeline
-- superlinter (includes shellcheck)
-- create ci for using shellcheck
-- run test()
-
-# TODO Show_Docs()
+TODO Show_Docs()
 works but not clean, but it works mdv() / Show_Docs
   we cant provide an abosolute path to the file because the Docker container cant the absolute path
   I also DONT want to provide two arguments when using glow
   I might simply stop using a docker container for this
   but as a priciiple, I like to call a docker container
 
-# TODO squash
+
+TODO squash
 - function that search for the same commit messages in previous commits
 - then suggestion to do a squash, then prompt user y/n
 
-# TODO Show_Fct_Category_F1 , F2
+
+TODO Show_Fct_Category_F1 , F2
 - revisit this function once all file are solid + private logic
 
-List files on B2
+
+TODO RANDOM NOTES
+- multipass.run / shell
+- var subtitution example
+- GH enviroment (staging, prod)
+- re-use workflow
+- List files on B2
 
 // END COMMENT BLOCK
 '
@@ -237,8 +250,6 @@ function mrg { # User_
 
   gh pr merge
 
-echo "wip" > /dev/null 2>&1
-
 # Ensure to checkout to main_branch.
 # The user maybe did not deleted the PR branch in the previous step (via cli gh pr merge)
   _branch_exist=$(git branch --list "${default_branch}" | wc -l)
@@ -333,6 +344,21 @@ function tag { # User_
     1 | y | r) release;;
     *) my_message="Aborted" && Print_Gray;;
   esac
+}
+
+function tci { # User_
+  Condition_No_Commits_Pending
+  Condition_Attr_2_Must_Be_Empty
+
+  _short_hash=$(git rev-parse --short HEAD)
+  _tag_name="ci_${app_version}_${_short_hash}"
+    _var_name="_short_hash" _is_it_empty="${_short_hash}" && Condition_Vars_Must_Be_Not_Empty
+    _var_name="_tag_name" _is_it_empty="${_tag_name}" && Condition_Vars_Must_Be_Not_Empty
+
+  git tag ${_tag_name} && git push --tags && echo
+  Show_Version
+
+  # For docs, see this PR: 0o0o
 }
 
 function release { # User_
