@@ -18,14 +18,27 @@ PR Title: New Feat: 0o0o
 - Impact on: #4, #8, #9 #10
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 
-
 TODO
-PR Title: version(): Add logic to catch the attribut when calling fct 
-- Add logic to consider the fact that user may add the attribut version like /v 1.4.16/
-- Now the attibuts is ignored
-- Fully indepotent, great!
+PR Title: UX: prompt NEXT STEP must shows more details
+- x() is done | app_name: branch_name
+- With the interactivity (next move), we can forget where we were
+- it will help us a lot when shuffling between different projets, branch, pr
 - Impact on: #4, #8
-- Bug fix: version(), Impact on: #9
+
+
+# TODO
+- rename config_default.sh
+- consider config_custom (which overrides the default)
+
+
+# TODO show version is missing
+- need to add it back
+- was delete when we refactor show()
+
+
+# TODO log()
+- voir la version short du hash
+
 
 TODO edge()
 - dynamic edge name creation
@@ -136,6 +149,8 @@ function mainbranch { # User_
   Condition_Attr_2_Must_Be_Empty
   Condition_No_Commits_Pending
   Condition_Apps_Must_Be_Installed
+  _from_fct="mainbranch"
+
   Show_Version
 
   git checkout ${default_branch}
@@ -147,9 +162,10 @@ function edge { # User_
   Condition_Attr_2_Must_Be_Empty       # fct without attributs
   Condition_No_Commits_Pending
   Condition_Apps_Must_Be_Installed
+  _from_fct="e"
 
-### ================================================================================
 ### Logic to manage and generate unique edge name
+### =============================================
 
 ### Read _branch_dev_unique
   _path_dev_unique_name="${HOME}/Library/.bashlava_${app_name}_dev_branch_name_is"
@@ -199,9 +215,8 @@ function edge { # User_
   else
     my_message="FATAL: Core_Load_Dev_Branch_Name | ${_path_dev_unique_name}" && Print_Fatal
   fi
+  ### =============================================
 
-### Logic to manage and generate unique edge name
-### ================================================================================
 
   git checkout -b "${_branch_dev_unique}"
   echo && echo "push ${_branch_dev_unique} to origin"
@@ -209,15 +224,20 @@ function edge { # User_
   echo && log
 
   Show_Version
+
+  Show_What_Was_Done
   _doc_name="next_move_fct_edge.md" && Show_Docs
 }
 
 function commit { # User_
   Condition_Attr_2_Must_Be_Provided
+  _from_fct="c"
+
   git status && git add -A && git commit -m "${input_2}" && git push
 
-  _doc_name="fct_c_is_done.md" && Show_Docs
+  Show_What_Was_Done
   git --no-pager log --decorate=short --pretty=oneline -n1
+
   _doc_name="fct_c_next.md" && Show_Docs
 }
 
@@ -225,6 +245,7 @@ function pr { # User_
   Condition_Branch_Must_Be_Edge
   Condition_Attr_2_Must_Be_Empty
   Condition_No_Commits_Pending
+  _from_fct="pr"
 
   _pr_title=$(git log --format=%B -n 1 "$(git log -1 --pretty=format:"%h")" | cat -)
   _var_name="_pr_title" _is_it_empty="${_pr_title}" && Condition_Vars_Must_Be_Not_Empty
@@ -232,6 +253,7 @@ function pr { # User_
   gh pr create --fill --title "${_pr_title}" --base "${default_branch}" && sleep 1
   gh pr view --web    # if there is a bug see: /docs/debug_upstream.md
 
+  Show_What_Was_Done
   _doc_name="next_move_fct_pr.md" && Show_Docs
   input_2="not_set"   #reset input_2
   read -r user_input;
@@ -268,6 +290,8 @@ function mrg { # User_
   my_message="Current branch is:" && Print_Blue
   git rev-parse --abbrev-ref HEAD
 
+  _from_fct="mrg"
+  Show_What_Was_Done
   _doc_name="next_move_fct_mrg.md" && Show_Docs
   input_2="not_set"   #reset input_2
   read -r user_input;
@@ -283,6 +307,8 @@ function mrg { # User_
 function version { # User_
 ### The version is stored within the Dockerfile. For BashLaVa, this Dockerfile is just a config-env file
   Condition_No_Commits_Pending
+  _from_fct="v"
+
   Show_Version
 
   # set input_2 if not provided
@@ -293,15 +319,7 @@ function version { # User_
     my_message="${user_input}" && Print_Green
     input_2="${user_input}"
     Condition_Version_Must_Be_Valid
-    
-    _doc_name="prompt_fct_v_confirmation.md" && Show_Docs
-    # warning: dont reset input_2
-    read -r user_input;
-    case ${user_input} in
-      1 | y) echo "Good, lets continue" > /dev/null 2>&1;;
-      2 | n) echo "Lets retry" && version;;
-      *) my_message="Aborted" && Print_Gray;;
-    esac
+
   elif [[ "${input_2}" != "not_set" ]]; then
     echo "Good, lets continue" > /dev/null 2>&1
   else
@@ -323,6 +341,7 @@ function version { # User_
     git push && echo
     Show_Version
 
+    Show_What_Was_Done
     _doc_name="next_move_fct_v.md" && Show_Docs
     input_2="not_set"   #reset input_2
     read -r user_input;
@@ -342,10 +361,12 @@ function version { # User_
 function tag { # User_
   Condition_No_Commits_Pending
   Condition_Attr_2_Must_Be_Empty
+  _from_fct="t"
 
   git tag ${app_version} && git push --tags && echo
   Show_Version
 
+  Show_What_Was_Done
   _doc_name="next_move_fct_tag.md" && Show_Docs
   input_2="not_set"   #reset input_2
   read -r user_input;
@@ -359,6 +380,7 @@ function tag { # User_
 function tci { # User_
   Condition_No_Commits_Pending
   Condition_Attr_2_Must_Be_Empty
+  _from_fct="tci"
 
   _short_hash=$(git rev-parse --short HEAD)
   _tag_name="ci_${app_version}_${_short_hash}"
@@ -368,17 +390,29 @@ function tci { # User_
   git tag ${_tag_name} && git push --tags && echo
   Show_Version
 
-  # See this PR: https://github.com/firepress-org/bashlava/pulls?q=is%3Apr+is%3Aclosed+tci
+  Show_What_Was_Done
+  _doc_name="next_move_fct_tci.md" && Show_Docs
+  input_2="not_set"   #reset input_2
+  read -r user_input;
+  case ${user_input} in
+    1 | r) release;;
+    2 | ci) ci;;
+    *) my_message="Aborted" && Print_Gray;;
+  esac
+
+  #   See this PR: https://github.com/firepress-org/bashlava/pulls?q=is%3Apr+is%3Aclosed+tci
 }
 
 function release { # User_
   Condition_No_Commits_Pending
   Condition_Attr_2_Must_Be_Empty
+  _from_fct="r"
 
   gh release create && sleep 5
   Show_Version
   Show_Release
 
+  Show_What_Was_Done
   _doc_name="next_move_fct_release.md" && Show_Docs
   input_2="not_set"   #reset input_2
   read -r user_input;
@@ -392,6 +426,7 @@ function squash { # User_
   Condition_No_Commits_Pending
   Condition_Attr_2_Must_Be_Provided # how many steps
   Condition_Attr_3_Must_Be_Provided # message
+  _from_fct="sq"
 
   git --no-pager log --decorate=short --pretty=oneline -n15
 
@@ -402,7 +437,8 @@ function squash { # User_
   git reset --soft HEAD~"${input_2}" &&\
   git commit --edit -m "${input_3}" &&\
   git push --force-with-lease &&\
-  git pull &&\
+  git pull
+  input_2="not_set"   #reset input_2
   log
 }
 
@@ -410,6 +446,7 @@ function ci { # User_
   # continuous integration status
   Condition_Attr_2_Must_Be_Empty
   Condition_No_Commits_Pending
+  _from_fct="ci"
 
 ### show latest build and open webpage on Github Actions
   # gh run list
@@ -421,6 +458,7 @@ function ci { # User_
   # Follow status within the terminal
   gh run watch
 
+  Show_What_Was_Done
   _doc_name="next_move_fct_ci.md" && Show_Docs
   input_2="not_set"   #reset input_2
   read -r user_input;
@@ -431,6 +469,10 @@ function ci { # User_
 }
 
 function dummy { # User_
+  Condition_Attr_2_Must_Be_Empty
+  Condition_No_Commits_Pending
+  _from_fct="d"
+
   _in_file="README.md"
   _hash=$(echo ${date_nano} | sha256sum | awk '{print $1}')
   _hash_four_last="${_hash: -4}"
@@ -441,15 +483,23 @@ function dummy { # User_
 }
 
 function show { # User_
+  Condition_Attr_2_Must_Be_Empty
+  Condition_No_Commits_Pending
+  _from_fct="s"
   Show_Prompt_All
 }
 
 function log { # User_
-  #git log --all --decorate --oneline --graph --pretty=oneline | head -n 10
+  Condition_Attr_2_Must_Be_Empty
+  Condition_No_Commits_Pending
+
   echo && git --no-pager log --decorate=short --pretty=oneline -n10 && echo
 }
 
 function test { # User_
+  Condition_Attr_2_Must_Be_Empty
+  Condition_No_Commits_Pending
+  _from_fct="test"
   # PRINT OPTION 1
   echo && my_message="Check Print_Banner:" && Print_Blue
   my_message="bashLaVa" && Print_Banner
@@ -497,19 +547,24 @@ function test { # User_
 
 function help { # User_
   Condition_Attr_3_Must_Be_Empty
+  _from_fct="h"
+
   clear
   _doc_name="help.md" && Show_Docs
 }
 
 function hello { # User_
+  _from_fct="hello"
   echo && my_message="NEXT MOVE suggestion: Say hello to a living soul." Print_Green
 }
 
 function mdv { # User_
+  _from_fct="hmdv"
   Print_mdv
 }
 
 function gitio { # User_
+  _from_fct="gitio"
 
   # depends on the selected option below
   function child_gitio {
@@ -606,6 +661,10 @@ function Show_Docs {
   cd ${_path_docs} || { echo "FATAL: Show_Docs / cd"; exit 1; }
   docker run --rm -it -v "$(pwd)":/sandbox -w /sandbox ${docker_img_glow} glow -w 110 "${_doc_name}"
   cd ${_present_path_is} || { echo "FATAL: Show_Docs / cd"; exit 1; }
+}
+
+function Show_What_Was_Done {
+  my_message="(${_from_fct}) was done.                     ${app_name} ($(git rev-parse --abbrev-ref HEAD))" && Print_Green
 }
 
 function Show_Prompt_All {

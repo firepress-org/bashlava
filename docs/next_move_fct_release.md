@@ -1,5 +1,3 @@
-`r` _is done_
-
 🚀 Do you want to `e`?
 
 - `1` ... |`y`,`e`
