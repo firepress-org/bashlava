@@ -20,14 +20,12 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 
 
 # TODO
-
-UX: refactoring config_default.sh
-- consider config_custom.sh (which overrides the default)
+UX: version() when prompt, stop using mdv
 - Impact on: #4, #8
 
-UX show more log() when we commit
-- voir la version short du hash
-- Impact on: #4, #8
+Also:
+- UX: Update release() prompt
+
 
 # TODO show version is missing
 - need to add it back
@@ -307,7 +305,7 @@ function version { # User_
 
   # set input_2 if not provided
   if [[ "${input_2}" == "not_set" ]]; then
-    _doc_name="prompt_fct_v_version_number.md" && Show_Docs
+    my_message="What is the version number (ex: 1.12.4.)?" && Print_Green
     read -r user_input;
     echo;
     my_message="${user_input}" && Print_Green
@@ -411,7 +409,7 @@ function release { # User_
   input_2="not_set"   #reset input_2
   read -r user_input;
   case ${user_input} in
-    1 | y | e) edge;;
+    1 | e) edge;;
     *) my_message="Aborted" && Print_Gray;;
   esac
 }
@@ -658,7 +656,7 @@ function Show_Docs {
 }
 
 function Show_What_Was_Done {
-  my_message="(${_from_fct}) was done.                     ${app_name} ($(git rev-parse --abbrev-ref HEAD))" && Print_Green
+  echo && my_message="(${_from_fct}) was done.                     ${app_name} ($(git rev-parse --abbrev-ref HEAD))" && Print_Green
 }
 
 function Show_Prompt_All {
@@ -728,7 +726,7 @@ function Print_Green {
 }
 function Print_Blue {
   _var_name="my_message" _is_it_empty="${my_message}" && Condition_Vars_Must_Be_Not_Empty
-  echo -e "👋 \e[1;34m${my_message}\e[0m"
+  echo -e "🧵 \e[1;34m${my_message}\e[0m 🧵"
 }
 
 ### Why do we have Print_Warning and Print_Warning_Stop here ?

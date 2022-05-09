@@ -1,4 +1,4 @@
-🚀 Do you want to `e`?
+🚀 What do you want to do next?
 
-- `1` ... |`y`,`e`
-- `2` ... |`n`
+- `1` ... |`e`
+- `2` ... |`q`uit
