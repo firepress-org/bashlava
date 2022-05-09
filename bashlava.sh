@@ -2,56 +2,78 @@
 
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### #
 #
-# To-Do comment section. Total of 15
+# To-Do comment section. Total of 11
 #
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### #
 
 : '
 // START COMMENT BLOCK
 
-      #4 TODO & backlog
-      #8 UX 
-      #9 Bugfix
-      #10 Logic & Condition
-      #11 docs
+PINNED issues on GH
+  issue #4 TODO & backlog
+  issue #8 UX 
+  issue #9 Bugfix
+  issue #10 Logic & Condition
+  issue #11 docs
+  |
+  PR Title: 0o0o
+  Impact on: #4, #8, #9 #10, #11
 
-      PR Title: 0o0o
-      Impact on: #4, #8, #9 #10, #11
+# TODO edge ()
+update path to ~/Library/Application Support/FirePress/bashlava
 
-# TODO New Feat dummy() create a dummy commit
-
-- to quickly test bashlava in a dummy projet
+# TODO
+c() see more than 1 line in git log
 - Impact on: #4, #8
 
+# edge() prompt user
+- Impact on: #4, #8
+
+OPTIONS ARE:
+1) CREATE edge_neW      and DELETE edge_olD (default)
+2) CREATE edge_neW      and KEEP edge_olD
+3) CREATE custom_neW    and DELETE edge_olD only
+4) CREATE custom_neW    and KEEP edge_olD only
+
+(Your branch name for edge is located .. path here )
 
 # TODO Core_Load_Vars_General
-better management core vars / group them, avoid having multiple place to define them
-file to check VERSUS file to source
+- better management core vars / group them, avoid having multiple place to define them
+- file to check VERSUS file to source
+- we have few array that are configs. They should be all together under the same block of code.
 
-we have few array that are configs. They should be all together under the same block of code.
-source files under /components
+# TODO
 code optimization 0o0o / Need logic to manage file under /private/* 
 favorite URL could be a great example
 
-set a new config flag: debug="true"
-
+# RANDOM NOTES
+- multipass.run / shell
+- var subtitution example
+- GH enviroment (staging, prod)
+- re-use workflow
 
 # TODO private scripts
 
 logical flags to manage under /private/*
-source {_path_components}/private/
 Need to check if files exist /private/* when DIR private exist
-manage private vars https://github.com/firepress-org/bashlava/issues/83;
 
 logic to switch between private fct VERSUS public fct
-custom_fct_opensite="false"
-custom_fct_help="false"
-  this will use a fct available to public
-  else it will use a 
-
+- overide like:
+- custom_fct_opensite="true" # during pr, merg
+- custom_fct_help="false"
 
 # TODO
-## App check brew + git-crypt + gnupg, shellcheck
+set a new config flag: debug="true"
+
+# TODO
+## App if app are installed
+  which git-crypt
+  which gnupg
+  which shellcheck
+  which openssl
+
+  if not propose to install them via brew
+
   if brew ls --versions myformula > /dev/null; then
     The package is installed
   else
@@ -61,18 +83,10 @@ custom_fct_help="false"
 # TODO
 spell checker in comments, vs code extension ?
 
-
-# TODO
-when the user goes into a prompt, he should be able to provide attri to avoid the pop-up.
-ex: ci yes, ci no
-ex: show app, show 3
-need to check if gh cli support this as well
-
-
 # TODO ci pipeline
-create ci for using shellcheck
-run test()
-
+- superlinter (includes shellcheck)
+- create ci for using shellcheck
+- run test()
 
 # TODO Show_Docs()
 works but not clean, but it works mdv() / Show_Docs
@@ -82,19 +96,13 @@ works but not clean, but it works mdv() / Show_Docs
   but as a priciiple, I like to call a docker container
 
 # TODO squash
-function that search for the same commit messages in previous commits
-then suggestion to do a squash, then prompt user y/n
-
+- function that search for the same commit messages in previous commits
+- then suggestion to do a squash, then prompt user y/n
 
 # TODO Show_Fct_Category_F1 , F2
-revisit this function once all file are solid + private logic
+- revisit this function once all file are solid + private logic
 
-
-# TODO
-idea_here
-
-# TODO
-idea_here
+List files on B2
 
 // END COMMENT BLOCK
 '
@@ -355,13 +363,10 @@ function squash { # User_
     my_message="Oups, syntax error." && Print_Warning_Stop
   fi
 
-  git reset --hard HEAD~"${input_2}"
-  git merge --squash HEAD@{1}
-  git push origin HEAD --force
-  git status
-  git add -A
-  git commit -m "${input_3}"
-  git push
+  git reset --soft HEAD~"${input_2}" &&\
+  git commit --edit -m "${input_3}" &&\
+  git push --force-with-lease &&\
+  git pull &&\
   log
 }
 
@@ -390,10 +395,13 @@ function ci { # User_
 }
 
 function dummy { # User_
-  write_dummy_commit_here="README.md"
-  echo "Dummy Commit ${date_sec}" >> "${write_dummy_commit_here}"
-  git add -A && git commit -m "Dummy Commit ${date_sec}" && git push
-  pr
+  _in_file="README.md"
+  _hash=$(echo ${date_nano} | sha256sum | awk '{print $1}')
+  _hash_four_last="${_hash: -4}"
+
+  echo "Dummy Commit, ${date_sec}, ${_hash}" >> "${_in_file}"
+  git add -A && git commit -m "dummy commit ${_hash_four_last}" && git push
+  log
 }
 
 function show { # User_
