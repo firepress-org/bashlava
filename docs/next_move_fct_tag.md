@@ -1,6 +1,7 @@
 `t` _is done_
 
-🚀 Do you want to `r`?
+🚀 What do you want to do next?
 
-- `1` ... |`y`,`r`
-- `2` ... |`n`
+- `1` ... |`r`
+- `2` ... |`ci`
+- `3` ... |`q`uit

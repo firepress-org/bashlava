@@ -350,7 +350,8 @@ function tag { # User_
   input_2="not_set"   #reset input_2
   read -r user_input;
   case ${user_input} in
-    1 | y | r) release;;
+    1 | r) release;;
+    2 | ci) ci;;
     *) my_message="Aborted" && Print_Gray;;
   esac
 }
