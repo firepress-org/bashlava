@@ -20,11 +20,13 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 
 
 # TODO
-UX: version() when prompt, stop using mdv
+## Major
+UX: version() during prompt use Print_Green instead
 - Impact on: #4, #8
 
-Also:
-- UX: Update release() prompt
+## Minor 
+- UX: release() Update prompt
+- UX: Print_Blue() update emoji 🧵
 
 
 # TODO show version is missing
