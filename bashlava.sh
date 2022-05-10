@@ -22,10 +22,19 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 PRIORITY 1 ____________________________________________________________________________
 _______________________________________________________________________________________
 
-TODO
-UX: release() add attributs to the release cli to minimize prompts
+UX: Many optimizations
+- Impact on: #4, #8
 
-TODO 
+TODO
+log() shows a short hash (not the full hash)
+
+TODO
+UX: mrg() gh cli, pass attributs -rebase to minimize prompts
+
+TODO
+UX: release() pass attributs to minimize prompts
+
+WIP
 UX: Improve how we manage CONFIGS, vars, sane defaults, idempotent, logic overrides
 - At the moment, its too complex for a new user to configure bashlava
 - Avoid having multiple place to define them, source components, source .md
@@ -45,12 +54,6 @@ Functional impacts:
 - Impact on: #4, #8, #10
 
 
-TODO
-log() to show a short hash (not the full hash)
-
-TODO
-UX: mrg() gh cli, pass attributs to minimize prompts
-- use flag rebase
 
 
 TODO
