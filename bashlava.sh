@@ -527,7 +527,7 @@ function dummy { # User_
   Condition_Attr_2_Must_Be_Empty
   Condition_No_Commits_Pending
   _from_fct="d"
-  _in_file="README.md"
+  _in_file="./docs/DUMMY.md"
 
   # create a commit X time the update
   for lineID in $(seq 1 2); do
