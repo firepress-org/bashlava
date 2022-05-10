@@ -9,7 +9,7 @@ Show functions by categories:
 - `7`,`user` ... | User facing
 - `8`,`util` ... | Utilities
 - `9`,`a` ...... | All
-- `0`,`q` ...... | quit
+- `q` .......... | quit
 
 Show files:
 
