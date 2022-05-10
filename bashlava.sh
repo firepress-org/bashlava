@@ -465,7 +465,8 @@ function release { # User_
 
   latest_tag="$(git describe --tags --abbrev=0)"
 
-  #                'v' is an attribut
+  # I would like to not have the v in the release https://github.com/cli/cli/issues/5609
+  #                'v' is an attribut required by gh cli
   gh release create v"${latest_tag}" --generate-notes && sleep 5
   Show_Version
   Show_Release
