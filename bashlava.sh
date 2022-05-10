@@ -22,12 +22,6 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 PRIORITY 1 ____________________________________________________________________________
 _______________________________________________________________________________________
 
-TODO
-UX: many improvements on v(), t(), dummy(), docs/
-- UX: v_and_t() add the option to v() + t() in a single step
-- UX: dummy() now writes two commits
-- UX: /docs improve prompt syntax
-- Impact on: #8
 
 TODO
 UX: Improve how we manage CONFIGS, vars, sane defaults, logic overrides
