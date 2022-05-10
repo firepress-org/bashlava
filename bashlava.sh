@@ -19,14 +19,10 @@ PR Title: New Feat: 0o0o
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 
 
-# TODO
-- New Feat: Add Show_version sv()
-- Was probably delete when I refactor show()
-
-
-TODO edge()
+TODO 
+- Refactoring edge() store the name in a better location
 - dynamic edge name creation
-- update path to ~/Library/Application Support/FirePress/bashlava
+- update path to {HOME}/Library/Application Support/FirePress/bashlava/file
 
 
 TODO Core_Load_Vars_General
@@ -144,14 +140,11 @@ function edge { # User_
 
 ### Logic to manage and generate unique edge name
 ### =============================================
-
-### Read _branch_dev_unique
-  _path_dev_unique_name="${HOME}/Library/.bashlava_${app_name}_dev_branch_name_is"
-  _branch_dev_unique=$(cat ${_path_dev_unique_name})
+_branch_dev_unique=$(cat "${_path_lib}/Application Support/${_path_last_part}")
 
 ### Local: delete branch if it exists
   _branch_exist=$(git branch --list "${_branch_dev_unique}" | wc -l)
-    # It does not make sens to Condition_Vars_Must_Be_Not_Empty
+  # It does not make sens to Condition_Vars_Must_Be_Not_Empty
   if [[ ${_branch_exist} -eq 0 ]]; then
     echo "local: OK branch ${_branch_dev_unique} do not exist" > /dev/null 2>&1
   
@@ -163,8 +156,8 @@ function edge { # User_
   fi
 
 ### Remote: delete branch if it exists
-  _branch_exist=$(git ls-remote --heads https://github.com/${github_user}/${app_name}.git "${_branch_dev_unique}" | wc -l)
-    # It does not make sens to Condition_Vars_Must_Be_Not_Empty
+  _branch_exist=$(git ls-remote --heads https://github.com/"${github_user}"/"${app_name}".git "${_branch_dev_unique}" | wc -l)
+  # It does not make sens to Condition_Vars_Must_Be_Not_Empty
   if [[ ${_branch_exist} -eq 0 ]]; then
     echo "remote: OK branch ${_branch_dev_unique} do not exist" > /dev/null 2>&1
   elif [[ ${_branch_exist} -eq 1 ]]; then
@@ -175,26 +168,25 @@ function edge { # User_
   fi
 
   ### Reset file where we stored the _branch_dev_unique
-  if [[ -f "${_path_dev_unique_name}" ]]; then
+  if [[ -f "${_path_lib}/Application Support/${_path_last_part}" ]]; then
     echo "File exist. Lets delete it" > /dev/null 2>&1
-    rm ${_path_dev_unique_name}
+    rm "${_path_lib}/Application Support/${_path_last_part}"
   fi
 
   ### Generate _branch_dev_unique and save the name in a file
-  if [[ -f "${_path_dev_unique_name}" ]]; then
+  if [[ -f "${_path_lib}/Application Support/${_path_last_part}" ]]; then
     my_message="FATAL: File exist, but it should not!" && Print_Fatal
-  elif [[ ! -f "${_path_dev_unique_name}" ]]; then
+  elif [[ ! -f "${_path_lib}/Application Support/${_path_last_part}" ]]; then
     echo "OK, file do not exit" > /dev/null 2>&1
     _default_edge_prefix="edge" _random_char=$(openssl rand -hex 4 | colrm 4)
     # Store to file
-    echo "${_default_edge_prefix}_${_random_char}" > "${_path_dev_unique_name}"
+    echo "${_default_edge_prefix}_${_random_char}" > "${_path_lib}/Application Support/${_path_last_part}"
     # Get the new generated _branch_dev_unique
-    _branch_dev_unique=$(cat ${_path_dev_unique_name})
+    _branch_dev_unique=$(cat "${_path_lib}/Application Support/${_path_last_part}")
   else
-    my_message="FATAL: Core_Load_Dev_Branch_Name | ${_path_dev_unique_name}" && Print_Fatal
+    my_message="FATAL: edge" && Print_Fatal
   fi
   ### =============================================
-
 
   git checkout -b "${_branch_dev_unique}"
   echo && echo "push ${_branch_dev_unique} to origin"
@@ -362,8 +354,8 @@ function tci { # User_
 
   _short_hash=$(git rev-parse --short HEAD)
   _tag_name="ci_${app_version}_${_short_hash}"
-    _var_name="_short_hash" _is_it_empty="${_short_hash}" && Condition_Vars_Must_Be_Not_Empty
-    _var_name="_tag_name" _is_it_empty="${_tag_name}" && Condition_Vars_Must_Be_Not_Empty
+  _var_name="_short_hash" _is_it_empty="${_short_hash}" && Condition_Vars_Must_Be_Not_Empty
+  _var_name="_tag_name" _is_it_empty="${_tag_name}" && Condition_Vars_Must_Be_Not_Empty
 
   git tag ${_tag_name} && git push --tags && echo
   Show_Version
@@ -755,8 +747,7 @@ function Condition_Branch_Must_Be_Mainbranch {
 }
 
 function Condition_Branch_Must_Be_Edge {
-  _path_dev_unique_name="${HOME}/Library/.bashlava_${app_name}_dev_branch_name_is"
-  _branch_dev_unique=$(cat ${_path_dev_unique_name})
+  _branch_dev_unique=$(cat "${_path_lib}/Application Support/${_path_last_part}")
 
   _compare_me=$(git rev-parse --abbrev-ref HEAD)
   _compare_you="${_branch_dev_unique}" _fct_is="Condition_Branch_Must_Be_Edge"
@@ -1000,19 +991,22 @@ function Core_Load_Vars_General {
   # to have multiple instance of bashLaVa on your machine
   bashlava_executable="bashlava.sh"
   _path_user="/usr/local/bin"
+  _var_name="_path_user" _is_it_empty="${_path_user}" && Condition_Vars_Must_Be_Not_Empty
 
 ### Reset if needed
   Core_Reset_Bashlava_Path
 
 ### Set absolute path for the project root ./
   _path_bashlava="$(cat "${_path_user}"/bashlava_path)"
+  _var_name="_path_bashlava" _is_it_empty="${_path_bashlava}" && Condition_Vars_Must_Be_Not_Empty
 
 ### Set absolute path for the ./components directory
   _path_components="${_path_bashlava}/components"
+  _var_name="_path_components" _is_it_empty="${_path_components}" && Condition_Vars_Must_Be_Not_Empty
 
 ### Set absolute path for the ./docs directory
   _path_docs="${_path_bashlava}/docs"
-
+  _var_name="_path_docs" _is_it_empty="${_path_docs}" && Condition_Vars_Must_Be_Not_Empty
 # every scripts that are not under the main bashLaVa app, should be threated as an components.
 # It makes it easier to maintain the project, it minimises cluter, it minimise break changes, it makes it easy to accept PR, more modular, etc.
 
@@ -1075,6 +1069,21 @@ function Core_Load_Vars_Dockerfile {
   _var_name="_url_to_check" _is_it_empty="${_url_to_check}" && Condition_Vars_Must_Be_Not_Empty
 }
 
+function Core_Load_Vars_Edge {
+### edge
+  # Path where we store the dynamically generated edge name
+  _path_lib="${HOME}/Library"
+  _var_name="_path_lib" _is_it_empty="${_path_lib}" && Condition_Vars_Must_Be_Not_Empty
+
+  mkdir -p "${_path_lib}/Application Support/FirePress/bashlava"
+  _path_last_part="FirePress/bashlava/${app_name}_dev_branch_name_is"
+  _var_name="_path_last_part" _is_it_empty="${_path_last_part}" && Condition_Vars_Must_Be_Not_Empty
+
+  # Can't pass the path as a var because of the space (/Application Support)
+  #_branch_dev_unique=$(cat "${_path_lib}/Application Support/${_path_last_part}")
+  # It does not make sens to Condition_Vars_Must_Be_Not_Empty
+}
+
 ### Entrypoint
 function main() {
   trap script_trap_err ERR
@@ -1083,6 +1092,7 @@ function main() {
 
   Core_Load_Vars_General
   Core_Load_Vars_Dockerfile
+  Core_Load_Vars_Edge
   Core_Check_Which_File_Exist
 
 ### Core_Input_Checkpoint
