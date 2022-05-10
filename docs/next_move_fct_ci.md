@@ -1,4 +1,4 @@
-🚀 Do you want to `mrg`?
+🚀 What do you want to do next?
 
-- `1` ... |`y`,`mrg`
-- `2` ... |`n`
+- `1` ... |`mrg`
+- `q` ... | quit

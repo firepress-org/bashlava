@@ -22,20 +22,15 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 PRIORITY 1 ____________________________________________________________________________
 _______________________________________________________________________________________
 
-UX: Many optimizations
-- Impact on: #4, #8
+TODO
+UX: many improvements on v(), t(), dummy(), docs/
+- UX: v_and_t() add the option to v() + t() in a single step
+- UX: dummy() now writes two commits
+- UX: /docs improve prompt syntax
+- Impact on: #8
 
 TODO
-log() shows a short hash (not the full hash)
-
-TODO
-UX: mrg() gh cli, pass attributs -rebase to minimize prompts
-
-TODO
-UX: release() pass attributs to minimize prompts
-
-WIP
-UX: Improve how we manage CONFIGS, vars, sane defaults, idempotent, logic overrides
+UX: Improve how we manage CONFIGS, vars, sane defaults, logic overrides
 - At the moment, its too complex for a new user to configure bashlava
 - Avoid having multiple place to define them, source components, source .md
 - Few array that are configs. They should be all together under the same block of code.
@@ -54,21 +49,6 @@ Functional impacts:
 - Impact on: #4, #8, #10
 
 
-
-
-TODO
-optimize my_message when calling
-  Print_
-  Banner_
-
-Instead of creating custom var simnply use %1 %2 <=dollar sign
-
-  function greet () {
-    echo "Hello @1"
-  }
-  greet "Shellman"
-
-
 TODO private scripts
 logical flags to manage under /private/*
 Need to check if files exist /private/* when DIR private exist
@@ -79,6 +59,7 @@ overide like:
 - custom_fct_opensite="true" # during pr, merg
 - custom_fct_help="false"
 - set a new config flag: debug="true"
+
 
 TODO
 ## App if app are installed
@@ -95,6 +76,19 @@ TODO
   else
     The package is not installed
   fi
+
+
+TODO
+optimize my_message when calling
+  Print_
+  Banner_
+
+Instead of creating custom var simnply use %1 %2 <=dollar sign
+
+  function greet () {
+    echo "Hello @1"
+  }
+  greet "Pascal"
 
 
 TODO ci pipeline
@@ -307,8 +301,10 @@ function mrg { # User_
   case ${user_input} in
     1 | v) version;;
     2 | t) tag;;
-    3 | ci) ci;;
-    4 | e) edge;;
+    3 | e) edge;;
+    4 | ci) ci;;
+    8 | vt) v_and_t;;
+    9 | a) echo "WIP, will allow the user to: v + t + r + e in one step";;
     *) my_message="Aborted" && Print_Gray;;
   esac
 }
@@ -369,7 +365,7 @@ function version { # User_
 
 function tag { # User_
   Condition_No_Commits_Pending
-  Condition_Attr_2_Must_Be_Empty
+  #Condition_Attr_2_Must_Be_Empty
   _from_fct="t"
 
   git tag ${app_version} && git push --tags && echo
@@ -384,6 +380,56 @@ function tag { # User_
     2 | ci) ci;;
     *) my_message="Aborted" && Print_Gray;;
   esac
+}
+
+function v_and_t { 
+  # version and tag
+# TODO
+  # I can optimze this later with a flag
+  # I need to duplicate v() code because we prompt in version and in tag
+### The version is stored within the Dockerfile. For BashLaVa, this Dockerfile is just a config-env file
+  Condition_No_Commits_Pending
+  _from_fct="v"
+
+  Show_Version
+
+  # set input_2 if not provided
+  if [[ "${input_2}" == "not_set" ]]; then
+    my_message="What is the version number (ex: 1.12.4.)?" && Print_Green
+    read -r user_input;
+    echo;
+    my_message="${user_input}" && Print_Green
+    input_2="${user_input}"
+    Condition_Version_Must_Be_Valid
+
+  elif [[ "${input_2}" != "not_set" ]]; then
+    echo "Good, lets continue" > /dev/null 2>&1
+  else
+    my_message="FATAL: (version)" && Print_Fatal
+  fi
+  
+
+  if [[ "${input_2}" != "not_set" ]]; then
+
+    Condition_Attr_2_Must_Be_Provided
+    Condition_Version_Must_Be_Valid
+
+  ### Update version within Dockerfile
+    sed -i '' "s/^ARG VERSION=.*$/ARG VERSION=\"${input_2}\"/" Dockerfile
+    # code optimization 0o0o, Add logic for /private scripts
+
+    git add .
+    git commit . -m "Update ${app_name} to version ${input_2}"
+    git push && echo
+    Show_Version
+    Show_What_Was_Done
+    tag
+
+  elif [[ "${input_2}" == "not_set" ]]; then
+    my_message="ERROR: This should not happen (version)" && Print_Warning_Stop
+  else
+    my_message="FATAL (version)" && Print_Fatal
+  fi
 }
 
 function tci { # User_
@@ -486,13 +532,19 @@ function dummy { # User_
   Condition_Attr_2_Must_Be_Empty
   Condition_No_Commits_Pending
   _from_fct="d"
-
   _in_file="README.md"
-  _hash=$(echo ${date_nano} | sha256sum | awk '{print $1}')
-  _hash_four_last="${_hash: -4}"
 
-  echo "Dummy Commit, ${date_sec}, ${_hash}" >> "${_in_file}"
-  git add -A && git commit -m "dummy commit ${_hash_four_last}" && git push
+  # create a commit X time the update
+  for lineID in $(seq 1 2); do
+    date_nano="$(date +%Y-%m-%d_%HH%Ms%S-%N)"
+    _hash=$(echo ${date_nano} | sha256sum | awk '{print $1}')
+    _hash_four_last="${_hash: -4}"
+    echo "Dummy Commit, ${date_sec}, ${_hash}" >> "${_in_file}"
+    git add -A && git commit -m "dummy commit ${_hash_four_last}"
+    sleep 1
+  done
+
+  git push
   log
 }
 

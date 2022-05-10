@@ -8,6 +8,6 @@
 
 - `1` ... |`h`,`help`
 - `2` ... |`tt`,`test`
-- `3` ... |`q`uit,`a`bord
+- `q` ... | quit
 
 Tip 💡: You can execute these commands directly: `bashlava h`,`bashlava test`, etc.
