@@ -2,11 +2,11 @@
 
 : '
 // START COMMENT BLOCK
-To-Do comment section. Total of 11
+To-Do comment section. Total of 4
 
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 PINNED issues on GH             _
-  issue #4 TODO & backlog       _
+  issue #4 TO-DO & backlog       _
   issue #8 UX                   _
   issue #9 Bugfix               _
   issue #10 Logic & Condition   _
@@ -19,26 +19,53 @@ PR Title: New Feat: 0o0o
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 
 
+PRIORITY 1 ____________________________________________________________________________
+_______________________________________________________________________________________
+
+
 TODO 
-- Refactoring edge() store the name in a better location
-- dynamic edge name creation
-- update path to {HOME}/Library/Application Support/FirePress/bashlava/file
+UX: Improve how we manage CONFIGS, vars, sane defaults, idempotent, logic overrides
+- At the moment, its too complex for a new user to configure bashlava
+- Avoid having multiple place to define them, source components, source .md
+- Few array that are configs. They should be all together under the same block of code.
+- Decouple logic using files: config_default.sh and config_custom.sh
+
+Functional impacts:
+- Dockerfile file should not be the default place to store configs
+    Core_Load_Vars_General
+    Core_Load_Vars_Dockerfile
+    Core_Load_Vars_Edge
+    Core_Check_Which_File_Exist
+- File: to check VERSUS file to source
+- Extended Test: Show all var and config (debug)
+- Think about private scripts trigger
+- Think about gcrypt dir VERSUS private dir (.gitignore)
+- Impact on: #4, #8, #10
 
 
-TODO Core_Load_Vars_General
-- better management core vars / group them, avoid having multiple place to define them
-- file to check VERSUS file to source
-- we have few array that are configs. They should be all together under the same block of code.
+TODO
+log() to show a short hash (not the full hash)
+
+
+TODO
+optimize my_message when calling
+  Print_
+  Banner_
+
+Instead of creating custom var simnply use %1 %2 <=dollar sign
+
+  function greet () {
+    echo "Hello @1"
+  }
+  greet "Shellman"
 
 
 TODO private scripts
-
 logical flags to manage under /private/*
 Need to check if files exist /private/* when DIR private exist
-
 Need logic to manage file under /private/*  fct VERSUS public fct
-
 overide like:
+- Dockerfile versionning VS config_custom.sh
 - favorite URL
 - custom_fct_opensite="true" # during pr, merg
 - custom_fct_help="false"
@@ -66,38 +93,41 @@ TODO ci pipeline
 - create ci for using shellcheck
 - run test()
 
-
-TODO
-edge() prompt user
-- Impact on: #4, #8
-
-OPTIONS ARE:
-1) CREATE edge_neW      and DELETE edge_olD (default)
-2) CREATE edge_neW      and KEEP edge_olD
-3) CREATE custom_neW    and DELETE edge_olD only
-4) CREATE custom_neW    and KEEP edge_olD only
-
-(Your branch name for edge is located .. path here )
+TODO git-crypt
+once gitcrypt to well test and solid, push V2
 
 
-TODO Show_Docs()
+PRIORITY 2 ____________________________________________________________________________
+_______________________________________________________________________________________
+
+
+0o0o EDGE_EXTENTED
+  edge() prompt user
+
+  OPTIONS ARE:
+  1) CREATE edge_neW      and DELETE edge_olD (default)
+  2) CREATE edge_neW      and KEEP edge_olD
+  3) CREATE custom_neW    and DELETE edge_olD only
+  4) CREATE custom_neW    and KEEP edge_olD only
+
+  (Your branch name for edge is located .. path here )
+  - Impact on: #4, #8
+
+0o0o Show_Docs()
 works but not clean, but it works mdv() / Show_Docs
-  we cant provide an abosolute path to the file because the Docker container cant the absolute path
+  we cant provide an absolute path to the file because the Docker container cant the absolute path
   I also DONT want to provide two arguments when using glow
   I might simply stop using a docker container for this
   but as a priciiple, I like to call a docker container
 
-
-TODO squash
+0o0o squash
 - function that search for the same commit messages in previous commits
 - then suggestion to do a squash, then prompt user y/n
 
-
-TODO Show_Fct_Category_F1 , F2
+0o0o Show_Fct_Category_F1 , F2
 - revisit this function once all file are solid + private logic
 
-
-TODO RANDOM NOTES
+0o0o RANDOM NOTES
 - multipass.run / shell
 - var subtitution example
 - GH enviroment (staging, prod)
@@ -206,7 +236,7 @@ function commit { # User_
   git status && git add -A && git commit -m "${input_2}" && git push
 
   Show_What_Was_Done
-  git --no-pager log --decorate=short --pretty=oneline -n4
+  git --no-pager log --decorate=short --pretty=oneline --abbrev-commit -n4
 
   _doc_name="fct_c_next.md" && Show_Docs
 }
@@ -398,10 +428,12 @@ function squash { # User_
   Condition_Attr_3_Must_Be_Provided # message
   _from_fct="sq"
 
-  git --no-pager log --decorate=short --pretty=oneline -n15
+  git --no-pager log --decorate=short --pretty=oneline --abbrev-commit -n15
 
   if ! [[ "${input_2}" =~ ^[0-9]+$ ]] ; then
     my_message="Oups, syntax error." && Print_Warning_Stop
+  else
+    echo "Ok, lets squash" > /dev/null 2>&1
   fi
 
   git reset --soft HEAD~"${input_2}" &&\
@@ -463,7 +495,7 @@ function log { # User_
   Condition_Attr_2_Must_Be_Empty
   Condition_No_Commits_Pending
 
-  echo && git --no-pager log --decorate=short --pretty=oneline -n8 && echo
+  echo && git --no-pager log --decorate=short --pretty=oneline --abbrev-commit -n8 && echo
 }
 
 function test { # User_
@@ -634,7 +666,7 @@ function Show_Docs {
 }
 
 function Show_What_Was_Done {
-  echo && my_message="(${_from_fct}) was done.                     ${app_name} ($(git rev-parse --abbrev-ref HEAD))" && Print_Green
+  echo && my_message="(${_from_fct}) was done.                          ${app_name} $(git rev-parse --abbrev-ref HEAD)" && Print_Green
 }
 
 function Show_Prompt_All {
@@ -1013,7 +1045,7 @@ function Core_Load_Vars_General {
 ### source PUBLIC scripts
 
 ### source files under /components
-  arr=( "alias.sh" "utilities.sh" "show_fct_category_filter.sh")
+  arr=( "alias.sh" "utilities.sh" "show_fct_category_filter.sh" "example.sh")
   for action in "${arr[@]}"; do
     _file_is="${action}" _file_path_is="${_path_components}/${_file_is}" && Condition_File_Must_Be_Present
     # code optimization 0o0o, add logic: _to_source="true"

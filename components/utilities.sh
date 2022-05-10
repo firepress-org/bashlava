@@ -9,14 +9,6 @@ function Utility_Array {
   for i in "${arr[@]}"; do
     my_message="${i}" && Print_Gray
   done
-
-  myArray=("one" "two" "three")
-  myArray2=(
-    "four"
-    "five"
-    "six"
-  )
-  echo "${myArray[@]}" && echo && echo "${myArray2[@]}"
 }
 
 function Utility_Curl_URL {

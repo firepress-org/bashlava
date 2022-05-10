@@ -185,14 +185,6 @@ function ex_read {
   echo "Your name is ${name}!"
 }
 
-# Mapfile: Assigning a variable the values of a file's lines
-function ex_mapfile {
-  mapfile -t file_var < ${_path_components}/list.txt
-  for i in "${file_var[@]}"; do
-    echo "${i}"
-  done
-}
-
 # Setting the value when a variable isn't set
 function ex_case_21 {
   echo "What is your name?"
@@ -234,4 +226,171 @@ function ex_demo_set_var_if_empty {
   
   # set only if it has no value currently
   "${variable:=default}"
+}
+
+function ex_loop_1 {
+  a=3
+  while (( a > 0)); do
+    echo "${a}"
+    (( a-- ))
+  done
+}
+
+function ex_loop_2 {
+
+  # string compare
+  str="s"
+  while [[ "${str}" != "end" ]]; do
+    echo "start"
+    str="end"
+  done
+}
+
+function ex_loop_3 {
+  for col in $(multipass list | awk '{print $1}'); do
+    echo "${col}"
+  done
+}
+
+function ex_compare_1 {
+  var=3
+  (( var > 3 )) && echo "greater than 3"
+  (( var > 3 )) || echo "NOT greater than 3"
+  
+  (( var <= 3 )) && echo "equal or smaller than 3"
+}
+
+function ex_path_exist {
+  path=~/.zshrc
+
+  if [[ -e "${path}" ]]; then
+    echo "File exists"
+    cat "${path}"
+  else
+    echo "File does not exist"
+  fi
+}
+
+function ex_random_1 {
+  echo && echo "lenght=22" &&\
+  for lineID in $(seq 1 8); do
+    grp1=$(openssl rand -base64 32 | sed 's/[^123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz]//g' | cut -c11-14)
+    grp2=$(vm_stat | sha256sum | sed 's/.$//' | sed 's: ::g' | cut -c2-13)
+    grp3=$(openssl rand -base64 32 | sed 's/[^123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz]//g' | cut -c21-24)
+    echo "${grp1}_${grp2}_${grp3}"
+  done && echo;
+}
+
+function ex_random_2 {
+  # lenght=22
+  for lineID in $(seq 1 8); do
+    grp1=$(openssl rand -base64 32 | sed 's/[^123456789ABCDEFGHJKMNPQRSTUVWXYZ]//g' | cut -c10-12)
+    echo "${grp1}"
+  done && echo;
+}
+
+function ex_replace {
+  replaced=$(echo -e "${string}" | sed -e 's/find/replace/g')
+}
+
+function ex_array_1 {
+  arr=( "Looping ..." "an array of string" )
+  for i in "${arr[@]}"; do
+    my_message="${i}" && Print_Gray
+  done
+
+  myArray=("one" "two" "three")
+  myArray+=("four")
+
+  myArray2=(
+    "eleven"
+    "twelve"
+    "thirteen"
+  )
+  echo "${myArray[@]}"
+  echo "${myArray2[@]}"
+  echo "${myArray2[1]}"
+}
+
+function ex_array_2 {
+  # filter
+  myArray=( 'Alice' '22' 'Bob' '16' 'Eve' )
+  filtered=$(for i in "${myArray[@]}" ; do echo ${i} ; done | grep [0-9])
+  echo "${filtered[@]}"
+  # output: 
+  # 22
+  # 16
+}
+
+function ex_array_2 {
+  # filter
+  myArray=( "Alice" "22"  "Bob" "16" "Eve" )
+
+  for i in "${myArray[@]}"; do
+    my_message="${i}" && Print_Gray
+  done
+
+  # array length
+  echo
+  echo "How many items in this list?"
+  echo ${#myArray[@]}
+
+  # range
+  echo
+  echo "Range 1 to 3"
+  echo ${myArray[@]:1:3}
+
+}
+
+function ex_array_3 {
+  #override
+  myArray=( "Alice" "22" "Bob" "16" "Eve" )
+  myArray[1]="Pascal"
+  echo "${myArray[@]}"
+}
+
+function ex_cmd_check_1 {
+  # useful to debug
+
+  ls # this command will succeed
+  if [[ $? == 0 ]]; then
+    echo "command succeeded"
+  else
+    echo "command failed"
+  fi
+}
+
+function ex_cmd_check_2 {
+  myApp="docker"
+  if [[ -n $(command -v "${myApp}") ]]; then
+    echo "${myApp} is installed"
+  else
+    echo "${myApp} is NOT installed"
+  fi
+}
+
+function ex_find_file {
+  result=$(find . -maxdepth 3 -type f -name "*.sh")
+  echo "${result}"
+
+  result=$(find . -maxdepth 3 -type f -name "*.md")
+  echo "${result}"
+}
+
+function ex_file_read_1 {
+  cat ./components/list.txt | while read -r byline; do
+    echo "${byline}"
+  done
+}
+
+# Mapfile: Assigning a variable the values of a file's lines
+function ex_file_read_2 {
+  mapfile -t file_var < ${_path_components}/list.txt
+  for i in "${file_var[@]}"; do
+    echo "${i}"
+  done
+}
+
+function ex_timeout {
+  gtimeout 1s curl -I http://www.google.com/
 }
