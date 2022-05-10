@@ -22,6 +22,10 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 PRIORITY 1 ____________________________________________________________________________
 _______________________________________________________________________________________
 
+TODO
+UX: mrg() gh cli, pass attributs to minimize prompts
+- use flag rebase
+
 
 TODO 
 UX: Improve how we manage CONFIGS, vars, sane defaults, idempotent, logic overrides
@@ -270,7 +274,7 @@ function mrg { # User_
   Condition_No_Commits_Pending
   Condition_Attr_2_Must_Be_Empty
 
-  gh pr merge
+  gh pr merge --rebase
 
 # Ensure to checkout to main_branch.
 # The user maybe did not deleted the PR branch in the previous step (via cli gh pr merge)
