@@ -23,9 +23,7 @@ PRIORITY 1 _____________________________________________________________________
 _______________________________________________________________________________________
 
 TODO
-UX: mrg() gh cli, pass attributs to minimize prompts
-- use flag rebase
-
+UX: release() add attributs to the release cli to minimize prompts
 
 TODO 
 UX: Improve how we manage CONFIGS, vars, sane defaults, idempotent, logic overrides
@@ -49,6 +47,10 @@ Functional impacts:
 
 TODO
 log() to show a short hash (not the full hash)
+
+TODO
+UX: mrg() gh cli, pass attributs to minimize prompts
+- use flag rebase
 
 
 TODO
@@ -412,7 +414,10 @@ function release { # User_
   Condition_Attr_2_Must_Be_Empty
   _from_fct="r"
 
-  gh release create && sleep 5
+  latest_tag="$(git describe --tags --abbrev=0)"
+
+  #                'v' is an attribut
+  gh release create v"${latest_tag}" --generate-notes && sleep 5
   Show_Version
   Show_Release
 
