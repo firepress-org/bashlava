@@ -4,7 +4,7 @@
 ###################################
 
 ARG APP_NAME="bashlava"
-ARG VERSION="1.42.0"
+ARG VERSION="1.43.0"
 ARG GITHUB_USER="firepress-org"
 ARG DOCKERHUB_USER="devmtl"
 ARG GITHUB_REGISTRY="registry"
