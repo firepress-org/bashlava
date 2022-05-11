@@ -1,21 +1,11 @@
 # .gitignore
 ############
 private
-custom_*.sh
-env_local_path.sh
+config_custom.sh
 .env
 .cache
-coverage
-dist
 node_modules
 npm-debug
-
-# Directories
-############
-
-# Files
-############
-var-config.sh
 
 # Compiled source #
 ###################
