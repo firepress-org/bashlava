@@ -24,6 +24,8 @@ ________________________________________________________________________________
 
 
 TODO
+Transition from Dockerfile
+
 UX: Improve how we manage CONFIGS, vars, sane defaults, logic overrides
 - At the moment, its too complex for a new user to configure bashlava
 - Avoid having multiple place to define them, source components, source .md
@@ -154,8 +156,8 @@ function mainbranch { # User_
 
   Show_Version
 
-  git checkout ${default_branch}
-  git pull origin ${default_branch} && echo
+  git checkout ${CFG_DEFAULT_BRANCH}
+  git pull origin ${CFG_DEFAULT_BRANCH} && echo
   log
 }
 
@@ -205,13 +207,13 @@ _branch_dev_unique=$(cat "${_path_lib}/Application Support/${_path_last_part}")
     my_message="FATAL: File exist, but it should not!" && Print_Fatal
   elif [[ ! -f "${_path_lib}/Application Support/${_path_last_part}" ]]; then
     echo "OK, file do not exit" > /dev/null 2>&1
-    _default_edge_prefix="edge" _random_char=$(openssl rand -hex 4 | colrm 4)
+    _default_edge_prefix="${CFG_DEFAULT_DEV_BRANCH}" _random_char=$(openssl rand -hex 4 | colrm 4)
     # Store to file
     echo "${_default_edge_prefix}_${_random_char}" > "${_path_lib}/Application Support/${_path_last_part}"
     # Get the new generated _branch_dev_unique
     _branch_dev_unique=$(cat "${_path_lib}/Application Support/${_path_last_part}")
   else
-    my_message="FATAL: edge" && Print_Fatal
+    my_message="FATAL: ${CFG_DEFAULT_DEV_BRANCH}" && Print_Fatal
   fi
   ### =============================================
 
@@ -233,7 +235,7 @@ function commit { # User_
   git status && git add -A && git commit -m "${input_2}" && git push
 
   Show_What_Was_Done
-  git --no-pager log --decorate=short --pretty=oneline --abbrev-commit -n4
+  git --no-pager log --decorate=short --pretty=oneline --abbrev-commit -n"${CFG_LOG_LINE_NBR_SHORT}"
 
   _doc_name="fct_c_next.md" && Show_Docs
 }
@@ -247,7 +249,7 @@ function pr { # User_
   _pr_title=$(git log --format=%B -n 1 "$(git log -1 --pretty=format:"%h")" | cat -)
   _var_name="_pr_title" _is_it_empty="${_pr_title}" && Condition_Vars_Must_Be_Not_Empty
 
-  gh pr create --fill --title "${_pr_title}" --base "${default_branch}" && sleep 1
+  gh pr create --fill --title "${_pr_title}" --base "${CFG_DEFAULT_BRANCH}" && sleep 1
   gh pr view --web    # if there is a bug see: /docs/debug_upstream.md
 
   Show_What_Was_Done
@@ -271,7 +273,7 @@ function mrg { # User_
 
 # Ensure to checkout to main_branch.
 # The user maybe did not deleted the PR branch in the previous step (via cli gh pr merge)
-  _branch_exist=$(git branch --list "${default_branch}" | wc -l)
+  _branch_exist=$(git branch --list "${CFG_DEFAULT_BRANCH}" | wc -l)
     # It does not make sens to Condition_Vars_Must_Be_Not_Empty
   if [[ ${_branch_exist} -eq 0 ]]; then
     echo "OK we are on main_branch. Nothing to do"
@@ -379,7 +381,8 @@ function tag { # User_
 function v_and_t { 
   # version and tag
 # TODO
-  # I can optimze this later with a flag
+  # This is OK but not clean
+  # I can optimze this later with a flag for many apps v, t, r, e
   # I need to duplicate v() code because we prompt in version and in tag
 ### The version is stored within the Dockerfile. For BashLaVa, this Dockerfile is just a config-env file
   Condition_No_Commits_Pending
@@ -481,7 +484,7 @@ function squash { # User_
   Condition_Attr_3_Must_Be_Provided # message
   _from_fct="sq"
 
-  git --no-pager log --decorate=short --pretty=oneline --abbrev-commit -n15
+  git --no-pager log --decorate=short --pretty=oneline --abbrev-commit -n"${CFG_LOG_LINE_NBR_LONG}"
 
   if ! [[ "${input_2}" =~ ^[0-9]+$ ]] ; then
     my_message="Oups, syntax error." && Print_Warning_Stop
@@ -534,7 +537,7 @@ function dummy { # User_
     date_nano="$(date +%Y-%m-%d_%HH%Ms%S-%N)"
     _hash=$(echo ${date_nano} | sha256sum | awk '{print $1}')
     _hash_four_last="${_hash: -4}"
-    echo "Dummy Commit, ${date_sec}, ${_hash}" >> "${_in_file}"
+    echo "Dummy Commit, $(date +%Y-%m-%d_%HH%M_%S), ${_hash}" >> "${_in_file}"
     git add -A && git commit -m "dummy commit ${_hash_four_last}"
     sleep 1
   done
@@ -554,7 +557,7 @@ function log { # User_
   Condition_Attr_2_Must_Be_Empty
   Condition_No_Commits_Pending
 
-  echo && git --no-pager log --decorate=short --pretty=oneline --abbrev-commit -n8 && echo
+  echo && git --no-pager log --decorate=short --pretty=oneline --abbrev-commit -n"${CFG_LOG_LINE_NBR_LONG}" && echo
 }
 
 function test { # User_
@@ -604,6 +607,10 @@ function test { # User_
   # Print_Fatal is bypassed as it does an 'exit 0'
 
   Show_Version
+
+  echo "WIP 2022-05-10_21h45"
+  Core_test_vars
+  Core_show_vars
 }
 
 function help { # User_
@@ -684,7 +691,7 @@ function Show_Version {
     echo "Logic: new projet don't have any tags. So we must expect that it can be empty" > /dev/null 2>&1
     latest_tag="none "
   fi
-  my_message="${latest_tag} < TAG     in ${default_branch}" Print_Gray
+  my_message="${latest_tag} < TAG     in ${CFG_DEFAULT_BRANCH}" Print_Gray
 
   # release
   release_latest=$(curl -s https://api.github.com/repos/${github_user}/${app_name}/releases/latest | \
@@ -713,14 +720,14 @@ function Show_Release {
 
 function Show_Docs {
   # idempotent checkpoint
-  _var_name="docker_img_glow" _is_it_empty="${docker_img_glow}" && Condition_Vars_Must_Be_Not_Empty
+  _var_name="DOCKER_IMG_GLOW" _is_it_empty="${DOCKER_IMG_GLOW}" && Condition_Vars_Must_Be_Not_Empty
   _var_name="_doc_name" _is_it_empty="${_doc_name}" && Condition_Vars_Must_Be_Not_Empty
 
   _present_path_is="$(pwd)"
   _file_is="${_doc_name}" _file_path_is="${_path_docs}/${_doc_name}" && Condition_File_Must_Be_Present
 
   cd ${_path_docs} || { echo "FATAL: Show_Docs / cd"; exit 1; }
-  docker run --rm -it -v "$(pwd)":/sandbox -w /sandbox ${docker_img_glow} glow -w 110 "${_doc_name}"
+  docker run --rm -it -v "$(pwd)":/sandbox -w /sandbox ${DOCKER_IMG_GLOW} glow -w 110 "${_doc_name}"
   cd ${_present_path_is} || { echo "FATAL: Show_Docs / cd"; exit 1; }
 }
 
@@ -767,7 +774,7 @@ function Print_mdv {
   Condition_Attr_2_Must_Be_Provided
 
   # markdown viewer (mdv)
-  _var_name="docker_img_glow" _is_it_empty="${docker_img_glow}" && Condition_Vars_Must_Be_Not_Empty
+  _var_name="DOCKER_IMG_GLOW" _is_it_empty="${DOCKER_IMG_GLOW}" && Condition_Vars_Must_Be_Not_Empty
   _var_name="input_2" _is_it_empty="${input_2}" && Condition_Vars_Must_Be_Not_Empty
   my_message="Info: 'mdv' can only read markdown files at the same path level" Print_Green
   sleep 0.5
@@ -775,13 +782,13 @@ function Print_mdv {
   _present_path_is=$(pwd)
   _file_is="${input_2}" _file_path_is="${_present_path_is}/${input_2}" && Condition_File_Must_Be_Present
 
-  docker run --rm -it -v "$(pwd)":/sandbox -w /sandbox ${docker_img_glow} glow -w 120 "${input_2}"
+  docker run --rm -it -v "$(pwd)":/sandbox -w /sandbox ${DOCKER_IMG_GLOW} glow -w 120 "${input_2}"
 }
 
 function Print_Banner {
-  _var_name="docker_img_figlet" _is_it_empty="${docker_img_figlet}" && Condition_Vars_Must_Be_Not_Empty
+  _var_name="DOCKER_IMG_FIGLET" _is_it_empty="${DOCKER_IMG_FIGLET}" && Condition_Vars_Must_Be_Not_Empty
   _var_name="my_message" _is_it_empty="${my_message}" && Condition_Vars_Must_Be_Not_Empty
-  docker run --rm ${docker_img_figlet} ${my_message}
+  docker run --rm ${DOCKER_IMG_FIGLET} ${my_message}
 }
 
 # Define colors / https://www.shellhacks.com/bash-colors/
@@ -833,7 +840,7 @@ function Print_Fatal {
 function Condition_Branch_Must_Be_Mainbranch {
   echo "function not required yet"
   _compare_me=$(git rev-parse --abbrev-ref HEAD)
-  _compare_you="${default_branch}" _fct_is="Condition_Branch_Must_Be_Mainbranch"
+  _compare_you="${CFG_DEFAULT_BRANCH}" _fct_is="Condition_Branch_Must_Be_Mainbranch"
   Condition_Vars_Must_Be_Equal
 }
 
@@ -1064,10 +1071,10 @@ function Core_Reset_Bashlava_Path {
 # Don't confuse it with the symlink which is usually at "/usr/local/bin/bashlava.sh"
 # We write bashlava_path on disk for speed optimization and to avoid running this request all the time.
   if [[ ! -f ${_path_user}/bashlava_path ]]; then
-    readlink "$(which "${bashlava_executable}")" > "${_path_user}/bashlava_path_tmp"
+    readlink "$(which bashlava.sh)" > "${_path_user}/bashlava_path_tmp"
     rm ${_path_user}/bashlava_path
 # this will strip "/bashlava.sh" from the absolute path
-    cat "${_path_user}/bashlava_path_tmp" | sed "s/\/${bashlava_executable}//g" > "${_path_user}/bashlava_path"
+    cat "${_path_user}/bashlava_path_tmp" | sed "s/\/bashlava.sh//g" > "${_path_user}/bashlava_path"
 # clean up
     rm ${_path_user}/bashlava_path_tmp
   elif [[ -f ${_path_user}/bashlava_path ]]; then
@@ -1077,71 +1084,11 @@ function Core_Reset_Bashlava_Path {
   fi
 }
 
-function Core_Load_Vars_General {
-### Default var & path. Customize if need. Usefull if you want
-  # to have multiple instance of bashLaVa on your machine
-  bashlava_executable="bashlava.sh"
-  _path_user="/usr/local/bin"
-  _var_name="_path_user" _is_it_empty="${_path_user}" && Condition_Vars_Must_Be_Not_Empty
-
-### Reset if needed
-  Core_Reset_Bashlava_Path
-
-### Set absolute path for the project root ./
-  _path_bashlava="$(cat "${_path_user}"/bashlava_path)"
-  _var_name="_path_bashlava" _is_it_empty="${_path_bashlava}" && Condition_Vars_Must_Be_Not_Empty
-
-### Set absolute path for the ./components directory
-  _path_components="${_path_bashlava}/components"
-  _var_name="_path_components" _is_it_empty="${_path_components}" && Condition_Vars_Must_Be_Not_Empty
-
-### Set absolute path for the ./docs directory
-  _path_docs="${_path_bashlava}/docs"
-  _var_name="_path_docs" _is_it_empty="${_path_docs}" && Condition_Vars_Must_Be_Not_Empty
-# every scripts that are not under the main bashLaVa app, should be threated as an components.
-# It makes it easier to maintain the project, it minimises cluter, it minimise break changes, it makes it easy to accept PR, more modular, etc.
-
-### source PUBLIC scripts
-
-### source files under /components
-  arr=( "alias.sh" "utilities.sh" "show_fct_category_filter.sh" "example.sh")
-  for action in "${arr[@]}"; do
-    _file_is="${action}" _file_path_is="${_path_components}/${_file_is}" && Condition_File_Must_Be_Present
-    # code optimization 0o0o, add logic: _to_source="true"
-    source "${_file_path_is}"
-  done
-
-### source PRIVATE / custom scripts
-  # the user must create /private/_entrypoint.sh file
-  _file_is="_entrypoint.sh" _file_path_is="${_path_components}/private/${_file_is}" && Condition_File_Must_Be_Present
-  source "${_file_path_is}"
-
-### Set defaults for flags
-  _flag_deploy_commit_message="not_set"
-  _commit_message="not_set"
-
-###	docker images
-  docker_img_figlet="devmtl/figlet:1.1"
-  docker_img_glow="devmtl/glow:1.4.1"
-
-###	Date generators
-  date_nano="$(date +%Y-%m-%d_%HH%Ms%S-%N)"
-    date_sec="$(date +%Y-%m-%d_%HH%Ms%S)"
-    date_min="$(date +%Y-%m-%d_%HH%M)"
-
-  date_hour="$(date +%Y-%m-%d_%HH)XX"
-    date_day="$(date +%Y-%m-%d)"
-  date_month="$(date +%Y-%m)-XX"
-  date_year="$(date +%Y)-XX-XX"
-}
-
 function Core_Load_Vars_Dockerfile {
   # Define vars from Dockerfile
   app_name=$(cat Dockerfile | grep APP_NAME= | head -n 1 | grep -o '".*"' | sed 's/"//g')
   app_version=$(cat Dockerfile | grep VERSION= | head -n 1 | grep -o '".*"' | sed 's/"//g')
   github_user=$(cat Dockerfile | grep GITHUB_USER= | head -n 1 | grep -o '".*"' | sed 's/"//g')
-  default_branch=$(cat Dockerfile | grep DEFAULT_BRANCH= | head -n 1 | grep -o '".*"' | sed 's/"//g')
-  github_org=$(cat Dockerfile | grep GITHUB_ORG= | head -n 1 | grep -o '".*"' | sed 's/"//g')
   dockerhub_user=$(cat Dockerfile | grep DOCKERHUB_USER= | head -n 1 | grep -o '".*"' | sed 's/"//g')
   github_registry=$(cat Dockerfile | grep GITHUB_REGISTRY= | head -n 1 | grep -o '".*"' | sed 's/"//g')
 
@@ -1152,12 +1099,58 @@ function Core_Load_Vars_Dockerfile {
   _var_name="app_name" _is_it_empty="${app_name}" && Condition_Vars_Must_Be_Not_Empty
   _var_name="app_version" _is_it_empty="${app_version}" && Condition_Vars_Must_Be_Not_Empty
   _var_name="github_user" _is_it_empty="${github_user}" && Condition_Vars_Must_Be_Not_Empty
-  _var_name="default_branch" _is_it_empty="${default_branch}" && Condition_Vars_Must_Be_Not_Empty
-  _var_name="github_org" _is_it_empty="${github_org}" && Condition_Vars_Must_Be_Not_Empty
   _var_name="dockerhub_user" _is_it_empty="${dockerhub_user}" && Condition_Vars_Must_Be_Not_Empty
   _var_name="github_registry" _is_it_empty="${github_registry}" && Condition_Vars_Must_Be_Not_Empty
   _var_name="_url_to_release" _is_it_empty="${_url_to_release}" && Condition_Vars_Must_Be_Not_Empty
   _var_name="_url_to_check" _is_it_empty="${_url_to_check}" && Condition_Vars_Must_Be_Not_Empty
+}
+
+function Core_test_vars {
+### NEW CONFIG
+_var_name="CFG_OVERRIDE_WITH_CUSTOM_CONFIG" _is_it_empty="${CFG_OVERRIDE_WITH_CUSTOM_CONFIG}" && Condition_Vars_Must_Be_Not_Empty
+
+_var_name="CFG_DEFAULT_BRANCH" _is_it_empty="${CFG_DEFAULT_BRANCH}" && Condition_Vars_Must_Be_Not_Empty
+_var_name="CFG_DEFAULT_DEV_BRANCH" _is_it_empty="${CFG_DEFAULT_DEV_BRANCH}" && Condition_Vars_Must_Be_Not_Empty
+_var_name="CFG_USER_IS" _is_it_empty="${CFG_USER_IS}" && Condition_Vars_Must_Be_Not_Empty
+#
+_var_name="APP_NAME" _is_it_empty="${APP_NAME}" && Condition_Vars_Must_Be_Not_Empty
+_var_name="APP_VERSION" _is_it_empty="${APP_VERSION}" && Condition_Vars_Must_Be_Not_Empty
+_var_name="GITHUB_USER" _is_it_empty="${GITHUB_USER}" && Condition_Vars_Must_Be_Not_Empty
+_var_name="DOCKERHUB_USER" _is_it_empty="${DOCKERHUB_USER}" && Condition_Vars_Must_Be_Not_Empty
+_var_name="GITHUB_REGISTRY" _is_it_empty="${GITHUB_REGISTRY}" && Condition_Vars_Must_Be_Not_Empty
+
+_var_name="CFG_EDGE_EXTENTED" _is_it_empty="${CFG_EDGE_EXTENTED}" && Condition_Vars_Must_Be_Not_Empty
+_var_name="CFG_LOG_LINE_NBR_SHORT" _is_it_empty="${CFG_LOG_LINE_NBR_SHORT}" && Condition_Vars_Must_Be_Not_Empty
+_var_name="CFG_LOG_LINE_NBR_LONG" _is_it_empty="${CFG_LOG_LINE_NBR_LONG}" && Condition_Vars_Must_Be_Not_Empty
+
+_var_name="CFG_ARR_SCRIPTS_COMPONENTS" _is_it_empty="${CFG_ARR_SCRIPTS_COMPONENTS}" && Condition_Vars_Must_Be_Not_Empty
+
+_var_name="DOCKER_IMG_FIGLET" _is_it_empty="${DOCKER_IMG_FIGLET}" && Condition_Vars_Must_Be_Not_Empty
+_var_name="DOCKER_IMG_GLOW" _is_it_empty="${DOCKER_IMG_GLOW}" && Condition_Vars_Must_Be_Not_Empty
+
+}
+
+function Core_show_vars {
+echo "${CFG_OVERRIDE_WITH_CUSTOM_CONFIG}"
+
+echo "${CFG_DEFAULT_BRANCH}"
+echo "${CFG_DEFAULT_DEV_BRANCH}"
+echo "${CFG_USER_IS}"
+
+echo "${APP_NAME}"
+echo "${APP_VERSION}"
+echo "${GITHUB_USER}"
+echo "${DOCKERHUB_USER}"
+echo "${GITHUB_REGISTRY}"
+
+echo "${CFG_EDGE_EXTENTED}"
+echo "${CFG_LOG_LINE_NBR_SHORT}"
+echo "${CFG_LOG_LINE_NBR_LONG}"
+
+echo "${CFG_ARR_SCRIPTS_COMPONENTS}"
+
+echo "${DOCKER_IMG_FIGLET}"
+echo "${DOCKER_IMG_GLOW}"
 }
 
 function Core_Load_Vars_Edge {
@@ -1171,6 +1164,7 @@ function Core_Load_Vars_Edge {
   _var_name="_path_last_part" _is_it_empty="${_path_last_part}" && Condition_Vars_Must_Be_Not_Empty
 
   # Can't pass the path as a var because of the space (/Application Support)
+  # I guess it's just me not knowing how to manage this :-p
   #_branch_dev_unique=$(cat "${_path_lib}/Application Support/${_path_last_part}")
   # It does not make sens to Condition_Vars_Must_Be_Not_Empty
 }
@@ -1179,9 +1173,53 @@ function Core_Load_Vars_Edge {
 function main() {
   trap script_trap_err ERR
   trap script_trap_exit EXIT
+### Load .bashcheck.sh
   source "$(dirname "${BASH_SOURCE[0]}")/.bashcheck.sh"
+### Default var & path. Customize if need. Usefull if you want
+  # to have multiple instance of bashLaVa on your machine
+  _path_user="/usr/local/bin" _var_name="_path_user" _is_it_empty="${_path_user}" && Condition_Vars_Must_Be_Not_Empty
+### Reset path if needed
+  Core_Reset_Bashlava_Path
+### Set absolute path for the project root ./
+  _path_bashlava="$(cat "${_path_user}"/bashlava_path)" _var_name="_path_bashlava" _is_it_empty="${_path_bashlava}" && Condition_Vars_Must_Be_Not_Empty
+### Set absolute path for the ./components directory
+  # every scripts that are not under the main bashLaVa app, should be threated as an components.
+  # It makes it easier to maintain the project, it minimises cluter, it minimise break changes, it makes it easy to accept PR, more modular, etc.
+  _path_components="${_path_bashlava}/components" _var_name="_path_components" _is_it_empty="${_path_components}" && Condition_Vars_Must_Be_Not_Empty
+### Set absolute path for the ./docs directory
+  _path_docs="${_path_bashlava}/docs" _var_name="_path_docs" _is_it_empty="${_path_docs}" && Condition_Vars_Must_Be_Not_Empty
 
-  Core_Load_Vars_General
+# TODO handle errors
+### Load default configurations
+  _file_is="config_default.sh" _file_path_is="$(pwd)/${_file_is}" && Condition_File_Must_Be_Present
+  source "${_file_path_is}"
+
+# TODO handle errors
+  if [[ "${CFG_OVERRIDE_WITH_CUSTOM_CONFIG}" == "true" ]]; then
+  _file_is="config_custom.sh" _file_path_is="$(pwd)/${_file_is}" && Condition_File_Must_Be_Present
+  source "${_file_path_is}"
+  fi
+
+# TODO handle errors
+  # SOURCE COMPONENTS (PUBLIC)
+  for action in "${CFG_ARR_SCRIPTS_COMPONENTS[@]}"; do
+    _file_is="${action}" _file_path_is="${_path_components}/${_file_is}" && Condition_File_Must_Be_Present
+    # code optimization 0o0o, add logic: _to_source="true"
+    source "${_file_path_is}"
+  done
+
+  # SOURCE PRIVATE COMPONENTS
+  ### the user must create components/private/_entrypoint.sh file
+  _file_is="_entrypoint.sh" _file_path_is="${_path_components}/private/${_file_is}"
+  if [[ -f "${_file_path_is}" ]]; then
+    source "${_file_path_is}"
+  elif [[ ! -f "${_file_path_is}" ]]; then
+    my_message="Warning: You should set /components/private/_entrypoint.sh" && Print_Warning
+    my_message="See README for installation details."                       && Print_Warning && sleep 2
+  else
+    my_message="FATAL: Condition_File_Must_Be_Present | ${_file_path_is}" && Print_Fatal
+  fi
+
   Core_Load_Vars_Dockerfile
   Core_Load_Vars_Edge
   Core_Check_Which_File_Exist
@@ -1234,35 +1272,26 @@ function main() {
 main "$@"
 
 ### Prompt if no attributs were passed
-  input_1="$1"
-  _script_name="$0"
+input_1="$1"
+_script_name="$0"
 
-  if [[ -z "$1" ]]; then
-    echo "OK, user did not provide argument. Show options" > /dev/null 2>&1
-    _doc_name="welcome_to_bashlava.md" && clear && Show_Docs
+if [[ -z "$1" ]]; then
+  echo "OK, user did not provide argument. Show options" > /dev/null 2>&1
+  _doc_name="welcome_to_bashlava.md" && clear && Show_Docs
 
-    read -r user_input; echo;
-    case ${user_input} in
-      # Dont use the shortcut 't' here! Its used for fct 'tag'
-      1 | h) clear && help;;
-      2 | tt) clear && test;;
-      *) my_message="Aborted - Invalid input." Print_Fatal;; 
-    esac
+  read -r user_input; echo;
+  case ${user_input} in
+    # Dont use the shortcut 't' here! Its used for fct 'tag'
+    1 | h) clear && help;;
+    2 | tt) clear && test;;
+    *) my_message="Aborted - Invalid input." Print_Fatal;; 
+  esac
 
-  elif [[ -n "$1" ]]; then
-    echo "Good, user did provide argument(s)." > /dev/null 2>&1
-  else
-    my_message="FATAL: main (When no arg are provided)" && Print_Fatal
-  fi
+elif [[ -n "$1" ]]; then
+  echo "Good, user did provide argument(s)." > /dev/null 2>&1
+else
+  my_message="FATAL: main (When no arg are provided)" && Print_Fatal
+fi
 
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### #
-#
+
 # END OF SCRIPT
-#
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### #
-          #
-        #
-      #
-    #
-  #
-#

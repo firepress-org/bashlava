@@ -4,6 +4,18 @@ function Utility_passgen {
   docker run --rm devmtl/alpine:3.11_2020-02-26_08H42s20_dec5798 sh "random7.sh"
 }
 
+function Utility_Date {
+  date_nano="$(date +%Y-%m-%d_%HH%M_%S-%N)"
+    date_sec="$(date +%Y-%m-%d_%HH%M_%S)"
+    date_min="$(date +%Y-%m-%d_%HH%M)"
+
+  date_hour="$(date +%Y-%m-%d_%HH)XX"
+    date_day="$(date +%Y-%m-%d)"
+  date_month="$(date +%Y-%m)-XX"
+  date_year="$(date +%Y)-XX-XX"
+}
+
+
 function Utility_Array {
   arr=( "Looping ..." "an array of string" )
   for i in "${arr[@]}"; do
@@ -74,7 +86,6 @@ ARG APP_NAME="notset"
 ARG VERSION="notset"
 ARG RELEASE="notset"
 ARG GITHUB_USER="notset"
-ARG DEFAULT_BRANCH="notset"
 ARG GITHUB_ORG="notset"
 ARG DOCKERHUB_USER="notset"
 ARG GITHUB_REGISTRY="notset"
