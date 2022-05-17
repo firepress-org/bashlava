@@ -1,4 +1,5 @@
 private
+.bashlava_env_*
 .cache
 coverage
 dist

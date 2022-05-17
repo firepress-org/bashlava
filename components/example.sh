@@ -22,7 +22,7 @@ function ex_11 () {
   if [[ $?! = 0 ]]; then
     echo "command failed"
   fi
-  if [[ $?==0 ]]; then
+  if [[ $? == 0 ]]; then
     echo command succeed
   fi
 }
@@ -291,6 +291,7 @@ function ex_random_2 {
 
 function ex_replace {
   replaced=$(echo -e "${string}" | sed -e 's/find/replace/g')
+  #                                sed -e 's@find@replace@g'
 }
 
 function ex_array_1 {
@@ -393,4 +394,14 @@ function ex_file_read_2 {
 
 function ex_timeout {
   gtimeout 1s curl -I http://www.google.com/
+}
+
+function ex_smoothing_on {
+  echo "TURN ON font smoothing on mac"
+  defaults -currentHost write -g AppleFontSmoothing -int 3
+
+  #echo "TURN OFF font smoothing on mac"
+  #defaults -currentHost write -g AppleFontSmoothing -int 0
+
+  echo "must reboot, works on mac os montery"
 }
