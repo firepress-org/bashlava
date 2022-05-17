@@ -2,7 +2,7 @@
 
 : '
 // START COMMENT BLOCK
-To-Do comment section. Total of 4
+To-Do comment section. Total of 7
 
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 PINNED issues on GH             _
@@ -24,29 +24,32 @@ ________________________________________________________________________________
 
 
 TODO
-Remove 'v' when release() + Dummy() change path
+Feat UX: Use config files and logic overrides
 
-
-TODO
-Transition from Dockerfile
-
-UX: Improve how we manage CONFIGS, vars, sane defaults, logic overrides
+## Requirement:
+- Decouple logic using files: .bashlava_env.sh and .bashlava_env_override.sh
 - At the moment, its too complex for a new user to configure bashlava
-- Avoid having multiple place to define them, source components, source .md
+- Let avoid having multiple place to define them, source components, source .md
 - Few array that are configs. They should be all together under the same block of code.
-- Decouple logic using files: config_default.sh and config_custom.sh
 
-Functional impacts:
-- Dockerfile file should not be the default place to store configs
-    Core_Load_Vars_General
-    Core_Load_Vars_Dockerfile
-    Core_Load_Vars_Edge
-    Core_Check_Which_File_Exist
-- File: to check VERSUS file to source
-- Extended Test: Show all var and config (debug)
-- Think about private scripts trigger
-- Think about gcrypt dir VERSUS private dir (.gitignore)
-- Impact on: #4, #8, #10
+## Functional impacts:
+  - Dockerfile file is not the place to store config anymore (old logic from https://github.com/firepress-org/ghostfire)
+  - Logic for .bashlava_env_override.sh, needed for this env var
+      APP_NAME="notset"
+      GITHUB_USER="notset"
+      APP_VERSION="0.0.1"
+  - Update Show_Version()
+  - Update Show_Tag()
+  - Update Show_Release()
+  - remove remove v_and_t()
+  - remove Core_Load_Vars_General()
+  - remove Core_Load_Vars_Dockerfile()
+  - remove Core_Check_Which_File_Exist()
+  - File: to check VERSUS file to source
+  - Extended Test: Show all var and config (debug)
+  - Think about private scripts trigger
+  - README docs are still missing, but its ok at this point
+  - Impact on: #4, #8, #10
 
 
 TODO private scripts
@@ -54,7 +57,6 @@ logical flags to manage under /private/*
 Need to check if files exist /private/* when DIR private exist
 Need logic to manage file under /private/*  fct VERSUS public fct
 overide like:
-- Dockerfile versionning VS config_custom.sh
 - favorite URL
 - custom_fct_opensite="true" # during pr, merg
 - custom_fct_help="false"
@@ -78,11 +80,6 @@ TODO
   fi
 
 
-TODO
-optimize my_message when calling
-  Print_
-  Banner_
-
 Instead of creating custom var simnply use %1 %2 <=dollar sign
 
   function greet () {
@@ -91,17 +88,28 @@ Instead of creating custom var simnply use %1 %2 <=dollar sign
   greet "Pascal"
 
 
-TODO ci pipeline
-- superlinter (includes shellcheck)
-- create ci for using shellcheck
-- run test()
-
 TODO git-crypt
 once gitcrypt to well test and solid, push V2
 
 
 PRIORITY 2 ____________________________________________________________________________
 _______________________________________________________________________________________
+
+0o0o ci pipeline
+- superlinter (includes shellcheck)
+- create ci for using shellcheck
+- execute test()
+
+
+0o0o
+Fix dependabot read-only annoyance
+https://github.com/marketplace/actions/fetch-metadata-from-dependabot-prs
+
+
+0o0o
+optimize my_message when calling
+  Print_
+  Banner_
 
 
 0o0o EDGE_EXTENTED
@@ -136,6 +144,12 @@ works but not clean, but it works mdv() / Show_Docs
 - GH enviroment (staging, prod)
 - re-use workflow
 - List files on B2
+- per example: https://github.com/fatih/dotfiles
+
+0o0o pending
+- v_and_t
+- ARRAY CFG_ARR_DOCS_MARKDOWN + CFG_ARR_COMPONENTS_SCRIPTS
+
 
 // END COMMENT BLOCK
 '
@@ -173,7 +187,6 @@ function edge { # User_
 
 ### Logic to manage and generate unique edge name
 ### =============================================
-_branch_dev_unique=$(cat "${_path_lib}/Application Support/${_path_last_part}")
 
 ### Local: delete branch if it exists
   _branch_exist=$(git branch --list "${_branch_dev_unique}" | wc -l)
@@ -189,7 +202,7 @@ _branch_dev_unique=$(cat "${_path_lib}/Application Support/${_path_last_part}")
   fi
 
 ### Remote: delete branch if it exists
-  _branch_exist=$(git ls-remote --heads https://github.com/"${github_user}"/"${app_name}".git "${_branch_dev_unique}" | wc -l)
+  _branch_exist=$(git ls-remote --heads https://github.com/"${GITHUB_USER}"/"${APP_NAME}".git "${_branch_dev_unique}" | wc -l)
   # It does not make sens to Condition_Vars_Must_Be_Not_Empty
   if [[ ${_branch_exist} -eq 0 ]]; then
     echo "remote: OK branch ${_branch_dev_unique} do not exist" > /dev/null 2>&1
@@ -290,6 +303,7 @@ function mrg { # User_
 
   Show_Version
 
+  echo
   my_message="Current branch is:" && Print_Blue
   git rev-parse --abbrev-ref HEAD
 
@@ -310,7 +324,6 @@ function mrg { # User_
 }
 
 function version { # User_
-### The version is stored within the Dockerfile. For BashLaVa, this Dockerfile is just a config-env file
   Condition_No_Commits_Pending
   _from_fct="v"
 
@@ -333,28 +346,31 @@ function version { # User_
   
 
   if [[ "${input_2}" != "not_set" ]]; then
-
     Condition_Attr_2_Must_Be_Provided
     Condition_Version_Must_Be_Valid
 
-  ### Update version within Dockerfile
-    sed -i '' "s/^ARG VERSION=.*$/ARG VERSION=\"${input_2}\"/" Dockerfile
-    # code optimization 0o0o, Add logic for /private scripts
+# TODO
+### Update version within .bashlava_env_override.sh
+  _file_is="${CFG_CUSTOM_CONFIG_FILE_NAME}" _file_path_is="$(pwd)/${_file_is}" && Condition_File_Must_Be_Present
+  sed -i '' "s/^APP_VERSION=.*$/APP_VERSION=\"${input_2}\"/" "${_file_path_is}"
 
-    git add .
-    git commit . -m "Update ${app_name} to version ${input_2}"
-    git push && echo
-    Show_Version
+  ### Reload default configurations as the version was updated
+  source "${_file_path_is}"
 
-    Show_What_Was_Done
-    _doc_name="next_move_fct_v.md" && Show_Docs
-    input_2="not_set"   #reset input_2
-    read -r user_input;
-    case ${user_input} in
-      1 | t) tag;;
-      2 | pr) pr;;
-      *) my_message="Aborted" && Print_Gray;;
-    esac
+  git add .
+  git commit . -m "Update ${APP_NAME} to version ${input_2}"
+  git push && echo
+  Show_Version
+
+  Show_What_Was_Done
+  _doc_name="next_move_fct_v.md" && Show_Docs
+  input_2="not_set"   #reset input_2
+  read -r user_input;
+  case ${user_input} in
+    1 | t) tag;;
+    2 | pr) pr;;
+    *) my_message="Aborted" && Print_Gray;;
+  esac
 
   elif [[ "${input_2}" == "not_set" ]]; then
     my_message="ERROR: This should not happen (version)" && Print_Warning_Stop
@@ -368,8 +384,9 @@ function tag { # User_
   #Condition_Attr_2_Must_Be_Empty
   _from_fct="t"
 
-  git tag ${app_version} && git push --tags && echo
+  git tag ${APP_VERSION} && git push --tags && echo
   Show_Version
+  Show_Tag
 
   Show_What_Was_Done
   _doc_name="next_move_fct_tag.md" && Show_Docs
@@ -382,64 +399,13 @@ function tag { # User_
   esac
 }
 
-function v_and_t { 
-  # version and tag
-# TODO
-  # This is OK but not clean
-  # I can optimze this later with a flag for many apps v, t, r, e
-  # I need to duplicate v() code because we prompt in version and in tag
-### The version is stored within the Dockerfile. For BashLaVa, this Dockerfile is just a config-env file
-  Condition_No_Commits_Pending
-  _from_fct="v"
-
-  Show_Version
-
-  # set input_2 if not provided
-  if [[ "${input_2}" == "not_set" ]]; then
-    my_message="What is the version number (ex: 1.12.4.)?" && Print_Green
-    read -r user_input;
-    echo;
-    my_message="${user_input}" && Print_Green
-    input_2="${user_input}"
-    Condition_Version_Must_Be_Valid
-
-  elif [[ "${input_2}" != "not_set" ]]; then
-    echo "Good, lets continue" > /dev/null 2>&1
-  else
-    my_message="FATAL: (version)" && Print_Fatal
-  fi
-  
-
-  if [[ "${input_2}" != "not_set" ]]; then
-
-    Condition_Attr_2_Must_Be_Provided
-    Condition_Version_Must_Be_Valid
-
-  ### Update version within Dockerfile
-    sed -i '' "s/^ARG VERSION=.*$/ARG VERSION=\"${input_2}\"/" Dockerfile
-    # code optimization 0o0o, Add logic for /private scripts
-
-    git add .
-    git commit . -m "Update ${app_name} to version ${input_2}"
-    git push && echo
-    Show_Version
-    Show_What_Was_Done
-    tag
-
-  elif [[ "${input_2}" == "not_set" ]]; then
-    my_message="ERROR: This should not happen (version)" && Print_Warning_Stop
-  else
-    my_message="FATAL (version)" && Print_Fatal
-  fi
-}
-
 function tci { # User_
   Condition_No_Commits_Pending
   Condition_Attr_2_Must_Be_Empty
   _from_fct="tci"
 
   _short_hash=$(git rev-parse --short HEAD)
-  _tag_name="ci_${app_version}_${_short_hash}"
+  _tag_name="ci_${APP_VERSION}_${_short_hash}"
   _var_name="_short_hash" _is_it_empty="${_short_hash}" && Condition_Vars_Must_Be_Not_Empty
   _var_name="_tag_name" _is_it_empty="${_tag_name}" && Condition_Vars_Must_Be_Not_Empty
 
@@ -464,12 +430,13 @@ function release { # User_
   Condition_Attr_2_Must_Be_Empty
   _from_fct="r"
 
-  latest_tag="$(git describe --tags --abbrev=0)"
-
   # I would like to not have the v in the release https://github.com/cli/cli/issues/5609
   #                'v' is an attribut required by gh cli
-  gh release create "${latest_tag}" --generate-notes && sleep 5
-  Show_Version
+  gh release create "$(git describe --tags --abbrev=0)" --generate-notes
+  
+  sleep 0.3
+  Show_Version && sleep 0.3
+  Show_Tag && sleep 0.3
   Show_Release
 
   Show_What_Was_Done
@@ -515,7 +482,7 @@ function ci { # User_
   _run_id=$(gh run list | head -1 | awk '{print $11}')
   _var_name="_run_id" _is_it_empty="${_run_id}" && Condition_Vars_Must_Be_Not_Empty
   # Opening the run id cuase issues. Lets stick to /actions/
-  open https://github.com/${github_user}/${app_name}/actions/
+  open https://github.com/${GITHUB_USER}/${APP_NAME}/actions/
 
   # Follow status within the terminal
   gh run watch
@@ -532,7 +499,6 @@ function ci { # User_
 
 function dummy { # User_
   Condition_Attr_2_Must_Be_Empty
-  Condition_No_Commits_Pending
   _from_fct="d"
   _in_file="./docs/DUMMY.md"
 
@@ -541,8 +507,8 @@ function dummy { # User_
     date_nano="$(date +%Y-%m-%d_%HH%Ms%S-%N)"
     _hash=$(echo ${date_nano} | sha256sum | awk '{print $1}')
     _hash_four_last="${_hash: -4}"
-    echo "Dummy Commit, $(date +%Y-%m-%d_%HH%M_%S), ${_hash}" >> "${_in_file}"
-    git add -A && git commit -m "dummy commit ${_hash_four_last}"
+    echo "Dummy Commit ${lineID} - $(date +%Y-%m-%d_%HH%M_%S) - ${_hash}" >> "${_in_file}"
+    git add -A && git commit -m "Dummy Commit ${lineID} - ${_hash_four_last}"
     sleep 1
   done
 
@@ -569,14 +535,16 @@ function test { # User_
   Condition_No_Commits_Pending
   _from_fct="test"
   # PRINT OPTION 1
-  echo && my_message="Check Print_Banner:" && Print_Blue
+  echo && my_message="Check Print_Banner" && Print_Blue
   my_message="bashLaVa" && Print_Banner
 
-  my_message="Random tests: " Print_Blue
+  my_message="Random tests" Print_Blue
   my_message="\$1 value is: ${input_1}" Print_Gray
   my_message="\$2 value is: ${input_2}" Print_Gray
   my_message="\$3 value is: ${input_3}" Print_Gray
   my_message="\$4 value is: ${input_4}" Print_Gray
+ 
+  Core_Show_Env_Vars
 
   echo
   Condition_Apps_Must_Be_Installed
@@ -594,15 +562,16 @@ function test { # User_
   fi
 
   echo
+  my_message="Array from /components/utilities.sh" && Print_Blue
   Utility_Array
 
   # PRINT OPTION 2
   echo
-  my_message="Test mdv:" && Print_Blue
+  my_message="Test mdv" && Print_Blue
   _doc_name="test.md" && Show_Docs
 
   # PRINT OPTION 3
-  my_message="Test color prints:" && Print_Blue
+  my_message="Test color prints" && Print_Blue
   my_message="You feel me!?"
   Print_Green
   Print_Blue
@@ -611,10 +580,6 @@ function test { # User_
   # Print_Fatal is bypassed as it does an 'exit 0'
 
   Show_Version
-
-  echo "WIP 2022-05-10_21h45"
-  Core_test_vars
-  Core_show_vars
 }
 
 function help { # User_
@@ -651,8 +616,8 @@ function gitio { # User_
   }
 
   echo
-  my_message="URL ........ : https://git.io/${app_name}" && Print_Gray
-  my_message="will point to: https://github.com/${github_user}/${app_name}" && Print_Gray
+  my_message="URL ........ : https://git.io/${APP_NAME}" && Print_Gray
+  my_message="will point to: https://github.com/${GITHUB_USER}/${APP_NAME}" && Print_Gray
   #output example: https://git.io/bashlava
 
   # PROMPT
@@ -678,16 +643,14 @@ function gitio { # User_
 #
 
 function Show_Version {
-
   echo && my_message="Check versions:" && Print_Blue
   # Need to reload so the user can see before and after version
-  Core_Load_Vars_Dockerfile
 
-  # version in dockerfile
-  my_message="${app_version} < VERSION in Dockerfile" Print_Gray
-
-  # tag
-  if [[ -n $(git tag -l "${app_version}") ]]; then
+  # VERSION
+  my_message="${APP_VERSION} < VERSION in ${CFG_CUSTOM_CONFIG_FILE_NAME}" Print_Gray
+}
+function Show_Tag {
+  if [[ -n $(git tag -l "${APP_VERSION}") ]]; then
     echo "Good, a tag is present" > /dev/null 2>&1
     latest_tag="$(git describe --tags --abbrev=0)"
     _var_name="latest_tag" _is_it_empty="${latest_tag}" && Condition_Vars_Must_Be_Not_Empty
@@ -696,30 +659,14 @@ function Show_Version {
     latest_tag="none "
   fi
   my_message="${latest_tag} < TAG     in ${CFG_DEFAULT_BRANCH}" Print_Gray
-
-  # release
-  release_latest=$(curl -s https://api.github.com/repos/${github_user}/${app_name}/releases/latest | \
-    grep tag_name | awk -F ': "' '{ print $2 }' | awk -F '",' '{ print $1 }')
-
-  if [[ -z "${release_latest}" ]]; then
-    release_latest="none "
-    echo "Logic: new projet don't have any release. So we must expect that it can be empty" > /dev/null 2>&1
-  elif [[ -n "${release_latest}" ]]; then
-    echo "Good, a release is present" > /dev/null 2>&1
-    _var_name="release_latest" _is_it_empty="${release_latest}" && Condition_Vars_Must_Be_Not_Empty
-  else
-    my_message="FATAL: Show_Version | release_latest " && Print_Fatal
-  fi
-
-  my_message="${release_latest} < RELEASE on https://github.com/${github_user}/${app_name}/releases/tag/${release_latest}" && Print_Gray
-  echo
 }
 
 function Show_Release {
-  release_latest=$(curl -s https://api.github.com/repos/${github_user}/${app_name}/releases/latest | \
-    grep tag_name | awk -F ': "' '{ print $2 }' | awk -F '",' '{ print $1 }')
+  release_latest=$(curl -s "https://api.github.com/repos/${GITHUB_USER}/${APP_NAME}/releases/latest" | grep '"tag_name": ' | awk '{print $2}' | sed -e 's/"//g' | sed -e 's/,//g' | awk '{print $1}')
   _var_name="release_latest" _is_it_empty="${release_latest}" && Condition_Vars_Must_Be_Not_Empty
-  open "https://github.com/${github_user}/${app_name}/releases/tag/${release_latest}"
+
+  my_message="${release_latest} < RELEASE on https://github.com/${GITHUB_USER}/${APP_NAME}/releases/tag/${release_latest}" && Print_Gray
+  echo
 }
 
 function Show_Docs {
@@ -736,7 +683,7 @@ function Show_Docs {
 }
 
 function Show_What_Was_Done {
-  echo && my_message="(${_from_fct}) was done.                          ${app_name} $(git rev-parse --abbrev-ref HEAD)" && Print_Green
+  echo && my_message="(${_from_fct}) was done.                          ${APP_NAME} $(git rev-parse --abbrev-ref HEAD)" && Print_Green
 }
 
 function Show_Prompt_All {
@@ -849,8 +796,6 @@ function Condition_Branch_Must_Be_Mainbranch {
 }
 
 function Condition_Branch_Must_Be_Edge {
-  _branch_dev_unique=$(cat "${_path_lib}/Application Support/${_path_last_part}")
-
   _compare_me=$(git rev-parse --abbrev-ref HEAD)
   _compare_you="${_branch_dev_unique}" _fct_is="Condition_Branch_Must_Be_Edge"
   Condition_Vars_Must_Be_Equal
@@ -944,9 +889,8 @@ function Condition_Apps_Must_Be_Installed {
 
 function Core_Check_Which_File_Exist {
   # List markdown files under /docs/*
-  arr=( "welcome_to_bashlava" "help" "test" "debug_upstream" )
-  for action in "${arr[@]}"; do
-    _file_is="${action}" _file_path_is="${_path_docs}/${_file_is}.md" && Condition_File_Must_Be_Present
+  for action in "${CFG_ARR_DOCS_MARKDOWN[@]}"; do
+    _file_is="${action}" _file_path_is="${_path_docs}/${_file_is}" && Condition_File_Must_Be_Present
   done
 
   # List files under /components/*
@@ -957,22 +901,17 @@ function Core_Check_Which_File_Exist {
 
   _file_is="LICENSE" _file_path_is="${_path_bashlava}/${_file_is}" && Condition_File_Optionnally_Present
   if [[ "${_file_do_not_exist}" == "true" ]]; then
-    my_message="Dockerfile does not exit, let's generate one" && Print_Warning && sleep 2 && Utility_license && exit 1
+    my_message="LICENSE does not exit, let's generate one" && Print_Warning && sleep 2 && Utility_license && exit 1
   fi
 
   _file_is="README.md" _file_path_is="${_path_bashlava}/${_file_is}" && Condition_File_Optionnally_Present
   if [[ "${_file_do_not_exist}" == "true" ]]; then
-    my_message="Dockerfile does not exit, let's generate one" && Print_Warning && sleep 2 && Utility_readme && exit 1
+    my_message="README.md does not exit, let's generate one" && Print_Warning && sleep 2 && Utility_readme && exit 1
   fi
 
   _file_is=".gitignore" _file_path_is="${_path_bashlava}/${_file_is}" && Condition_File_Optionnally_Present
   if [[ "${_file_do_not_exist}" == "true" ]]; then
-    my_message="Dockerfile does not exit, let's generate one" && Print_Warning && sleep 2 && Utility_gitignore && exit 1
-  fi
-
-  _file_is="Dockerfile" _file_path_is="${_path_bashlava}/${_file_is}" && Condition_File_Optionnally_Present
-  if [[ "${_file_do_not_exist}" == "true" ]]; then
-    my_message="Dockerfile does not exit, let's generate one" && Print_Warning && sleep 2 && Utility_dockerfile && exit 1
+    my_message=".gitignore does not exit, let's generate one" && Print_Warning && sleep 2 && Utility_gitignore && exit 1
   fi
 
   # Warning only
@@ -1088,89 +1027,70 @@ function Core_Reset_Bashlava_Path {
   fi
 }
 
-function Core_Load_Vars_Dockerfile {
-  # Define vars from Dockerfile
-  app_name=$(cat Dockerfile | grep APP_NAME= | head -n 1 | grep -o '".*"' | sed 's/"//g')
-  app_version=$(cat Dockerfile | grep VERSION= | head -n 1 | grep -o '".*"' | sed 's/"//g')
-  github_user=$(cat Dockerfile | grep GITHUB_USER= | head -n 1 | grep -o '".*"' | sed 's/"//g')
-  dockerhub_user=$(cat Dockerfile | grep DOCKERHUB_USER= | head -n 1 | grep -o '".*"' | sed 's/"//g')
-  github_registry=$(cat Dockerfile | grep GITHUB_REGISTRY= | head -n 1 | grep -o '".*"' | sed 's/"//g')
+function Core_Load_Vars_Edge {
+### edge
+  # This is where we dynamically store the edge name
+  # Can't pass the path as a var because of the space in the path (/Application Support)
+  # I guess it's just me not knowing how to manage this :-p
+  # It does not make sens to Condition_Vars_Must_Be_Not_Empty
+  _path_lib="${HOME}/Library"
+  _var_name="_path_lib" _is_it_empty="${_path_lib}" && Condition_Vars_Must_Be_Not_Empty
 
-  _url_to_release="https://github.com/${github_user}/${app_name}/releases/new"
-  _url_to_check="https://github.com/${github_user}/${app_name}"
+  mkdir -p "${_path_lib}/Application Support/FirePress/bashlava"
+  _path_last_part="FirePress/bashlava/${APP_NAME}_dev_branch_name_is"
+  _var_name="_path_last_part" _is_it_empty="${_path_last_part}" && Condition_Vars_Must_Be_Not_Empty
 
-  # idempotent checkpoints
-  _var_name="app_name" _is_it_empty="${app_name}" && Condition_Vars_Must_Be_Not_Empty
-  _var_name="app_version" _is_it_empty="${app_version}" && Condition_Vars_Must_Be_Not_Empty
-  _var_name="github_user" _is_it_empty="${github_user}" && Condition_Vars_Must_Be_Not_Empty
-  _var_name="dockerhub_user" _is_it_empty="${dockerhub_user}" && Condition_Vars_Must_Be_Not_Empty
-  _var_name="github_registry" _is_it_empty="${github_registry}" && Condition_Vars_Must_Be_Not_Empty
-  _var_name="_url_to_release" _is_it_empty="${_url_to_release}" && Condition_Vars_Must_Be_Not_Empty
-  _var_name="_url_to_check" _is_it_empty="${_url_to_check}" && Condition_Vars_Must_Be_Not_Empty
+  _branch_dev_unique=$(cat "${_path_lib}/Application Support/${_path_last_part}")
+  _var_name="_branch_dev_unique" _is_it_empty="${_branch_dev_unique}" && Condition_Vars_Must_Be_Not_Empty
 }
 
-function Core_test_vars {
+function Core_Show_Env_Vars {
+  Core_Test_Env_Vars
+
+  my_message="Check env_vars from config:" && Print_Blue
+  echo
+  echo "CFG_OVERRIDE_WITH_CUSTOM_CONFIG   > ${CFG_OVERRIDE_WITH_CUSTOM_CONFIG}"
+  echo
+  echo "APP_NAME                          > ${APP_NAME}"
+  echo "GITHUB_USER                       > ${GITHUB_USER}"
+  echo "APP_VERSION                       > ${APP_VERSION}"
+  echo
+  echo "CFG_DEFAULT_BRANCH                > ${CFG_DEFAULT_BRANCH}"
+  echo "CFG_DEFAULT_DEV_BRANCH            > ${CFG_DEFAULT_DEV_BRANCH}"
+  echo "CFG_USER_IS                       > ${CFG_USER_IS}"
+  echo
+  echo "CFG_EDGE_EXTENTED                 > ${CFG_EDGE_EXTENTED}"
+  echo "CFG_LOG_LINE_NBR_SHORT            > ${CFG_LOG_LINE_NBR_SHORT}"
+  echo "CFG_LOG_LINE_NBR_LONG             > ${CFG_LOG_LINE_NBR_LONG}"
+  echo
+  echo "CFG_ARR_COMPONENTS_SCRIPTS        > ${CFG_ARR_COMPONENTS_SCRIPTS}"
+  echo "CFG_ARR_DOCS_MARKDOWN             > ${CFG_ARR_DOCS_MARKDOWN}"
+  echo
+  echo "DOCKER_IMG_FIGLET                 > ${DOCKER_IMG_FIGLET}"
+  echo "DOCKER_IMG_GLOW                   > ${DOCKER_IMG_GLOW}"
+}
+
+function Core_Test_Env_Vars {
 ### NEW CONFIG
 _var_name="CFG_OVERRIDE_WITH_CUSTOM_CONFIG" _is_it_empty="${CFG_OVERRIDE_WITH_CUSTOM_CONFIG}" && Condition_Vars_Must_Be_Not_Empty
+
+_var_name="APP_NAME" _is_it_empty="${APP_NAME}" && Condition_Vars_Must_Be_Not_Empty
+_var_name="GITHUB_USER" _is_it_empty="${GITHUB_USER}" && Condition_Vars_Must_Be_Not_Empty
+_var_name="APP_VERSION" _is_it_empty="${APP_VERSION}" && Condition_Vars_Must_Be_Not_Empty
 
 _var_name="CFG_DEFAULT_BRANCH" _is_it_empty="${CFG_DEFAULT_BRANCH}" && Condition_Vars_Must_Be_Not_Empty
 _var_name="CFG_DEFAULT_DEV_BRANCH" _is_it_empty="${CFG_DEFAULT_DEV_BRANCH}" && Condition_Vars_Must_Be_Not_Empty
 _var_name="CFG_USER_IS" _is_it_empty="${CFG_USER_IS}" && Condition_Vars_Must_Be_Not_Empty
-#
-_var_name="APP_NAME" _is_it_empty="${APP_NAME}" && Condition_Vars_Must_Be_Not_Empty
-_var_name="APP_VERSION" _is_it_empty="${APP_VERSION}" && Condition_Vars_Must_Be_Not_Empty
-_var_name="GITHUB_USER" _is_it_empty="${GITHUB_USER}" && Condition_Vars_Must_Be_Not_Empty
-_var_name="DOCKERHUB_USER" _is_it_empty="${DOCKERHUB_USER}" && Condition_Vars_Must_Be_Not_Empty
-_var_name="GITHUB_REGISTRY" _is_it_empty="${GITHUB_REGISTRY}" && Condition_Vars_Must_Be_Not_Empty
 
 _var_name="CFG_EDGE_EXTENTED" _is_it_empty="${CFG_EDGE_EXTENTED}" && Condition_Vars_Must_Be_Not_Empty
 _var_name="CFG_LOG_LINE_NBR_SHORT" _is_it_empty="${CFG_LOG_LINE_NBR_SHORT}" && Condition_Vars_Must_Be_Not_Empty
 _var_name="CFG_LOG_LINE_NBR_LONG" _is_it_empty="${CFG_LOG_LINE_NBR_LONG}" && Condition_Vars_Must_Be_Not_Empty
 
-_var_name="CFG_ARR_SCRIPTS_COMPONENTS" _is_it_empty="${CFG_ARR_SCRIPTS_COMPONENTS}" && Condition_Vars_Must_Be_Not_Empty
+_var_name="CFG_ARR_COMPONENTS_SCRIPTS" _is_it_empty="${CFG_ARR_COMPONENTS_SCRIPTS}" && Condition_Vars_Must_Be_Not_Empty
+_var_name="CFG_ARR_DOCS_MARKDOWN" _is_it_empty="${CFG_ARR_DOCS_MARKDOWN}" && Condition_Vars_Must_Be_Not_Empty
 
 _var_name="DOCKER_IMG_FIGLET" _is_it_empty="${DOCKER_IMG_FIGLET}" && Condition_Vars_Must_Be_Not_Empty
 _var_name="DOCKER_IMG_GLOW" _is_it_empty="${DOCKER_IMG_GLOW}" && Condition_Vars_Must_Be_Not_Empty
-
-}
-
-function Core_show_vars {
-echo "${CFG_OVERRIDE_WITH_CUSTOM_CONFIG}"
-
-echo "${CFG_DEFAULT_BRANCH}"
-echo "${CFG_DEFAULT_DEV_BRANCH}"
-echo "${CFG_USER_IS}"
-
-echo "${APP_NAME}"
-echo "${APP_VERSION}"
-echo "${GITHUB_USER}"
-echo "${DOCKERHUB_USER}"
-echo "${GITHUB_REGISTRY}"
-
-echo "${CFG_EDGE_EXTENTED}"
-echo "${CFG_LOG_LINE_NBR_SHORT}"
-echo "${CFG_LOG_LINE_NBR_LONG}"
-
-echo "${CFG_ARR_SCRIPTS_COMPONENTS}"
-
-echo "${DOCKER_IMG_FIGLET}"
-echo "${DOCKER_IMG_GLOW}"
-}
-
-function Core_Load_Vars_Edge {
-### edge
-  # Path where we store the dynamically generated edge name
-  _path_lib="${HOME}/Library"
-  _var_name="_path_lib" _is_it_empty="${_path_lib}" && Condition_Vars_Must_Be_Not_Empty
-
-  mkdir -p "${_path_lib}/Application Support/FirePress/bashlava"
-  _path_last_part="FirePress/bashlava/${app_name}_dev_branch_name_is"
-  _var_name="_path_last_part" _is_it_empty="${_path_last_part}" && Condition_Vars_Must_Be_Not_Empty
-
-  # Can't pass the path as a var because of the space (/Application Support)
-  # I guess it's just me not knowing how to manage this :-p
-  #_branch_dev_unique=$(cat "${_path_lib}/Application Support/${_path_last_part}")
-  # It does not make sens to Condition_Vars_Must_Be_Not_Empty
 }
 
 ### Entrypoint
@@ -1193,38 +1113,54 @@ function main() {
 ### Set absolute path for the ./docs directory
   _path_docs="${_path_bashlava}/docs" _var_name="_path_docs" _is_it_empty="${_path_docs}" && Condition_Vars_Must_Be_Not_Empty
 
-# TODO handle errors
 ### Load default configurations
-  _file_is="config_default.sh" _file_path_is="$(pwd)/${_file_is}" && Condition_File_Must_Be_Present
+  _file_is=".bashlava_env.sh" _file_path_is="$(pwd)/${_file_is}" && Condition_File_Must_Be_Present
   source "${_file_path_is}"
 
-# TODO handle errors
+### Load custom configurations
   if [[ "${CFG_OVERRIDE_WITH_CUSTOM_CONFIG}" == "true" ]]; then
-  _file_is="config_custom.sh" _file_path_is="$(pwd)/${_file_is}" && Condition_File_Must_Be_Present
-  source "${_file_path_is}"
+    _file_is="${CFG_CUSTOM_CONFIG_FILE_NAME}" _file_path_is="$(pwd)/${CFG_CUSTOM_CONFIG_FILE_NAME}" && Condition_File_Must_Be_Present
+    source "${_file_path_is}"
+  elif [[ "${CFG_OVERRIDE_WITH_CUSTOM_CONFIG}" == "false" ]]; then
+    my_message="Config file is missing or not well configured: '${CFG_CUSTOM_CONFIG_FILE_NAME}'. See docs." && Print_Warning_Stop
+  else
+    my_message="FATAL: Config is broken regarding: 'CFG_OVERRIDE_WITH_CUSTOM_CONFIG'." && Print_Fatal
   fi
 
-# TODO handle errors
-  # SOURCE COMPONENTS (PUBLIC)
-  for action in "${CFG_ARR_SCRIPTS_COMPONENTS[@]}"; do
+  ### The array should be in the config file but it does not work
+  CFG_ARR_DOCS_MARKDOWN=(
+    "welcome_to_bashlava.md"
+    "help.md"
+    "test.md"
+    "debug_upstream.md"
+  )
+  ### The array should be in the config file but it does not work
+  CFG_ARR_COMPONENTS_SCRIPTS=(
+    "alias.sh"
+    "example.sh"
+    "utilities.sh"
+    "Show_Fct_Category_Filter.sh"
+  )
+
+### Load COMPONENTS (PUBLIC)
+  for action in "${CFG_ARR_COMPONENTS_SCRIPTS[@]}"; do
     _file_is="${action}" _file_path_is="${_path_components}/${_file_is}" && Condition_File_Must_Be_Present
     # code optimization 0o0o, add logic: _to_source="true"
     source "${_file_path_is}"
   done
 
-  # SOURCE PRIVATE COMPONENTS
-  ### the user must create components/private/_entrypoint.sh file
+### Load PRIVATE COMPONENTS
+### To use private components, the user must create components/private/_entrypoint.sh file
   _file_is="_entrypoint.sh" _file_path_is="${_path_components}/private/${_file_is}"
   if [[ -f "${_file_path_is}" ]]; then
     source "${_file_path_is}"
   elif [[ ! -f "${_file_path_is}" ]]; then
-    my_message="Warning: You should set /components/private/_entrypoint.sh" && Print_Warning
+    my_message="Warning: You should set ${_file_path_is}" && Print_Warning
     my_message="See README for installation details."                       && Print_Warning && sleep 2
   else
     my_message="FATAL: Condition_File_Must_Be_Present | ${_file_path_is}" && Print_Fatal
   fi
 
-  Core_Load_Vars_Dockerfile
   Core_Load_Vars_Edge
   Core_Check_Which_File_Exist
 
@@ -1296,6 +1232,5 @@ elif [[ -n "$1" ]]; then
 else
   my_message="FATAL: main (When no arg are provided)" && Print_Fatal
 fi
-
 
 # END OF SCRIPT

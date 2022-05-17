@@ -1,7 +1,10 @@
-# .gitignore
+# Specific to bashlava
 ############
 private
-config_custom.sh
+.bashlava_env_*
+
+# .gitignore
+############
 .env
 .cache
 node_modules
