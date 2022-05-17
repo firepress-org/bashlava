@@ -5,4 +5,4 @@
 
 APP_NAME="bashlava"
 GITHUB_USER="firepress-org"
-APP_VERSION="1.43.0"
+APP_VERSION="1.44.0"
