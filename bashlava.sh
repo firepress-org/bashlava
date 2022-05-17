@@ -2,7 +2,7 @@
 
 : '
 // START COMMENT BLOCK
-To-Do comment section. Total of 7
+To-Do comment section. Total of 4
 
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 PINNED issues on GH             _
@@ -22,46 +22,14 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 PRIORITY 1 ____________________________________________________________________________
 _______________________________________________________________________________________
 
-
 TODO
-Feat UX: Use config files and logic overrides
+PR Title: FEAT: 4 updates (configs, source, private). See PR
 
-## Requirement:
-- Decouple logic using files: .bashlava_env.sh and .bashlava_env_override.sh
-- At the moment, its too complex for a new user to configure bashlava
-- Let avoid having multiple place to define them, source components, source .md
-- Few array that are configs. They should be all together under the same block of code.
-
-## Functional impacts:
-  - Dockerfile file is not the place to store config anymore (old logic from https://github.com/firepress-org/ghostfire)
-  - Logic for .bashlava_env_override.sh, needed for this env var
-      APP_NAME="notset"
-      GITHUB_USER="notset"
-      APP_VERSION="0.0.1"
-  - Update Show_Version()
-  - Update Show_Tag()
-  - Update Show_Release()
-  - remove remove v_and_t()
-  - remove Core_Load_Vars_General()
-  - remove Core_Load_Vars_Dockerfile()
-  - remove Core_Check_Which_File_Exist()
-  - File: to check VERSUS file to source
-  - Extended Test: Show all var and config (debug)
-  - Think about private scripts trigger
-  - README docs are still missing, but its ok at this point
-  - Impact on: #4, #8, #10
-
-
-TODO private scripts
-logical flags to manage under /private/*
-Need to check if files exist /private/* when DIR private exist
-Need logic to manage file under /private/*  fct VERSUS public fct
-overide like:
-- favorite URL
-- custom_fct_opensite="true" # during pr, merg
-- custom_fct_help="false"
-- set a new config flag: debug="true"
-
+- Add new config / CFG_RELEASE_POPUP
+- Add new config / CFG_LOCK_INIT
+- Source .bashlava_env.sh directly from bashlava projet (not from pwd)
+- Logic for private scripts is already well managed
+- Impact on: #4
 
 TODO
 ## App if app are installed
@@ -437,7 +405,9 @@ function release { # User_
   sleep 0.3
   Show_Version && sleep 0.3
   Show_Tag && sleep 0.3
+
   Show_Release
+# CFG_RELEASE_POPUP / add logic 0o0o
 
   Show_What_Was_Done
   _doc_name="next_move_fct_release.md" && Show_Docs
@@ -586,6 +556,7 @@ function help { # User_
   Condition_Attr_3_Must_Be_Empty
   _from_fct="h"
 
+# CFG_HELP_ALT / Add logic 0o0o
   clear
   _doc_name="help.md" && Show_Docs
 }
@@ -1114,7 +1085,7 @@ function main() {
   _path_docs="${_path_bashlava}/docs" _var_name="_path_docs" _is_it_empty="${_path_docs}" && Condition_Vars_Must_Be_Not_Empty
 
 ### Load default configurations
-  _file_is=".bashlava_env.sh" _file_path_is="$(pwd)/${_file_is}" && Condition_File_Must_Be_Present
+  _file_is=".bashlava_env.sh" _file_path_is="${_path_bashlava}/${_file_is}" && Condition_File_Must_Be_Present
   source "${_file_path_is}"
 
 ### Load custom configurations
@@ -1122,7 +1093,8 @@ function main() {
     _file_is="${CFG_CUSTOM_CONFIG_FILE_NAME}" _file_path_is="$(pwd)/${CFG_CUSTOM_CONFIG_FILE_NAME}" && Condition_File_Must_Be_Present
     source "${_file_path_is}"
   elif [[ "${CFG_OVERRIDE_WITH_CUSTOM_CONFIG}" == "false" ]]; then
-    my_message="Config file is missing or not well configured: '${CFG_CUSTOM_CONFIG_FILE_NAME}'. See docs." && Print_Warning_Stop
+    my_message="Config file is missing or not well configured: '${CFG_CUSTOM_CONFIG_FILE_NAME}"   && Print_Warning
+    my_message="See README for installation details."                                             && Print_Warning_Stop
   else
     my_message="FATAL: Config is broken regarding: 'CFG_OVERRIDE_WITH_CUSTOM_CONFIG'." && Print_Fatal
   fi
@@ -1145,7 +1117,7 @@ function main() {
 ### Load COMPONENTS (PUBLIC)
   for action in "${CFG_ARR_COMPONENTS_SCRIPTS[@]}"; do
     _file_is="${action}" _file_path_is="${_path_components}/${_file_is}" && Condition_File_Must_Be_Present
-    # code optimization 0o0o, add logic: _to_source="true"
+    # code optimization, add logic: _to_source="true" 0o0o
     source "${_file_path_is}"
   done
 
@@ -1155,8 +1127,8 @@ function main() {
   if [[ -f "${_file_path_is}" ]]; then
     source "${_file_path_is}"
   elif [[ ! -f "${_file_path_is}" ]]; then
-    my_message="Warning: You should set ${_file_path_is}" && Print_Warning
-    my_message="See README for installation details."                       && Print_Warning && sleep 2
+    my_message="Warning: You should set ${_file_path_is} for your own scripts."   && Print_Warning
+    my_message="See README for installation details."                             && Print_Warning && sleep 2
   else
     my_message="FATAL: Condition_File_Must_Be_Present | ${_file_path_is}" && Print_Fatal
   fi
@@ -1194,14 +1166,26 @@ function main() {
   cron_init
   colour_init
 
-### Ensure there are no more than three attrbutes
+### Ensure there are no more than three attributes
   Condition_Attr_4_Must_Be_Empty
 
-### optional
-  # lock_init system
+### Acquire script lock
+if [[ "${CFG_LOCK_INIT}" == "true" ]]; then
+  lock_init system
+elif [[ "${CFG_LOCK_INIT}" == "false" ]]; then
+  echo "bypassed, ok" > /dev/null
+else
+  my_message="FATAL: Config is broken regarding: 'CFG_LOCK_INIT'." && Print_Fatal
+fi
 
 ### optionnal Trace the execution of the script to debug (if needed)
-  # set -o xtrace
+if [[ "${CFG_DEBUG_MODE}" == "true" ]]; then
+  set -o xtrace
+elif [[ "${CFG_DEBUG_MODE}" == "false" ]]; then
+  echo "bypassed, ok" > /dev/null
+else
+  my_message="FATAL: Config is broken regarding: 'CFG_DEBUG_MODE'." && Print_Fatal
+fi
 
 ###'command not found' / Add logic to confirm the fct exist or not
   #clear
