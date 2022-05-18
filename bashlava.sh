@@ -2,66 +2,49 @@
 
 : '
 // START COMMENT BLOCK
-To-Do comment section. Total of 4
+TO-DO comment section. Total of 3
 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+_________________________________
 PINNED issues on GH             _
-  issue #4 TO-DO & backlog       _
+  issue #4 TO-DO & backlog      _
   issue #8 UX                   _
   issue #9 Bugfix               _
   issue #10 Logic & Condition   _
   issue #11 docs                _
-                                _
+
 PR Title: New Feat: 0o0o
 - 0o0o
 - 0o0o
 - Impact on: #4, #8, #9 #10
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+_________________________________
 
 
 PRIORITY 1 ____________________________________________________________________________
 _______________________________________________________________________________________
 
-TODO
-PR Title: FEAT: 4 updates (configs, source, private). See PR
-
-- Add new config / CFG_RELEASE_POPUP
-- Add new config / CFG_LOCK_INIT
-- Source .bashlava_env.sh directly from bashlava projet (not from pwd)
-- Logic for private scripts is already well managed
-- Impact on: #4
 
 TODO
-## App if app are installed
-  which git-crypt
-  which gnupg
-  which shellcheck
-  which openssl
-  which sha256
-
-  if not propose to install them via brew
-
-  if brew ls --versions myformula > /dev/null; then
-    The package is installed
-  else
-    The package is not installed
-  fi
+New Feat: Condition_Apps_Installed_Is_Optionnal() with a config
+- update test()
+- update Core_Show_Env_Vars()
+- Impact on: #4, #10
 
 
-Instead of creating custom var simnply use %1 %2 <=dollar sign
+TODO git-crypt
+once gitcrypt to well test and solid
+
+
+PRIORITY 2 ____________________________________________________________________________
+_______________________________________________________________________________________
+
+0o0o
+Optimize code: Instead of creating custom var simply use %1 %2 <=dollar sign
 
   function greet () {
     echo "Hello @1"
   }
   greet "Pascal"
 
-
-TODO git-crypt
-once gitcrypt to well test and solid, push V2
-
-
-PRIORITY 2 ____________________________________________________________________________
-_______________________________________________________________________________________
 
 0o0o ci pipeline
 - superlinter (includes shellcheck)
@@ -100,7 +83,7 @@ works but not clean, but it works mdv() / Show_Docs
   but as a priciiple, I like to call a docker container
 
 0o0o squash
-- function that search for the same commit messages in previous commits
+- Create a fct that search for the same commit messages in previous commits
 - then suggestion to do a squash, then prompt user y/n
 
 0o0o Show_Fct_Category_F1 , F2
@@ -116,7 +99,7 @@ works but not clean, but it works mdv() / Show_Docs
 
 0o0o pending
 - v_and_t
-- ARRAY CFG_ARR_DOCS_MARKDOWN + CFG_ARR_COMPONENTS_SCRIPTS
+- ARRAY CFG_LIST_OF_REQ_MARKDOWN + CFG_LIST_OF_REQ_COMPONENTS
 
 
 // END COMMENT BLOCK
@@ -508,17 +491,35 @@ function test { # User_
   echo && my_message="Check Print_Banner" && Print_Blue
   my_message="bashLaVa" && Print_Banner
 
-  my_message="Random tests" Print_Blue
-  my_message="\$1 value is: ${input_1}" Print_Gray
-  my_message="\$2 value is: ${input_2}" Print_Gray
-  my_message="\$3 value is: ${input_3}" Print_Gray
-  my_message="\$4 value is: ${input_4}" Print_Gray
- 
-  Core_Show_Env_Vars
+  if [[ "${CFG_TEST_SHOW_VARS}" == "true" ]]; then
+    echo && my_message="Check env vars:" && Print_Blue
+
+    my_message="Random tests" Print_Blue
+    my_message="\$1 value is: ${input_1}" Print_Gray
+    my_message="\$2 value is: ${input_2}" Print_Gray
+    my_message="\$3 value is: ${input_3}" Print_Gray
+    my_message="\$4 value is: ${input_4}" Print_Gray
+
+    echo
+    Core_Show_Env_Vars
+  elif [[ "${CFG_TEST_SHOW_VARS}" == "false" ]]; then
+    echo "bypassed, ok" > /dev/null
+  else
+    my_message="FATAL: Config is broken regarding: 'CFG_TEST_SHOW_VARS'." && Print_Fatal
+  fi
 
   echo
   Condition_Apps_Must_Be_Installed
   my_message="Check apps required: All good!" Print_Gray     # else the Condition will stop the script
+
+  if [[ "${CFG_TEST_OPTIONAL_APPS}" == "true" ]]; then
+    my_message="Check optionnal apps:" Print_Gray
+    Condition_Apps_Installed_Is_Optionnal
+  elif [[ "${CFG_TEST_OPTIONAL_APPS}" == "false" ]]; then
+    echo "bypassed, ok" > /dev/null
+  else
+    my_message="FATAL: Config is broken regarding: 'CFG_TEST_OPTIONAL_APPS'." && Print_Fatal
+  fi
 
   Core_Check_Which_File_Exist
   my_message="Check files and directories: All good!" Print_Gray     # else the Condition will stop the script
@@ -837,7 +838,7 @@ function Condition_Attr_4_Must_Be_Empty {
 }
 
 function Condition_Version_Must_Be_Valid {
-  # Version is limited to these characters: 1234567890.rR-
+  # Version is limited to these characters: 1234567890.rRCc-
   # so we can do: '3.5.13-r3' or '3.5.13-rc3'
   _compare_me=$(echo "${input_2}" | sed 's/[^0123456789.rcRC\-]//g')
   _compare_you="${input_2}" _fct_is="Condition_Version_Must_Be_Valid"
@@ -852,15 +853,29 @@ function Condition_Apps_Must_Be_Installed {
   # my_message="Docker is installed" && Print_Gray
 
   # gh cli installed
-  _compare_me=$(gh --version | grep -c "https://github.com/cli/cli/releases/tag/v")
+  _compare_me=$(which gh | grep -c "/gh")
   _compare_you="1" _fct_is="Condition_Apps_Must_Be_Installed"
   Condition_Vars_Must_Be_Equal
   # my_message="gh cli is installed" && Print_Gray
 }
 
+function Condition_Apps_Installed_Is_Optionnal {
+# gpg must be install using brew install gnupg
+
+  for action in "${CFG_LIST_OF_OPTIONAL_APPS[@]}"; do
+    _output=$(which "${action}")
+    _compare_me=$(echo "${_output}" | grep -c "/${action}")
+    _compare_you="1" _fct_is="Condition_Apps_Must_Be_Installed"
+    echo "${_output}"
+    Condition_Vars_Must_Be_Equal
+  done
+  echo
+  my_message="All apps are installed" && Print_Gray
+}
+
 function Core_Check_Which_File_Exist {
   # List markdown files under /docs/*
-  for action in "${CFG_ARR_DOCS_MARKDOWN[@]}"; do
+  for action in "${CFG_LIST_OF_REQ_MARKDOWN[@]}"; do
     _file_is="${action}" _file_path_is="${_path_docs}/${_file_is}" && Condition_File_Must_Be_Present
   done
 
@@ -1021,6 +1036,7 @@ function Core_Show_Env_Vars {
   my_message="Check env_vars from config:" && Print_Blue
   echo
   echo "CFG_OVERRIDE_WITH_CUSTOM_CONFIG   > ${CFG_OVERRIDE_WITH_CUSTOM_CONFIG}"
+  echo "CFG_CUSTOM_CONFIG_FILE_NAME       > ${CFG_CUSTOM_CONFIG_FILE_NAME}"
   echo
   echo "APP_NAME                          > ${APP_NAME}"
   echo "GITHUB_USER                       > ${GITHUB_USER}"
@@ -1033,9 +1049,17 @@ function Core_Show_Env_Vars {
   echo "CFG_EDGE_EXTENTED                 > ${CFG_EDGE_EXTENTED}"
   echo "CFG_LOG_LINE_NBR_SHORT            > ${CFG_LOG_LINE_NBR_SHORT}"
   echo "CFG_LOG_LINE_NBR_LONG             > ${CFG_LOG_LINE_NBR_LONG}"
+  echo "CFG_RELEASE_POPUP                 > ${CFG_RELEASE_POPUP}"
   echo
-  echo "CFG_ARR_COMPONENTS_SCRIPTS        > ${CFG_ARR_COMPONENTS_SCRIPTS}"
-  echo "CFG_ARR_DOCS_MARKDOWN             > ${CFG_ARR_DOCS_MARKDOWN}"
+  echo "CFG_TEST_SHOW_VARS                > ${CFG_TEST_SHOW_VARS}"
+  echo "CFG_TEST_OPTIONAL_APPS            > ${CFG_TEST_OPTIONAL_APPS}"
+  echo
+  echo "CFG_DEBUG_MODE                    > ${CFG_DEBUG_MODE}"
+  echo "CFG_LOCK_INIT                     > ${CFG_LOCK_INIT}"
+  echo
+  echo "CFG_LIST_OF_REQ_COMPONENTS        > ${CFG_LIST_OF_REQ_COMPONENTS}"
+  echo "CFG_LIST_OF_REQ_MARKDOWN          > ${CFG_LIST_OF_REQ_MARKDOWN}"
+  echo "CFG_LIST_OF_OPTIONAL_APPS          > ${CFG_LIST_OF_OPTIONAL_APPS}"
   echo
   echo "DOCKER_IMG_FIGLET                 > ${DOCKER_IMG_FIGLET}"
   echo "DOCKER_IMG_GLOW                   > ${DOCKER_IMG_GLOW}"
@@ -1044,6 +1068,7 @@ function Core_Show_Env_Vars {
 function Core_Test_Env_Vars {
 ### NEW CONFIG
 _var_name="CFG_OVERRIDE_WITH_CUSTOM_CONFIG" _is_it_empty="${CFG_OVERRIDE_WITH_CUSTOM_CONFIG}" && Condition_Vars_Must_Be_Not_Empty
+_var_name="CFG_CUSTOM_CONFIG_FILE_NAME" _is_it_empty="${CFG_CUSTOM_CONFIG_FILE_NAME}" && Condition_Vars_Must_Be_Not_Empty
 
 _var_name="APP_NAME" _is_it_empty="${APP_NAME}" && Condition_Vars_Must_Be_Not_Empty
 _var_name="GITHUB_USER" _is_it_empty="${GITHUB_USER}" && Condition_Vars_Must_Be_Not_Empty
@@ -1056,9 +1081,14 @@ _var_name="CFG_USER_IS" _is_it_empty="${CFG_USER_IS}" && Condition_Vars_Must_Be_
 _var_name="CFG_EDGE_EXTENTED" _is_it_empty="${CFG_EDGE_EXTENTED}" && Condition_Vars_Must_Be_Not_Empty
 _var_name="CFG_LOG_LINE_NBR_SHORT" _is_it_empty="${CFG_LOG_LINE_NBR_SHORT}" && Condition_Vars_Must_Be_Not_Empty
 _var_name="CFG_LOG_LINE_NBR_LONG" _is_it_empty="${CFG_LOG_LINE_NBR_LONG}" && Condition_Vars_Must_Be_Not_Empty
+_var_name="CFG_RELEASE_POPUP" _is_it_empty="${CFG_RELEASE_POPUP}" && Condition_Vars_Must_Be_Not_Empty
 
-_var_name="CFG_ARR_COMPONENTS_SCRIPTS" _is_it_empty="${CFG_ARR_COMPONENTS_SCRIPTS}" && Condition_Vars_Must_Be_Not_Empty
-_var_name="CFG_ARR_DOCS_MARKDOWN" _is_it_empty="${CFG_ARR_DOCS_MARKDOWN}" && Condition_Vars_Must_Be_Not_Empty
+_var_name="CFG_DEBUG_MODE" _is_it_empty="${CFG_DEBUG_MODE}" && Condition_Vars_Must_Be_Not_Empty
+_var_name="CFG_LOCK_INIT" _is_it_empty="${CFG_LOCK_INIT}" && Condition_Vars_Must_Be_Not_Empty
+
+_var_name="CFG_LIST_OF_REQ_COMPONENTS" _is_it_empty="${CFG_LIST_OF_REQ_COMPONENTS}" && Condition_Vars_Must_Be_Not_Empty
+_var_name="CFG_LIST_OF_REQ_MARKDOWN" _is_it_empty="${CFG_LIST_OF_REQ_MARKDOWN}" && Condition_Vars_Must_Be_Not_Empty
+_var_name="CFG_LIST_OF_OPTIONAL_APPS" _is_it_empty="${CFG_LIST_OF_OPTIONAL_APPS}" && Condition_Vars_Must_Be_Not_Empty
 
 _var_name="DOCKER_IMG_FIGLET" _is_it_empty="${DOCKER_IMG_FIGLET}" && Condition_Vars_Must_Be_Not_Empty
 _var_name="DOCKER_IMG_GLOW" _is_it_empty="${DOCKER_IMG_GLOW}" && Condition_Vars_Must_Be_Not_Empty
@@ -1099,23 +1129,13 @@ function main() {
     my_message="FATAL: Config is broken regarding: 'CFG_OVERRIDE_WITH_CUSTOM_CONFIG'." && Print_Fatal
   fi
 
-  ### The array should be in the config file but it does not work
-  CFG_ARR_DOCS_MARKDOWN=(
-    "welcome_to_bashlava.md"
-    "help.md"
-    "test.md"
-    "debug_upstream.md"
-  )
-  ### The array should be in the config file but it does not work
-  CFG_ARR_COMPONENTS_SCRIPTS=(
-    "alias.sh"
-    "example.sh"
-    "utilities.sh"
-    "Show_Fct_Category_Filter.sh"
-  )
+### I can't pass an array from `.bashlava_env.sh` to `bashlava.sh`
+  CFG_LIST_OF_REQ_MARKDOWN=( "welcome_to_bashlava.md" "help.md" "test.md" "debug_upstream.md" )
+  CFG_LIST_OF_REQ_COMPONENTS=( "alias.sh" "example.sh" "utilities.sh" "Show_Fct_Category_Filter.sh" )
+  CFG_LIST_OF_OPTIONAL_APPS=( "docker" "gh" "git-crypt" "gpg" "openssl" "sha256sum" "grep" "nano" "tldr" "shellcheck" )
 
 ### Load COMPONENTS (PUBLIC)
-  for action in "${CFG_ARR_COMPONENTS_SCRIPTS[@]}"; do
+  for action in "${CFG_LIST_OF_REQ_COMPONENTS[@]}"; do
     _file_is="${action}" _file_path_is="${_path_components}/${_file_is}" && Condition_File_Must_Be_Present
     # code optimization, add logic: _to_source="true" 0o0o
     source "${_file_path_is}"
@@ -1135,6 +1155,7 @@ function main() {
 
   Core_Load_Vars_Edge
   Core_Check_Which_File_Exist
+  Core_Test_Env_Vars
 
 ### Core_Input_Checkpoint
   if [[ -z "$2" ]]; then    #if empty

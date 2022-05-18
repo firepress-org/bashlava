@@ -19,18 +19,21 @@ CFG_DEFAULT_DEV_BRANCH="edge"
 CFG_USER_IS="${USER}"
 
 ### FUNCTION OPTIONS
-CFG_EDGE_EXTENTED="false"   # #edge() not programmed yet
-CFG_LOG_LINE_NBR_SHORT="4"  # log() default line number
-CFG_LOG_LINE_NBR_LONG="12"  # log() default line number
-CFG_RELEASE_POPUP="false"   # TODO
-CFG_HELP_ALT="false"        # TODO
+CFG_EDGE_EXTENTED="false"       # not coded yet
+CFG_LOG_LINE_NBR_SHORT="4"      # log() default line number
+CFG_LOG_LINE_NBR_LONG="12"      # log() default line number
+CFG_RELEASE_POPUP="false"       # not coded yet
+
+CFG_TEST_SHOW_VARS="false"      # test extension
+CFG_TEST_OPTIONAL_APPS="false"  # test extension
 
 CFG_DEBUG_MODE="false"
 CFG_LOCK_INIT="false"
 
 ### SOURCE /components
-#CFG_ARR_COMPONENTS_SCRIPTS
-#CFG_ARR_DOCS_MARKDOWN
+# CFG_LIST_OF_REQ_COMPONENTS
+# CFG_LIST_OF_REQ_MARKDOWN
+# CFG_LIST_OF_OPTIONAL_APPS
 
 ###	DOCKER IMAGES
 DOCKER_IMG_FIGLET="devmtl/figlet:1.0"
