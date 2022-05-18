@@ -22,16 +22,13 @@ _________________________________
 PRIORITY 1 ____________________________________________________________________________
 _______________________________________________________________________________________
 
-
 TODO
-New Feat: Condition_Apps_Installed_Is_Optionnal() with a config
-- update test()
-- update Core_Show_Env_Vars()
-- Impact on: #4, #10
-
+squash() work non-interactively (no prompt)
+- Impact on: #4, #8
 
 TODO git-crypt
-once gitcrypt to well test and solid
+- once gitcrypt to well test and solid
+- 0o0o
 
 
 PRIORITY 2 ____________________________________________________________________________
@@ -417,7 +414,7 @@ function squash { # User_
   fi
 
   git reset --soft HEAD~"${input_2}" &&\
-  git commit --edit -m "${input_3}" &&\
+  git commit -m "${input_3}" &&\
   git push --force-with-lease &&\
   git pull
   input_2="not_set"   #reset input_2
