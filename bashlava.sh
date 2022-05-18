@@ -250,10 +250,8 @@ function mrg { # User_
   else 
     my_message="FATAL: ${_branch_dev_unique} (local)" && Print_Fatal
   fi
-
-  Show_Version
-
   echo
+  
   my_message="Current branch is:" && Print_Blue
   git rev-parse --abbrev-ref HEAD
 
@@ -267,10 +265,9 @@ function mrg { # User_
     2 | t) tag;;
     3 | e) edge;;
     4 | ci) ci;;
-    8 | vt) v_and_t;;
-    9 | a) echo "WIP, will allow the user to: v + t + r + e in one step";;
     *) my_message="Aborted" && Print_Gray;;
   esac
+  # Add new fct allow the user to: v + t + r + e in one step
 }
 
 function version { # User_
