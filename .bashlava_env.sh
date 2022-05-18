@@ -3,10 +3,11 @@
 # `.bashlava_env.sh`, required by bashlava
 
 ### DO NOT update vars directly within `.bashlava_env.sh`
-### DO NOT duplicate `.bashlava_env.sh` under your project
 ### Within your projects, create this config file: `.bashlava_env_override.sh`
 CFG_OVERRIDE_WITH_CUSTOM_CONFIG="true"
 CFG_CUSTOM_CONFIG_FILE_NAME=".bashlava_env_override.sh"
+
+CFG_USE_PRIVATE_DIRECTORY="false"
 
 ### Set these env vars via `.bashlava_env_override.sh`
 # APP_NAME="notset"

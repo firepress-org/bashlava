@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
 
 : '
-// START COMMENT BLOCK
+// COMMENT BLOCK //
 TO-DO comment section. Total of 3
 
-_________________________________
 PINNED issues on GH             _
   issue #4 TO-DO & backlog      _
   issue #8 UX                   _
@@ -16,31 +15,49 @@ PR Title: New Feat: 0o0o
 - 0o0o
 - 0o0o
 - Impact on: #4, #8, #9 #10
-_________________________________
 
 
-PRIORITY 1 ____________________________________________________________________________
 _______________________________________________________________________________________
+_______________________________________________________________________________________
+PRIORITY 1 ____________________________________________________________________________
 
-TODO
-squash() work non-interactively (no prompt)
-- Impact on: #4, #8
+
+# TODO
+
+## Feat: Add config logic when user uses /private directory
+- Move /private from /components
+- Add config about /private to bypass system warnings
+- path must be relative to the project (not to bashlava)
+- /private/entrypoint.sh, must check if file exist
+- Impact on: #4, #8, #10
+
+## Not related
+- dummy() remove timer
+
+
 
 TODO git-crypt
 - once gitcrypt to well test and solid
 - 0o0o
 
 
-PRIORITY 2 ____________________________________________________________________________
 _______________________________________________________________________________________
+_______________________________________________________________________________________
+PRIORITY 2 ____________________________________________________________________________
 
-0o0o
+
+TODO
 Optimize code: Instead of creating custom var simply use %1 %2 <=dollar sign
+
+REPLACE:
+  my_message="FATAL: {_branch_dev_unique} (local)" && Print_Fatal
+WITH THIS:
+  Print_Fatal "FATAL: {_branch_dev_unique} (local)"
 
   function greet () {
     echo "Hello @1"
   }
-  greet "Pascal"
+  greet "you"
 
 
 0o0o ci pipeline
@@ -99,7 +116,7 @@ works but not clean, but it works mdv() / Show_Docs
 - ARRAY CFG_LIST_OF_REQ_MARKDOWN + CFG_LIST_OF_REQ_COMPONENTS
 
 
-// END COMMENT BLOCK
+// COMMENT BLOCK //
 '
 
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### #
@@ -459,7 +476,6 @@ function dummy { # User_
     _hash_four_last="${_hash: -4}"
     echo "Dummy Commit ${lineID} - $(date +%Y-%m-%d_%HH%M_%S) - ${_hash}" >> "${_in_file}"
     git add -A && git commit -m "Dummy Commit ${lineID} - ${_hash_four_last}"
-    sleep 1
   done
 
   git push
@@ -1138,16 +1154,21 @@ function main() {
     source "${_file_path_is}"
   done
 
-### Load PRIVATE COMPONENTS
-### To use private components, the user must create components/private/_entrypoint.sh file
-  _file_is="_entrypoint.sh" _file_path_is="${_path_components}/private/${_file_is}"
-  if [[ -f "${_file_path_is}" ]]; then
-    source "${_file_path_is}"
-  elif [[ ! -f "${_file_path_is}" ]]; then
-    my_message="Warning: You should set ${_file_path_is} for your own scripts."   && Print_Warning
-    my_message="See README for installation details."                             && Print_Warning && sleep 2
+### Loads scripts under PRIVATE directory 
+  if [[ "${CFG_USE_PRIVATE_DIRECTORY}" == "true" ]]; then
+    _file_is="entrypoint.sh" _file_path_is="$(pwd)/private/${_file_is}"
+    if [[ -f "${_file_path_is}" ]]; then
+      source "${_file_path_is}"
+    elif [[ ! -f "${_file_path_is}" ]]; then
+      my_message="Warning: You should set ${_file_path_is} for your own scripts."   && Print_Warning
+      my_message="See README for installation details."                             && Print_Warning_Stop
+    else
+      my_message="FATAL: Condition_File_Must_Be_Present | ${_file_path_is}" && Print_Fatal
+    fi
+  elif [[ "${CFG_USE_PRIVATE_DIRECTORY}" == "false" ]]; then
+    echo "bypassed, ok" > /dev/null
   else
-    my_message="FATAL: Condition_File_Must_Be_Present | ${_file_path_is}" && Print_Fatal
+    my_message="FATAL: Config is broken regarding: 'CFG_USE_PRIVATE_DIRECTORY'." && Print_Fatal
   fi
 
   Core_Load_Vars_Edge
