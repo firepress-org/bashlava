@@ -22,24 +22,9 @@ ________________________________________________________________________________
 PRIORITY 1 ____________________________________________________________________________
 
 
-# TODO
-
-## Feat: Add config logic when user uses /private directory
-- Move /private from /components
-- Add config about /private to bypass system warnings
-- path must be relative to the project (not to bashlava)
-- /private/entrypoint.sh, must check if file exist
-- Impact on: #4, #8, #10
-
-## Not related
-- dummy() remove timer
-
-
-
 TODO git-crypt
 - once gitcrypt to well test and solid
 - 0o0o
-
 
 _______________________________________________________________________________________
 _______________________________________________________________________________________
@@ -491,8 +476,6 @@ function show { # User_
 
 function log { # User_
   Condition_Attr_2_Must_Be_Empty
-  Condition_No_Commits_Pending
-
   echo && git --no-pager log --decorate=short --pretty=oneline --abbrev-commit -n"${CFG_LOG_LINE_NBR_LONG}" && echo
 }
 
