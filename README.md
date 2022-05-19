@@ -12,13 +12,44 @@
 
 # BashLava
 
-BashLaVa is a utility-first bash framework. The idea is to abstract your workflow to minimize the time to do some repetitive actions.
+BashLaVa is a utility-first bash framework. The idea is to abstract your git workflow to minimize the time to do some repetitive actions.
 
-It's for developers that use git commands regularly. BashLaVa makes following git workflow a breeze without having to leave your terminal or use GitHub GUI.
+**Update May 2022**: There are so many new features, I must re-write the whole README.
 
-In other word, the the **agile release cycle** should be something you master. BashLaVa helps you big time to get there.
+## Features
 
-**WIP** - May 2022: There are so many new features, I must re-write the whole README.
+- A Super fast git flow
+- Sane default, see `.bashlava_env.sh`
+- Custom configuration to quickly use bashlava accross your project
+- manage your own bashscript scripts under /private
+- crypt secrets
+
+Below from the `bashlava.sh h`
+
+```
+  git flow
+
+  •  e  ....... | create a branch edge from main ........ | standalone
+  •  c  ....... | commit ................................ | usage: c "This feature rocks"
+  •  sq  ...... | squash commits ........................ | usage: sq 3 "Add: feat xyz, issue 123"
+  •  pr  ...... | create pull request  .................. | standalone
+  •  ci  ...... | show ci status on GitHub Actions ...... | standalone
+  •  mrg  ..... | merge to mainbranch ................... | standalone
+  •  m  ....... | checkout to main_branch  .............. | standalone
+  •  v  ....... | version code .......................... | standalone or usage: v 1.4.2
+  •  t  ....... | tag  .................................. | standalone
+  •  r  ....... | release  and open GUI on GitHub ....... | standalone
+  •  d  ....... | dummy  commits ........................ | standalone
+```
+
+## cli that are abstracted
+
+- git
+- gh
+- docker
+- git-crypt
+
+## Getting Started
 
 ## License
 
