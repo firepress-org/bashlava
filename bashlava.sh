@@ -23,13 +23,14 @@ PRIORITY 1 _____________________________________________________________________
 
 
 TODO
-## New feat: gc() one core fct + 5 childs to use git-crypt
-- gc h(), add /docs/help_gitcrypt.md
-- (h) update /docs/help.md
+New feat: verify gpg signature on commits, merge, tag
+- Add config: CFG_TAG_ARE_SIGNED
+- update dummy()
+- update commit()
+- in ~/.gitconfig
+  - signingKey = 466798446A36CC66A9AA58BEBEF00F535005628E
+  - gpgsign = true
 - Impact on: #4, #8
-
-## Minor
-- Update README.md
 
 TODO
 gc()
@@ -221,7 +222,19 @@ function commit { # User_
   Condition_Attr_2_Must_Be_Provided
   _from_fct="c"
 
-  git status && git add -A && git commit -m "${input_2}" && git push
+  git status && git add -A
+
+  if [[ "${CFG_TAG_ARE_SIGNED}" == "true" ]]; then
+    git commit -S -m "${input_2}"
+    echo "WIP commit should be signed"
+  elif [[ "${CFG_TAG_ARE_SIGNED}" == "false" ]]; then
+    git commit -m "${input_2}"
+    echo "WIP commit is NOT signed"
+  else
+    my_message="FATAL: tag" && Print_Fatal
+  fi
+
+  git push
 
   Show_What_Was_Done
   git --no-pager log --decorate=short --pretty=oneline --abbrev-commit -n"${CFG_LOG_LINE_NBR_SHORT}"
@@ -353,7 +366,16 @@ function tag { # User_
   #Condition_Attr_2_Must_Be_Empty
   _from_fct="t"
 
-  git tag ${APP_VERSION} && git push --tags && echo
+  if [[ "${CFG_TAG_ARE_SIGNED}" == "true" ]]; then
+    git tag -s "${APP_VERSION}" -m "tag: {APP_VERSION} using bashlava"
+  elif [[ "${CFG_TAG_ARE_SIGNED}" == "false" ]]; then
+    git tag "${APP_VERSION}"
+  else
+    my_message="FATAL: tag" && Print_Fatal
+  fi
+
+  git push --tags
+  echo
   Show_Version
   Show_Tag
 
@@ -473,10 +495,10 @@ function dummy { # User_
   _from_fct="d"
   _in_file="./docs/DUMMY.md"
 
-  # create a commit X time the update
+  # create two commits in a row
   for lineID in $(seq 1 2); do
     date_nano="$(date +%Y-%m-%d_%HH%Ms%S-%N)"
-    _hash=$(echo ${date_nano} | sha256sum | awk '{print $1}')
+    _hash=$(echo "${date_nano} ${lineID}" | sha256sum | awk '{print $1}')
     _hash_four_last="${_hash: -4}"
     echo "Dummy Commit ${lineID} - $(date +%Y-%m-%d_%HH%M_%S) - ${_hash}" >> "${_in_file}"
     git add -A && git commit -m "Dummy Commit ${lineID} - ${_hash_four_last}"
