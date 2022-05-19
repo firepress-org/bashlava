@@ -131,11 +131,11 @@ You should use public/private keys which is much more secure.
 
 ## As a USER_DEV
 
-As a USER_DEV must create a key
-`gpg --gen-key`
-
 As a USER_DEV, check the gpg keys
 `gpg --list-keys`
+
+As a USER_DEV must create a key
+`gpg --gen-key`
 
 As a USER_DEV, check the gpg keys and list the keys and copy the key ID (KEY_ID ex: 9F9VD135y67289ACGGD349E8S345TSRY4ECC53):
 
@@ -184,8 +184,8 @@ Symetric steup: It's a good idea to have ../git-crypt-key as an absolut path to 
 export/backup your keys:
 
 ```
-gpg --output public.pgp --armor --export username@email.ca
-gpg --output private.pgp --armor --export-secret-key username@email.ca
+gpg --output public.pgp --armor --export pascalandy@users.noreply.github.com
+gpg --output private.pgp --armor --export-secret-key pascalandy@users.noreply.github.com
 ```
 
 source: https://unix.stackexchange.com/a/482559
@@ -195,6 +195,8 @@ source: https://unix.stackexchange.com/a/482559
 - https://hackernoon.com/things-you-must-know-about-git-crypt-to-successfully-protect-your-secret-data-kyi3wi6
 - https://buddy.works/guides/git-crypt
 - https://medium.com/@ahmed.kamel/git-crypt-unattended-unlock-with-gpg-passphrase-in-docker-f0aa39b85a
+- manage gpg key to sign commits on github - https://www.youtube.com/watch?v=4166ExAnxmo
+  - code ~/.gitconfig
 
 ## What is great
 

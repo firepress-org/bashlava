@@ -23,6 +23,7 @@ CFG_USER_IS="${USER}"
 CFG_EDGE_EXTENTED="false"       # not coded yet
 CFG_LOG_LINE_NBR_SHORT="4"      # log() default line number
 CFG_LOG_LINE_NBR_LONG="12"      # log() default line number
+CFG_TAG_ARE_SIGNED="false"
 CFG_RELEASE_POPUP="false"       # not coded yet
 
 CFG_TEST_SHOW_VARS="false"      # test extension
