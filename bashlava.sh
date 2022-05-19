@@ -23,20 +23,8 @@ PRIORITY 1 _____________________________________________________________________
 
 
 TODO 
-## New feat: Core_Load_Config_Override()
-- Improve versionning within bashlava itself
-- Stop saving version into .bl_override.sh
-- Remove flag CFG_OVERRIDE_WITH_CUSTOM_CONFIG. Check if file exist or not instead.
-- Cleanup logics in main() by using new functions
-  - Core_Load_Config_Default
-  - Core_Load_Config_Override
-  - Core_Load_Components
-  - Core_Load_Private_Entrypoint
-- Update v()
-- Update .gitignore
-- Rename .bl_override.sh
-- Rename .bl_env.sh
-- Impact on: #4, #8, #10
+Fix logic: Core_Load_Config_Override()
+
 
 TODO
 gc()
@@ -232,10 +220,8 @@ function commit { # User_
 
   if [[ "${CFG_USE_GPG_SIGNATURE}" == "true" ]]; then
     git commit -S -m "${input_2}"
-    echo "WIP commit should be signed"
   elif [[ "${CFG_USE_GPG_SIGNATURE}" == "false" ]]; then
     git commit -m "${input_2}"
-    echo "WIP commit is NOT signed"
   else
     my_message="FATAL: tag" && Print_Fatal
   fi
@@ -325,7 +311,6 @@ function version { # User_
     my_message="${user_input}" && Print_Green
     input_2="${user_input}"
     Condition_Version_Must_Be_Valid
-
   elif [[ "${input_2}" != "not_set" ]]; then
     echo "Good, lets continue" > /dev/null 2>&1
   else
@@ -336,27 +321,27 @@ function version { # User_
     Condition_Attr_2_Must_Be_Provided
     Condition_Version_Must_Be_Valid
 
-  # See FLAG 902
-  _file_is=${_where_to_save_version} _file_path_is="$(pwd)/${_file_is}" && Condition_File_Must_Be_Present
-  sed -i '' "s/^APP_VERSION=.*$/APP_VERSION=\"${input_2}\"/" "${_file_path_is}"
+    # See FLAG 902
+    _file_is=${_where_to_save_version} _file_path_is="$(pwd)/${_file_is}" && Condition_File_Must_Be_Present
+    sed -i '' "s/^APP_VERSION=.*$/APP_VERSION=\"${input_2}\"/" "${_file_path_is}"
 
-  ### Reload vars as the version was just updated
-  source "${_file_path_is}"
+    ### Reload vars as the version was just updated
+    source "${_file_path_is}"
 
-  git add .
-  git commit . -m "Update ${APP_NAME} to version ${input_2}"
-  git push && echo
-  Show_Version
+    git add .
+    git commit . -m "Update ${APP_NAME} to version ${input_2}"
+    git push && echo
+    Show_Version
 
-  Show_What_Was_Done
-  _doc_name="next_move_fct_v.md" && Show_Docs
-  input_2="not_set"   #reset input_2
-  read -r user_input;
-  case ${user_input} in
-    1 | t) tag;;
-    2 | pr) pr;;
-    *) my_message="Aborted" && Print_Gray;;
-  esac
+    Show_What_Was_Done
+    _doc_name="next_move_fct_v.md" && Show_Docs
+    input_2="not_set"   #reset input_2
+    read -r user_input;
+    case ${user_input} in
+      1 | t) tag;;
+      2 | pr) pr;;
+      *) my_message="Aborted" && Print_Gray;;
+    esac
 
   elif [[ "${input_2}" == "not_set" ]]; then
     my_message="ERROR: This should not happen (version)" && Print_Warning_Stop
@@ -431,7 +416,7 @@ function release { # User_
   
   sleep 0.3
   Show_Version && sleep 0.3
-  Show_Tag && sleep 0.3
+  Show_Tag && sleep 2
 
   Show_Release
 # CFG_RELEASE_POPUP / add logic 0o0o
@@ -1197,31 +1182,40 @@ function Core_Load_Config_Default {
 }
 
 function Core_Load_Config_Override {
-  # check if override config is present. FLAG 902
-  if [[ -f "$(pwd)/${OVERRIDE_CONFIG_FILE_NAME_IS}" ]]; then
-    #use the override config file
-    source "${OVERRIDE_CONFIG_FILE_NAME_IS}"
-    _where_to_save_version="${OVERRIDE_CONFIG_FILE_NAME_IS}"
-  # if override config file is missing
 
+### Load override config
+
+  # Load override config if it exist
+  if [[ -f "$(pwd)/${OVERRIDE_CONFIG_FILE_NAME_IS}" ]]; then
+    _where_to_save_version="${OVERRIDE_CONFIG_FILE_NAME_IS}"
+    source "$(pwd)/${OVERRIDE_CONFIG_FILE_NAME_IS}"
   elif [[ ! -f "$(pwd)/${OVERRIDE_CONFIG_FILE_NAME_IS}" ]]; then
-    #use the default config file
+    echo "OK: no override config. Will catch the error about 15 lines below" > /dev/null 2>&1
+  else
+    my_message="FATAL: Core_Load_Config_Override() A" && Print_Fatal
+  fi
+
+
+  # Logic depending on which projet we are working on
+  if [[ "${APP_NAME}" == "bashlava" ]]; then
+    #Logic for bashlava itself
     _where_to_save_version="${DEFAULT_CONFIG_FILE_NAME_IS}"
 
-    # if we are updating the bashlava project itself, no warning
-    if [[ "${APP_NAME}" == "bashlava" ]]; then
-      echo "OK, no warning." > /dev/null 2>&1
+  elif [[ "${input_2}" != "bashlava" ]]; then
+    #Logic for YOUR projects (not bashlava itself)
+    if [[ -f "$(pwd)/${OVERRIDE_CONFIG_FILE_NAME_IS}" ]]; then
+      source "${OVERRIDE_CONFIG_FILE_NAME_IS}"
+      _where_to_save_version="${OVERRIDE_CONFIG_FILE_NAME_IS}"
 
-    # for YOUR projet, prompt are warning. You must create and use the override config file.
-    elif [[ "${input_2}" != "bashlava" ]]; then
+    elif [[ ! -f "$(pwd)/${OVERRIDE_CONFIG_FILE_NAME_IS}" ]]; then
       my_message="WARNING: Config file (${OVERRIDE_CONFIG_FILE_NAME_IS}) is not configured." && Print_Warning
       my_message="See README for installation details."                             && Print_Warning & sleep 2
-    else
-      my_message="FATAL: Load override configs" && Print_Fatal
-    fi
 
+    else
+      my_message="FATAL: Core_Load_Config_Override() B" && Print_Fatal
+    fi
   else
-    my_message="FATAL: Load override configs" && Print_Fatal
+    my_message="FATAL: Core_Load_Config_Override() C" && Print_Fatal
   fi
 }
 
@@ -1281,11 +1275,11 @@ function main() {
 
   Core_Load_Config_Default
   Core_Load_Config_Override
-  Core_Test_Env_Vars
   Core_Load_Components
   Core_Load_Private_Entrypoint
-  Core_Load_Vars_Edge
+  Core_Test_Env_Vars
   Core_Check_Which_File_Exist
+  Core_Load_Vars_Edge
   Core_Test_Env_Vars
 
 ### Core_Input_Checkpoint
