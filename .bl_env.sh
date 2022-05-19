@@ -4,7 +4,7 @@
 ### Because of these three vars, you must create a use `.bl_override.sh`
 APP_NAME="bashlava"
 GITHUB_USER="firepress-org"
-APP_VERSION="1.49.0"
+APP_VERSION="1.49.1"
 
 ### DEFAULT CONFIGS BELOW
 
