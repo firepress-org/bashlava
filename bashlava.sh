@@ -22,15 +22,21 @@ ________________________________________________________________________________
 PRIORITY 1 ____________________________________________________________________________
 
 
-TODO
-New feat: verify gpg signature on commits, merge, tag
-- Add config: CFG_TAG_ARE_SIGNED
-- update dummy()
-- update commit()
-- in ~/.gitconfig
-  - signingKey = 466798446A36CC66A9AA58BEBEF00F535005628E
-  - gpgsign = true
-- Impact on: #4, #8
+TODO 
+## New feat: Core_Load_Config_Override()
+- Improve versionning within bashlava itself
+- Stop saving version into .bl_override.sh
+- Remove flag CFG_OVERRIDE_WITH_CUSTOM_CONFIG. Check if file exist or not instead.
+- Cleanup logics in main() by using new functions
+  - Core_Load_Config_Default
+  - Core_Load_Config_Override
+  - Core_Load_Components
+  - Core_Load_Private_Entrypoint
+- Update v()
+- Update .gitignore
+- Rename .bl_override.sh
+- Rename .bl_env.sh
+- Impact on: #4, #8, #10
 
 TODO
 gc()
@@ -224,10 +230,10 @@ function commit { # User_
 
   git status && git add -A
 
-  if [[ "${CFG_TAG_ARE_SIGNED}" == "true" ]]; then
+  if [[ "${CFG_USE_GPG_SIGNATURE}" == "true" ]]; then
     git commit -S -m "${input_2}"
     echo "WIP commit should be signed"
-  elif [[ "${CFG_TAG_ARE_SIGNED}" == "false" ]]; then
+  elif [[ "${CFG_USE_GPG_SIGNATURE}" == "false" ]]; then
     git commit -m "${input_2}"
     echo "WIP commit is NOT signed"
   else
@@ -325,18 +331,16 @@ function version { # User_
   else
     my_message="FATAL: (version)" && Print_Fatal
   fi
-  
 
   if [[ "${input_2}" != "not_set" ]]; then
     Condition_Attr_2_Must_Be_Provided
     Condition_Version_Must_Be_Valid
 
-# TODO
-### Update version within .bashlava_env_override.sh
-  _file_is="${CFG_CUSTOM_CONFIG_FILE_NAME}" _file_path_is="$(pwd)/${_file_is}" && Condition_File_Must_Be_Present
+  # See FLAG 902
+  _file_is=${_where_to_save_version} _file_path_is="$(pwd)/${_file_is}" && Condition_File_Must_Be_Present
   sed -i '' "s/^APP_VERSION=.*$/APP_VERSION=\"${input_2}\"/" "${_file_path_is}"
 
-  ### Reload default configurations as the version was updated
+  ### Reload vars as the version was just updated
   source "${_file_path_is}"
 
   git add .
@@ -366,9 +370,9 @@ function tag { # User_
   #Condition_Attr_2_Must_Be_Empty
   _from_fct="t"
 
-  if [[ "${CFG_TAG_ARE_SIGNED}" == "true" ]]; then
+  if [[ "${CFG_USE_GPG_SIGNATURE}" == "true" ]]; then
     git tag -s "${APP_VERSION}" -m "tag: {APP_VERSION} using bashlava"
-  elif [[ "${CFG_TAG_ARE_SIGNED}" == "false" ]]; then
+  elif [[ "${CFG_USE_GPG_SIGNATURE}" == "false" ]]; then
     git tag "${APP_VERSION}"
   else
     my_message="FATAL: tag" && Print_Fatal
@@ -714,7 +718,7 @@ function Show_Version {
   # Need to reload so the user can see before and after version
 
   # VERSION
-  my_message="${APP_VERSION} < VERSION in ${CFG_CUSTOM_CONFIG_FILE_NAME}" Print_Gray
+  my_message="${APP_VERSION} < VERSION in ${OVERRIDE_CONFIG_FILE_NAME_IS}" Print_Gray
 }
 function Show_Tag {
   if [[ -n $(git tag -l "${APP_VERSION}") ]]; then
@@ -1088,6 +1092,68 @@ function Condition_Dir_Optionnally_Present {
   #
 #
 
+function Core_Show_Env_Vars {
+  Core_Test_Env_Vars
+
+  my_message="Check env_vars from config:" && Print_Blue
+  echo
+  echo "OVERRIDE_CONFIG_FILE_NAME_IS       > ${OVERRIDE_CONFIG_FILE_NAME_IS}"
+  echo
+  echo "APP_NAME                          > ${APP_NAME}"
+  echo "GITHUB_USER                       > ${GITHUB_USER}"
+  echo "APP_VERSION                       > ${APP_VERSION}"
+  echo
+  echo "CFG_DEFAULT_BRANCH                > ${CFG_DEFAULT_BRANCH}"
+  echo "CFG_DEFAULT_DEV_BRANCH            > ${CFG_DEFAULT_DEV_BRANCH}"
+  echo "CFG_USER_IS                       > ${CFG_USER_IS}"
+  echo
+  echo "CFG_EDGE_EXTENTED                 > ${CFG_EDGE_EXTENTED}"
+  echo "CFG_LOG_LINE_NBR_SHORT            > ${CFG_LOG_LINE_NBR_SHORT}"
+  echo "CFG_LOG_LINE_NBR_LONG             > ${CFG_LOG_LINE_NBR_LONG}"
+  echo "CFG_RELEASE_POPUP                 > ${CFG_RELEASE_POPUP}"
+  echo
+  echo "CFG_TEST_SHOW_VARS                > ${CFG_TEST_SHOW_VARS}"
+  echo "CFG_TEST_OPTIONAL_APPS            > ${CFG_TEST_OPTIONAL_APPS}"
+  echo
+  echo "CFG_DEBUG_MODE                    > ${CFG_DEBUG_MODE}"
+  echo "CFG_LOCK_INIT                     > ${CFG_LOCK_INIT}"
+  echo
+  echo "CFG_LIST_OF_REQ_COMPONENTS        > ${CFG_LIST_OF_REQ_COMPONENTS}"
+  echo "CFG_LIST_OF_REQ_MARKDOWN          > ${CFG_LIST_OF_REQ_MARKDOWN}"
+  echo "CFG_LIST_OF_OPTIONAL_APPS          > ${CFG_LIST_OF_OPTIONAL_APPS}"
+  echo
+  echo "DOCKER_IMG_FIGLET                 > ${DOCKER_IMG_FIGLET}"
+  echo "DOCKER_IMG_GLOW                   > ${DOCKER_IMG_GLOW}"
+}
+
+function Core_Test_Env_Vars {
+### NEW CONFIG
+_var_name="OVERRIDE_CONFIG_FILE_NAME_IS" _is_it_empty="${OVERRIDE_CONFIG_FILE_NAME_IS}" && Condition_Vars_Must_Be_Not_Empty
+
+_var_name="APP_NAME" _is_it_empty="${APP_NAME}" && Condition_Vars_Must_Be_Not_Empty
+_var_name="GITHUB_USER" _is_it_empty="${GITHUB_USER}" && Condition_Vars_Must_Be_Not_Empty
+_var_name="APP_VERSION" _is_it_empty="${APP_VERSION}" && Condition_Vars_Must_Be_Not_Empty
+
+_var_name="CFG_DEFAULT_BRANCH" _is_it_empty="${CFG_DEFAULT_BRANCH}" && Condition_Vars_Must_Be_Not_Empty
+_var_name="CFG_DEFAULT_DEV_BRANCH" _is_it_empty="${CFG_DEFAULT_DEV_BRANCH}" && Condition_Vars_Must_Be_Not_Empty
+_var_name="CFG_USER_IS" _is_it_empty="${CFG_USER_IS}" && Condition_Vars_Must_Be_Not_Empty
+
+_var_name="CFG_EDGE_EXTENTED" _is_it_empty="${CFG_EDGE_EXTENTED}" && Condition_Vars_Must_Be_Not_Empty
+_var_name="CFG_LOG_LINE_NBR_SHORT" _is_it_empty="${CFG_LOG_LINE_NBR_SHORT}" && Condition_Vars_Must_Be_Not_Empty
+_var_name="CFG_LOG_LINE_NBR_LONG" _is_it_empty="${CFG_LOG_LINE_NBR_LONG}" && Condition_Vars_Must_Be_Not_Empty
+_var_name="CFG_RELEASE_POPUP" _is_it_empty="${CFG_RELEASE_POPUP}" && Condition_Vars_Must_Be_Not_Empty
+
+_var_name="CFG_DEBUG_MODE" _is_it_empty="${CFG_DEBUG_MODE}" && Condition_Vars_Must_Be_Not_Empty
+_var_name="CFG_LOCK_INIT" _is_it_empty="${CFG_LOCK_INIT}" && Condition_Vars_Must_Be_Not_Empty
+
+_var_name="CFG_LIST_OF_REQ_COMPONENTS" _is_it_empty="${CFG_LIST_OF_REQ_COMPONENTS}" && Condition_Vars_Must_Be_Not_Empty
+_var_name="CFG_LIST_OF_REQ_MARKDOWN" _is_it_empty="${CFG_LIST_OF_REQ_MARKDOWN}" && Condition_Vars_Must_Be_Not_Empty
+_var_name="CFG_LIST_OF_OPTIONAL_APPS" _is_it_empty="${CFG_LIST_OF_OPTIONAL_APPS}" && Condition_Vars_Must_Be_Not_Empty
+
+_var_name="DOCKER_IMG_FIGLET" _is_it_empty="${DOCKER_IMG_FIGLET}" && Condition_Vars_Must_Be_Not_Empty
+_var_name="DOCKER_IMG_GLOW" _is_it_empty="${DOCKER_IMG_GLOW}" && Condition_Vars_Must_Be_Not_Empty
+}
+
 function Core_Reset_Bashlava_Path {
 # In file ${_path_user}/bashlava_path_tmp, we set an absolute path like: '~/Users/myuser/Documents/github/firepress-org/bashlava'
 # bashlava_path is a file on disk (not a variable)
@@ -1125,68 +1191,66 @@ function Core_Load_Vars_Edge {
   _var_name="_branch_dev_unique" _is_it_empty="${_branch_dev_unique}" && Condition_Vars_Must_Be_Not_Empty
 }
 
-function Core_Show_Env_Vars {
-  Core_Test_Env_Vars
-
-  my_message="Check env_vars from config:" && Print_Blue
-  echo
-  echo "CFG_OVERRIDE_WITH_CUSTOM_CONFIG   > ${CFG_OVERRIDE_WITH_CUSTOM_CONFIG}"
-  echo "CFG_CUSTOM_CONFIG_FILE_NAME       > ${CFG_CUSTOM_CONFIG_FILE_NAME}"
-  echo
-  echo "APP_NAME                          > ${APP_NAME}"
-  echo "GITHUB_USER                       > ${GITHUB_USER}"
-  echo "APP_VERSION                       > ${APP_VERSION}"
-  echo
-  echo "CFG_DEFAULT_BRANCH                > ${CFG_DEFAULT_BRANCH}"
-  echo "CFG_DEFAULT_DEV_BRANCH            > ${CFG_DEFAULT_DEV_BRANCH}"
-  echo "CFG_USER_IS                       > ${CFG_USER_IS}"
-  echo
-  echo "CFG_EDGE_EXTENTED                 > ${CFG_EDGE_EXTENTED}"
-  echo "CFG_LOG_LINE_NBR_SHORT            > ${CFG_LOG_LINE_NBR_SHORT}"
-  echo "CFG_LOG_LINE_NBR_LONG             > ${CFG_LOG_LINE_NBR_LONG}"
-  echo "CFG_RELEASE_POPUP                 > ${CFG_RELEASE_POPUP}"
-  echo
-  echo "CFG_TEST_SHOW_VARS                > ${CFG_TEST_SHOW_VARS}"
-  echo "CFG_TEST_OPTIONAL_APPS            > ${CFG_TEST_OPTIONAL_APPS}"
-  echo
-  echo "CFG_DEBUG_MODE                    > ${CFG_DEBUG_MODE}"
-  echo "CFG_LOCK_INIT                     > ${CFG_LOCK_INIT}"
-  echo
-  echo "CFG_LIST_OF_REQ_COMPONENTS        > ${CFG_LIST_OF_REQ_COMPONENTS}"
-  echo "CFG_LIST_OF_REQ_MARKDOWN          > ${CFG_LIST_OF_REQ_MARKDOWN}"
-  echo "CFG_LIST_OF_OPTIONAL_APPS          > ${CFG_LIST_OF_OPTIONAL_APPS}"
-  echo
-  echo "DOCKER_IMG_FIGLET                 > ${DOCKER_IMG_FIGLET}"
-  echo "DOCKER_IMG_GLOW                   > ${DOCKER_IMG_GLOW}"
+function Core_Load_Config_Default {
+  _file_is=".bl_env.sh" _file_path_is="${_path_bashlava}/${_file_is}" && Condition_File_Must_Be_Present
+  source "${_file_path_is}"
 }
 
-function Core_Test_Env_Vars {
-### NEW CONFIG
-_var_name="CFG_OVERRIDE_WITH_CUSTOM_CONFIG" _is_it_empty="${CFG_OVERRIDE_WITH_CUSTOM_CONFIG}" && Condition_Vars_Must_Be_Not_Empty
-_var_name="CFG_CUSTOM_CONFIG_FILE_NAME" _is_it_empty="${CFG_CUSTOM_CONFIG_FILE_NAME}" && Condition_Vars_Must_Be_Not_Empty
+function Core_Load_Config_Override {
+  # check if override config is present. FLAG 902
+  if [[ -f "$(pwd)/${OVERRIDE_CONFIG_FILE_NAME_IS}" ]]; then
+    #use the override config file
+    source "${OVERRIDE_CONFIG_FILE_NAME_IS}"
+    _where_to_save_version="${OVERRIDE_CONFIG_FILE_NAME_IS}"
+  # if override config file is missing
 
-_var_name="APP_NAME" _is_it_empty="${APP_NAME}" && Condition_Vars_Must_Be_Not_Empty
-_var_name="GITHUB_USER" _is_it_empty="${GITHUB_USER}" && Condition_Vars_Must_Be_Not_Empty
-_var_name="APP_VERSION" _is_it_empty="${APP_VERSION}" && Condition_Vars_Must_Be_Not_Empty
+  elif [[ ! -f "$(pwd)/${OVERRIDE_CONFIG_FILE_NAME_IS}" ]]; then
+    #use the default config file
+    _where_to_save_version="${DEFAULT_CONFIG_FILE_NAME_IS}"
 
-_var_name="CFG_DEFAULT_BRANCH" _is_it_empty="${CFG_DEFAULT_BRANCH}" && Condition_Vars_Must_Be_Not_Empty
-_var_name="CFG_DEFAULT_DEV_BRANCH" _is_it_empty="${CFG_DEFAULT_DEV_BRANCH}" && Condition_Vars_Must_Be_Not_Empty
-_var_name="CFG_USER_IS" _is_it_empty="${CFG_USER_IS}" && Condition_Vars_Must_Be_Not_Empty
+    # if we are updating the bashlava project itself, no warning
+    if [[ "${APP_NAME}" == "bashlava" ]]; then
+      echo "OK, no warning." > /dev/null 2>&1
 
-_var_name="CFG_EDGE_EXTENTED" _is_it_empty="${CFG_EDGE_EXTENTED}" && Condition_Vars_Must_Be_Not_Empty
-_var_name="CFG_LOG_LINE_NBR_SHORT" _is_it_empty="${CFG_LOG_LINE_NBR_SHORT}" && Condition_Vars_Must_Be_Not_Empty
-_var_name="CFG_LOG_LINE_NBR_LONG" _is_it_empty="${CFG_LOG_LINE_NBR_LONG}" && Condition_Vars_Must_Be_Not_Empty
-_var_name="CFG_RELEASE_POPUP" _is_it_empty="${CFG_RELEASE_POPUP}" && Condition_Vars_Must_Be_Not_Empty
+    # for YOUR projet, prompt are warning. You must create and use the override config file.
+    elif [[ "${input_2}" != "bashlava" ]]; then
+      my_message="WARNING: Config file (${OVERRIDE_CONFIG_FILE_NAME_IS}) is not configured." && Print_Warning
+      my_message="See README for installation details."                             && Print_Warning & sleep 2
+    else
+      my_message="FATAL: Load override configs" && Print_Fatal
+    fi
 
-_var_name="CFG_DEBUG_MODE" _is_it_empty="${CFG_DEBUG_MODE}" && Condition_Vars_Must_Be_Not_Empty
-_var_name="CFG_LOCK_INIT" _is_it_empty="${CFG_LOCK_INIT}" && Condition_Vars_Must_Be_Not_Empty
+  else
+    my_message="FATAL: Load override configs" && Print_Fatal
+  fi
+}
 
-_var_name="CFG_LIST_OF_REQ_COMPONENTS" _is_it_empty="${CFG_LIST_OF_REQ_COMPONENTS}" && Condition_Vars_Must_Be_Not_Empty
-_var_name="CFG_LIST_OF_REQ_MARKDOWN" _is_it_empty="${CFG_LIST_OF_REQ_MARKDOWN}" && Condition_Vars_Must_Be_Not_Empty
-_var_name="CFG_LIST_OF_OPTIONAL_APPS" _is_it_empty="${CFG_LIST_OF_OPTIONAL_APPS}" && Condition_Vars_Must_Be_Not_Empty
+function Core_Load_Components {
+  ### Load COMPONENTS (PUBLIC)
+  for action in "${CFG_LIST_OF_REQ_COMPONENTS[@]}"; do
+    _file_is="${action}" _file_path_is="${_path_components}/${_file_is}" && Condition_File_Must_Be_Present
+    # code optimization, add logic: _to_source="true" 0o0o
+    source "${_file_path_is}"
+  done
+}
 
-_var_name="DOCKER_IMG_FIGLET" _is_it_empty="${DOCKER_IMG_FIGLET}" && Condition_Vars_Must_Be_Not_Empty
-_var_name="DOCKER_IMG_GLOW" _is_it_empty="${DOCKER_IMG_GLOW}" && Condition_Vars_Must_Be_Not_Empty
+function Core_Load_Private_Entrypoint {
+### Loads scripts under PRIVATE directory 
+  if [[ "${CFG_USE_PRIVATE_DIRECTORY}" == "true" ]]; then
+    _file_is="entrypoint.sh" _file_path_is="$(pwd)/private/${_file_is}"
+    if [[ -f "${_file_path_is}" ]]; then
+      source "${_file_path_is}"
+    elif [[ ! -f "${_file_path_is}" ]]; then
+      my_message="Warning: You should set ${_file_path_is} for your own scripts."   && Print_Warning
+      my_message="See README for installation details."                             && Print_Warning_Stop
+    else
+      my_message="FATAL: Condition_File_Must_Be_Present | ${_file_path_is}" && Print_Fatal
+    fi
+  elif [[ "${CFG_USE_PRIVATE_DIRECTORY}" == "false" ]]; then
+    echo "bypassed, ok" > /dev/null
+  else
+    my_message="FATAL: Config is broken regarding: 'CFG_USE_PRIVATE_DIRECTORY'." && Print_Fatal
+  fi
 }
 
 ### Entrypoint
@@ -1209,50 +1273,17 @@ function main() {
 ### Set absolute path for the ./docs directory
   _path_docs="${_path_bashlava}/docs" _var_name="_path_docs" _is_it_empty="${_path_docs}" && Condition_Vars_Must_Be_Not_Empty
 
-### Load default configurations
-  _file_is=".bashlava_env.sh" _file_path_is="${_path_bashlava}/${_file_is}" && Condition_File_Must_Be_Present
-  source "${_file_path_is}"
-
-### Load custom configurations
-  if [[ "${CFG_OVERRIDE_WITH_CUSTOM_CONFIG}" == "true" ]]; then
-    _file_is="${CFG_CUSTOM_CONFIG_FILE_NAME}" _file_path_is="$(pwd)/${CFG_CUSTOM_CONFIG_FILE_NAME}" && Condition_File_Must_Be_Present
-    source "${_file_path_is}"
-  elif [[ "${CFG_OVERRIDE_WITH_CUSTOM_CONFIG}" == "false" ]]; then
-    my_message="Config file is missing or not well configured: '${CFG_CUSTOM_CONFIG_FILE_NAME}"   && Print_Warning
-    my_message="See README for installation details."                                             && Print_Warning_Stop
-  else
-    my_message="FATAL: Config is broken regarding: 'CFG_OVERRIDE_WITH_CUSTOM_CONFIG'." && Print_Fatal
-  fi
-
-### I can't pass an array from `.bashlava_env.sh` to `bashlava.sh`
+### I can't pass an array from `.bl_env.sh` to `bashlava.sh`
+  # FLAG 654
   CFG_LIST_OF_REQ_MARKDOWN=( "welcome_to_bashlava.md" "help.md" "test.md" "debug_upstream.md" )
   CFG_LIST_OF_REQ_COMPONENTS=( "alias.sh" "example.sh" "utilities.sh" "Show_Fct_Category_Filter.sh" )
   CFG_LIST_OF_OPTIONAL_APPS=( "docker" "gh" "git-crypt" "gpg" "openssl" "sha256sum" "grep" "nano" "tldr" "shellcheck" )
 
-### Load COMPONENTS (PUBLIC)
-  for action in "${CFG_LIST_OF_REQ_COMPONENTS[@]}"; do
-    _file_is="${action}" _file_path_is="${_path_components}/${_file_is}" && Condition_File_Must_Be_Present
-    # code optimization, add logic: _to_source="true" 0o0o
-    source "${_file_path_is}"
-  done
-
-### Loads scripts under PRIVATE directory 
-  if [[ "${CFG_USE_PRIVATE_DIRECTORY}" == "true" ]]; then
-    _file_is="entrypoint.sh" _file_path_is="$(pwd)/private/${_file_is}"
-    if [[ -f "${_file_path_is}" ]]; then
-      source "${_file_path_is}"
-    elif [[ ! -f "${_file_path_is}" ]]; then
-      my_message="Warning: You should set ${_file_path_is} for your own scripts."   && Print_Warning
-      my_message="See README for installation details."                             && Print_Warning_Stop
-    else
-      my_message="FATAL: Condition_File_Must_Be_Present | ${_file_path_is}" && Print_Fatal
-    fi
-  elif [[ "${CFG_USE_PRIVATE_DIRECTORY}" == "false" ]]; then
-    echo "bypassed, ok" > /dev/null
-  else
-    my_message="FATAL: Config is broken regarding: 'CFG_USE_PRIVATE_DIRECTORY'." && Print_Fatal
-  fi
-
+  Core_Load_Config_Default
+  Core_Load_Config_Override
+  Core_Test_Env_Vars
+  Core_Load_Components
+  Core_Load_Private_Entrypoint
   Core_Load_Vars_Edge
   Core_Check_Which_File_Exist
   Core_Test_Env_Vars

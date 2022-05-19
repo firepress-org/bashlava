@@ -29,7 +29,7 @@
 - `l` ....... | show`log`.............................. | _standalone_
 - `sv` ...... | show`version`.......................... | _standalone_
 - `oe` ...... | check`out`edge ......(does not fetch) . | _standalone_
-- `om` ...... | check`out`mainbranch (does not fetch)...| _standalone_
+- `om` ...... | check`out`mainbranch (does not fetch) . | _standalone_
 - `mdv` ..... | markdown`viewer` ...................... | usage: mdv README.md
 - `gitio` ... | URL`shortner`for GitHub ............... | _standalone_
 
