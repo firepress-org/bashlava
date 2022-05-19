@@ -5,6 +5,6 @@
 
 APP_NAME="bashlava"
 GITHUB_USER="firepress-org"
-APP_VERSION="1.46.2"
+APP_VERSION="1.47.0"
 
 CFG_USE_PRIVATE_DIRECTORY="true"
