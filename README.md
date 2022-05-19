@@ -19,7 +19,7 @@ BashLaVa is a utility-first bash framework. The idea is to abstract your git wor
 ## Features
 
 - A Super fast git flow
-- Sane default, see `.bashlava_env.sh`
+- Sane default, see `.bl_env.sh`
 - Custom configuration to quickly use bashlava accross your project
 - manage your own bashscript scripts under /private
 - crypt secrets

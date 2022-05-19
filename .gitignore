@@ -1,9 +1,10 @@
 # Specific to bashlava
 ############
 private
-.bashlava_env_*
+# .bl_override.sh should be part of YOUR project
+.bl_override.sh
 
-# .gitignore
+# Node stuff
 ############
 .env
 .cache
