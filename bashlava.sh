@@ -16,15 +16,14 @@ PR Title: New Feat: 0o0o
 - 0o0o
 - Impact on: #4, #8, #9 #10
 
-
 _______________________________________________________________________________________
 _______________________________________________________________________________________
 PRIORITY 1 ____________________________________________________________________________
 
 
 TODO 
-Fix logic: Core_Load_Config_Override()
-
+Fix tag() to avoid prompt
+- Impact on: #9
 
 TODO
 gc()
@@ -356,7 +355,7 @@ function tag { # User_
   _from_fct="t"
 
   if [[ "${CFG_USE_GPG_SIGNATURE}" == "true" ]]; then
-    git tag -s "${APP_VERSION}" -m "tag: {APP_VERSION} using bashlava"
+    git tag --sign "${APP_VERSION}" -m "tag: ${APP_VERSION} using bashlava"
   elif [[ "${CFG_USE_GPG_SIGNATURE}" == "false" ]]; then
     git tag "${APP_VERSION}"
   else
@@ -415,11 +414,10 @@ function release { # User_
   gh release create "$(git describe --tags --abbrev=0)" --generate-notes
   
   sleep 0.3
-  Show_Version && sleep 0.3
-  Show_Tag && sleep 2
-
+  Show_Version
+  Show_Tag && sleep 1
   Show_Release
-# CFG_RELEASE_POPUP / add logic 0o0o
+# CFG_RELEASE_webpage POPUP / add logic 0o0o
 
   Show_What_Was_Done
   _doc_name="next_move_fct_release.md" && Show_Docs
