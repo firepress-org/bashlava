@@ -18,13 +18,14 @@
 - `v` ....... |`version`code .......................... | _standalone_ or usage: v 1.4.2
 - `t` ....... |`tag` .................................. | _standalone_
 - `r` ....... |`release` and open GUI on GitHub ....... | _standalone_
-- `d` ....... |`dummy` commits ........................ | _standalone_
+- `d` ....... |`dummy`commits ......................... | _standalone_
 
 **more commands**
 
 - `s` ....... |`show`every functions per categories ... | _standalone_
 - `h` ....... |`help`.................................. | _standalone_
 - `test` .... |`test`if bashLaVa works properly ....... | _standalone_
+- `gc` ...... | git-crypt utility ..................... | _standalone_ or usage: gc on
 - `l` ....... | show`log`.............................. | _standalone_
 - `sv` ...... | show`version`.......................... | _standalone_
 - `oe` ...... | check`out`edge ......(does not fetch) . | _standalone_

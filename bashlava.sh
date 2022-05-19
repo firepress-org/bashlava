@@ -22,9 +22,31 @@ ________________________________________________________________________________
 PRIORITY 1 ____________________________________________________________________________
 
 
-TODO git-crypt
-- once gitcrypt to well test and solid
-- 0o0o
+TODO
+## New feat: gc() one core fct + 5 childs to use git-crypt
+- gc h(), add /docs/help_gitcrypt.md
+- (h) update /docs/help.md
+- Impact on: #4, #8
+
+## Minor
+- Update README.md
+
+TODO
+gc()
+  CONFIG: is if key is: symetric OR pub/priv
+    if symetric, we need to define a custom path for the key
+    most likely define in /private/entrypoint
+    Default pub/priv
+  CONFIG: do a gc on() when test()
+    default is false
+
+  check if projet have .git-crypt
+    else warn this project does have gc setup
+
+
+TODO
+- start a new git repo to test gc 
+- create key as new user on new computers to ensure how_to_use_gitcrypt.md is correct
 
 _______________________________________________________________________________________
 _______________________________________________________________________________________
@@ -594,6 +616,64 @@ function gitio { # User_
     *) my_message="Aborted" && Print_Fatal;;
   esac
 }
+
+function gc { # User_
+  Condition_Attr_3_Must_Be_Empty
+  
+  if [[ "${input_2}" == "on" ]]; then
+    gc_on
+  elif [[ "${input_2}" == "off" ]]; then
+    gc_off
+  elif [[ "${input_2}" == "s" ]]; then
+    gc_status
+  elif [[ "${input_2}" == "k" ]]; then
+    gc_keys
+  elif [[ "${input_2}" == "h" ]]; then
+    gc_help
+  elif [[ "${input_2}" == "not_set" ]]; then
+    _doc_name="fct_gc_next.md" && Show_Docs
+    input_2="not_set"   #reset input_2
+    read -r user_input;
+    case ${user_input} in
+      1 | on | un) gc_on;;
+      2 | off | lock) gc_off;;
+      3 | s | status) gc_status;;
+      4 | l | list) gc_list;;
+      5 | h | help) gc_help;;
+      *) my_message="Aborted" && Print_Gray;;
+    esac
+  else
+    my_message="FATAL: The command does not exist." && Print_Fatal
+  fi
+}
+### CHILD FUNCTIONS
+    function gc_on { # Child_
+      Condition_No_Commits_Pending
+      git-crypt unlock
+      # clear the warning. See https://github.com/firepress-org/bashlava/issues/40
+      clear
+      my_message="git-crypt unlocked your files/dir." && Print_Green
+      file "$(git-crypt status -e | head -1 | awk '{print $2}')"
+    }
+    function gc_off { # Child_
+      Condition_No_Commits_Pending
+      git-crypt lock
+      my_message="git-crypt locked your files/dir." && Print_Green
+      file "$(git-crypt status -e | head -1 | awk '{print $2}')"
+    }
+    function gc_status { # Child_
+      git-crypt status -e && echo
+      git-crypt status -u && echo
+      git-crypt status -f
+      file "$(git-crypt status -e | head -1 | awk '{print $2}')"
+    }
+    function gc_keys { # Child_
+      gpg --list-keys
+    }
+    function gc_help { # Child_
+      clear
+      _doc_name="help_gitcrypt.md" && Show_Docs
+    }
 
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### #
 #
