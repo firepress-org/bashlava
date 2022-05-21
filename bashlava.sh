@@ -14,20 +14,15 @@ PINNED issues on GH
 ## New Feat: 0o0o
 - 0o0o
 - 0o0o
-
-## Impacts: 💪 #4, 🎛️ #8, 🧠 #10, 🧵 #11, 🧨 #9
+- Impacts: 💪 #4, 🎛️ #8, 🧠 #10, 🧵 #11, 🧨 #9
 
 _______________________________________________________________________________________
 _______________________________________________________________________________________
 PRIORITY 1 ____________________________________________________________________________
 
 
-TODO
-## UX: Add config to dummy()
-- alternate message can be set by the user
-- CFG_DUMMY_CUSTOM_MSG, CFG_DUMMY_CUSTOM_MSG_IS
-
-## Impacts: 🎛️ #8
+Fix Show_Release(): sometimes the URL shown is not the latest one
+- Impacts: 🧨 #9
 
 
 TODO
@@ -731,10 +726,14 @@ function Show_Tag {
 }
 
 function Show_Release {
-  release_latest=$(curl -s "https://api.github.com/repos/${GITHUB_USER}/${APP_NAME}/releases/latest" | grep '"tag_name": ' | awk '{print $2}' | sed -e 's/"//g' | sed -e 's/,//g' | awk '{print $1}')
-  _var_name="release_latest" _is_it_empty="${release_latest}" && Condition_Vars_Must_Be_Not_Empty
 
-  my_message="${release_latest} < RELEASE on https://github.com/${GITHUB_USER}/${APP_NAME}/releases/tag/${release_latest}" && Print_Gray
+  ### The logic is not working perfectly.
+  ### Need to add a check
+  #release_latest=$(curl -s "https://api.github.com/repos/${GITHUB_USER}/${APP_NAME}/releases/latest" | grep '"tag_name": ' | awk '{print $2}' | sed -e 's/"//g' | sed -e 's/,//g' | awk '{print $1}')
+  #_var_name="release_latest" _is_it_empty="${release_latest}" && Condition_Vars_Must_Be_Not_Empty
+
+  # This is not sophiticated perfect but good enough
+  my_message="${APP_VERSION} < RELEASE on https://github.com/${GITHUB_USER}/${APP_NAME}/releases/tag/${APP_VERSION}" && Print_Gray
   echo
 }
 
