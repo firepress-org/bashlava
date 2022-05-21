@@ -16,12 +16,13 @@ PINNED issues on GH
 - 0o0o
 - Impacts: 💪 #4, 🎛️ #8, 🧠 #10, 🧵 #11, 🧨 #9
 
+
 _______________________________________________________________________________________
 _______________________________________________________________________________________
 PRIORITY 1 ____________________________________________________________________________
 
 
-Fix Show_Release(): sometimes the URL shown is not the latest one
+Fix dummy(): now, commit message is right
 - Impacts: 🧨 #9
 
 
@@ -491,14 +492,15 @@ function dummy { # User_
     _hash_four_last="${_hash: -4}"
     
     if [[ "${CFG_DUMMY_CUSTOM_MSG}" == "false" ]]; then
-      echo "Dummy Commit ${lineID} - $(date +%Y-%m-%d_%HH%M_%S) - ${_hash}" >> "${_in_file}"
+      _commit_message="Dummy Commit ${lineID} - $(date +%Y-%m-%d_%HH%M_%S) - ${_hash}"
     elif [[ "${CFG_DUMMY_CUSTOM_MSG}" == "true" ]]; then
-      echo "${CFG_DUMMY_CUSTOM_MSG_IS} ${lineID}" >> "${_in_file}"
+      _commit_message="${CFG_DUMMY_CUSTOM_MSG_IS} ${lineID}"
     else
       my_message="FATAL: Config is broken regarding: 'CFG_TEST_SHOW_VARS'." && Print_Fatal
     fi
-    
-    git add -A && git commit -m "Dummy Commit ${lineID} - ${_hash_four_last}"
+
+    echo "${_commit_message}" >> "${_in_file}"
+    git add -A && git commit -m "${_commit_message}"
   done
 
   git push
