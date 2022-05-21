@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-### DO NOT update these vars.
-### Because of these three vars, you must create a use `.bl_override.sh`
+### DO NOT update these vars (`.bl_env.sh`)
+### Override vars from `.bl_override.sh` Get template https://github.com/firepress-org/mycrypt/blob/master/.bl_override.sh
 APP_NAME="bashlava"
 GITHUB_USER="firepress-org"
 APP_VERSION="1.49.2"
@@ -15,12 +15,19 @@ CFG_USER_IS="${USER}"
 
 ### manage your custom scripts under this directory /private/**.sh
 CFG_USE_PRIVATE_DIRECTORY="false"
+CFG_USE_GPG_SIGNATURE="false"
 
-### function options
+### edge
 CFG_EDGE_EXTENTED="false"       # not coded yet
+
+### log()
 CFG_LOG_LINE_NBR_SHORT="4"      # log() default line number
 CFG_LOG_LINE_NBR_LONG="12"      # log() default line number
-CFG_USE_GPG_SIGNATURE="false"
+
+### dummy()
+CFG_DUMMY_CUSTOM_MSG="false"
+CFG_DUMMY_CUSTOM_MSG_IS="Alt dummy message"
+
 CFG_RELEASE_POPUP="false"       # not coded yet
 CFG_TEST_SHOW_VARS="false"      # test extension
 CFG_TEST_OPTIONAL_APPS="false"  # test extension

@@ -25,7 +25,7 @@
 - `s` ....... |`show`every functions per categories ... | _standalone_
 - `h` ....... |`help`.................................. | _standalone_
 - `test` .... |`test`if bashLaVa works properly ....... | _standalone_
-- `gc` ...... | git-crypt utility ..................... | _standalone_ or usage: gc on
+- `gc` ...... | git-crypt utility ..................... | _standalone_ or usage: gc (sub-cmd)
 - `l` ....... | show`log`.............................. | _standalone_
 - `sv` ...... | show`version`.......................... | _standalone_
 - `oe` ...... | check`out`edge ......(does not fetch) . | _standalone_

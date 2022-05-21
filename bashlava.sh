@@ -4,26 +4,31 @@
 // COMMENT BLOCK //
 TO-DO comment section. Total of 3
 
-PINNED issues on GH             _
-  issue #4 TO-DO & backlog      _
-  issue #8 UX                   _
-  issue #9 Bugfix               _
-  issue #10 Logic & Condition   _
-  issue #11 docs                _
+PINNED issues on GH
+  #4 TO-DO & backlog 💪
+  #8 UX 🎛️
+  #10 Logic & Condition 🧠
+  #11 docs 🧵
+  #9 Bugfix 🧨
 
-PR Title: New Feat: 0o0o
+## New Feat: 0o0o
 - 0o0o
 - 0o0o
-- Impact on: #4, #8, #9 #10
+
+## Impacts: 💪 #4, 🎛️ #8, 🧠 #10, 🧵 #11, 🧨 #9
 
 _______________________________________________________________________________________
 _______________________________________________________________________________________
 PRIORITY 1 ____________________________________________________________________________
 
 
-TODO 
-Fix tag() to avoid prompt
-- Impact on: #9
+TODO
+## UX: Add config to dummy()
+- alternate message can be set by the user
+- CFG_DUMMY_CUSTOM_MSG, CFG_DUMMY_CUSTOM_MSG_IS
+
+## Impacts: 🎛️ #8
+
 
 TODO
 gc()
@@ -46,6 +51,8 @@ ________________________________________________________________________________
 _______________________________________________________________________________________
 PRIORITY 2 ____________________________________________________________________________
 
+
+BUG: tag() still prompt on bashlava, but does not on project mycrypt .. ?
 
 TODO
 Optimize code: Instead of creating custom var simply use %1 %2 <=dollar sign
@@ -482,12 +489,20 @@ function dummy { # User_
   _from_fct="d"
   _in_file="./docs/DUMMY.md"
 
-  # create two commits in a row
+  # create two dummy commits in a row
   for lineID in $(seq 1 2); do
     date_nano="$(date +%Y-%m-%d_%HH%Ms%S-%N)"
     _hash=$(echo "${date_nano} ${lineID}" | sha256sum | awk '{print $1}')
     _hash_four_last="${_hash: -4}"
-    echo "Dummy Commit ${lineID} - $(date +%Y-%m-%d_%HH%M_%S) - ${_hash}" >> "${_in_file}"
+    
+    if [[ "${CFG_DUMMY_CUSTOM_MSG}" == "false" ]]; then
+      echo "Dummy Commit ${lineID} - $(date +%Y-%m-%d_%HH%M_%S) - ${_hash}" >> "${_in_file}"
+    elif [[ "${CFG_DUMMY_CUSTOM_MSG}" == "true" ]]; then
+      echo "${CFG_DUMMY_CUSTOM_MSG_IS} ${lineID}" >> "${_in_file}"
+    else
+      my_message="FATAL: Config is broken regarding: 'CFG_TEST_SHOW_VARS'." && Print_Fatal
+    fi
+    
     git add -A && git commit -m "Dummy Commit ${lineID} - ${_hash_four_last}"
   done
 
@@ -1180,9 +1195,6 @@ function Core_Load_Config_Default {
 }
 
 function Core_Load_Config_Override {
-
-### Load override config
-
   # Load override config if it exist
   if [[ -f "$(pwd)/${OVERRIDE_CONFIG_FILE_NAME_IS}" ]]; then
     _where_to_save_version="${OVERRIDE_CONFIG_FILE_NAME_IS}"
@@ -1192,7 +1204,6 @@ function Core_Load_Config_Override {
   else
     my_message="FATAL: Core_Load_Config_Override() A" && Print_Fatal
   fi
-
 
   # Logic depending on which projet we are working on
   if [[ "${APP_NAME}" == "bashlava" ]]; then
@@ -1208,7 +1219,6 @@ function Core_Load_Config_Override {
     elif [[ ! -f "$(pwd)/${OVERRIDE_CONFIG_FILE_NAME_IS}" ]]; then
       my_message="WARNING: Config file (${OVERRIDE_CONFIG_FILE_NAME_IS}) is not configured." && Print_Warning
       my_message="See README for installation details."                             && Print_Warning & sleep 2
-
     else
       my_message="FATAL: Core_Load_Config_Override() B" && Print_Fatal
     fi
