@@ -22,31 +22,32 @@ ________________________________________________________________________________
 PRIORITY 1 ____________________________________________________________________________
 
 
-Fix dummy(): now, commit message is right
-- Impacts: 🧨 #9
-
-
 TODO
-gc()
+gc(): Logic: check if dir .git-crypt exist
+
+  Logic: check if dir .git-crypt exist
+    else warn user ==> gc docs
+
+  CONFIG: do a gc on() when test()
+    default is false
+
   CONFIG: is if key is: symetric OR pub/priv
     if symetric, we need to define a custom path for the key
     most likely define in /private/entrypoint
     Default pub/priv
-  CONFIG: do a gc on() when test()
-    default is false
 
-  check if projet have .git-crypt
-    else warn this project does have gc setup
+  UAT - start a new git repo to test gc
 
+  UAT create key as new user on new computers to ensure how_to_use_gitcrypt.md is correct
 
-TODO
-- start a new git repo to test gc 
-- create key as new user on new computers to ensure how_to_use_gitcrypt.md is correct
+- Impacts: 💪 #4, 🎛️ #8, 🧠 #10
 
 _______________________________________________________________________________________
 _______________________________________________________________________________________
 PRIORITY 2 ____________________________________________________________________________
 
+0o0o
+  re-org *.md under dir : /prompts , /how-to, /random
 
 BUG: tag() still prompt on bashlava, but does not on project mycrypt .. ?
 
@@ -640,7 +641,7 @@ function gitio { # User_
 
 function gc { # User_
   Condition_Attr_3_Must_Be_Empty
-  
+
   if [[ "${input_2}" == "on" ]]; then
     gc_on
   elif [[ "${input_2}" == "off" ]]; then
@@ -657,9 +658,9 @@ function gc { # User_
     read -r user_input;
     case ${user_input} in
       1 | on | un) gc_on;;
-      2 | off | lock) gc_off;;
+      2 | off) gc_off;;
       3 | s | status) gc_status;;
-      4 | l | list) gc_list;;
+      4 | k) gc_keys;;
       5 | h | help) gc_help;;
       *) my_message="Aborted" && Print_Gray;;
     esac
@@ -670,6 +671,8 @@ function gc { # User_
 ### CHILD FUNCTIONS
     function gc_on { # Child_
       Condition_No_Commits_Pending
+      _file_is=".git-crypt" dir_path_is="$(pwd)/${_file_is}" && Condition_Dir_Must_Be_Present
+
       git-crypt unlock
       # clear the warning. See https://github.com/firepress-org/bashlava/issues/40
       clear
@@ -678,17 +681,21 @@ function gc { # User_
     }
     function gc_off { # Child_
       Condition_No_Commits_Pending
+      _file_is=".git-crypt" dir_path_is="$(pwd)/${_file_is}" && Condition_Dir_Must_Be_Present
+
       git-crypt lock
       my_message="git-crypt locked your files/dir." && Print_Green
       file "$(git-crypt status -e | head -1 | awk '{print $2}')"
     }
     function gc_status { # Child_
+      _file_is=".git-crypt" dir_path_is="$(pwd)/${_file_is}" && Condition_Dir_Must_Be_Present
       git-crypt status -e && echo
       git-crypt status -u && echo
       git-crypt status -f
       file "$(git-crypt status -e | head -1 | awk '{print $2}')"
     }
     function gc_keys { # Child_
+      _file_is=".git-crypt" dir_path_is="$(pwd)/${_file_is}" && Condition_Dir_Must_Be_Present
       gpg --list-keys
     }
     function gc_help { # Child_
