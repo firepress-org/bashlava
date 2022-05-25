@@ -23,14 +23,21 @@ PRIORITY 1 _____________________________________________________________________
 
 
 TODO
-gc(): Logic: check if dir .git-crypt exist
 
-  Logic: check if dir .git-crypt exist
+Fix: Core_Load_Vars_Edge() logic
+- Issue: the space in /Application Support is causing issues
+- Now using a more basic path to store file
+- impact on edge()
+- Impacts: 💪 #4, 🧨 #9
+
+
+TODO
+gc(): Improve on 5 features
+
+  Logic: check if dir .git-crypt exist (DONE)
     else warn user ==> gc docs
 
-  CONFIG: do a gc on() when test()
-    default is false
-
+  Rejected but not a bad idea:
   CONFIG: is if key is: symetric OR pub/priv
     if symetric, we need to define a custom path for the key
     most likely define in /private/entrypoint
@@ -41,6 +48,7 @@ gc(): Logic: check if dir .git-crypt exist
   UAT create key as new user on new computers to ensure how_to_use_gitcrypt.md is correct
 
 - Impacts: 💪 #4, 🎛️ #8, 🧠 #10
+
 
 _______________________________________________________________________________________
 _______________________________________________________________________________________
@@ -184,21 +192,21 @@ function edge { # User_
   fi
 
   ### Reset file where we stored the _branch_dev_unique
-  if [[ -f "${_path_lib}/Application Support/${_path_last_part}" ]]; then
+  if [[ -f "${HOME}/.bashlava/${_file_name_edge}" ]]; then
     echo "File exist. Lets delete it" > /dev/null 2>&1
-    rm "${_path_lib}/Application Support/${_path_last_part}"
+    rm "${HOME}/.bashlava/${_file_name_edge}"
   fi
 
   ### Generate _branch_dev_unique and save the name in a file
-  if [[ -f "${_path_lib}/Application Support/${_path_last_part}" ]]; then
+  if [[ -f "${HOME}/.bashlava/${_file_name_edge}" ]]; then
     my_message="FATAL: File exist, but it should not!" && Print_Fatal
-  elif [[ ! -f "${_path_lib}/Application Support/${_path_last_part}" ]]; then
+  elif [[ ! -f "${HOME}/.bashlava/${_file_name_edge}" ]]; then
     echo "OK, file do not exit" > /dev/null 2>&1
     _default_edge_prefix="${CFG_DEFAULT_DEV_BRANCH}" _random_char=$(openssl rand -hex 4 | colrm 4)
     # Store to file
-    echo "${_default_edge_prefix}_${_random_char}" > "${_path_lib}/Application Support/${_path_last_part}"
+    echo "${_default_edge_prefix}_${_random_char}" > "${HOME}/.bashlava/${_file_name_edge}"
     # Get the new generated _branch_dev_unique
-    _branch_dev_unique=$(cat "${_path_lib}/Application Support/${_path_last_part}")
+    _branch_dev_unique=$(cat "${HOME}/.bashlava/${_file_name_edge}")
   else
     my_message="FATAL: ${CFG_DEFAULT_DEV_BRANCH}" && Print_Fatal
   fi
@@ -1181,19 +1189,32 @@ function Core_Reset_Bashlava_Path {
 }
 
 function Core_Load_Vars_Edge {
-### edge
-  # This is where we dynamically store the edge name
-  # Can't pass the path as a var because of the space in the path (/Application Support)
-  # I guess it's just me not knowing how to manage this :-p
-  # It does not make sens to Condition_Vars_Must_Be_Not_Empty
-  _path_lib="${HOME}/Library"
-  _var_name="_path_lib" _is_it_empty="${_path_lib}" && Condition_Vars_Must_Be_Not_Empty
+  _file_name_edge="${APP_NAME}_dev_branch_name_is"
 
-  mkdir -p "${_path_lib}/Application Support/FirePress/bashlava"
-  _path_last_part="FirePress/bashlava/${APP_NAME}_dev_branch_name_is"
-  _var_name="_path_last_part" _is_it_empty="${_path_last_part}" && Condition_Vars_Must_Be_Not_Empty
+  # Needed when we first integrate bash to a new project
+  # create file if not exist
+  if [[ ! -f "${HOME}/.bashlava/${_file_name_edge}" ]]; then
+    mkdir -p "${HOME}/.bashlava"
+    touch "${HOME}/.bashlava/${_file_name_edge}"
+  elif [[ -f "${HOME}/.bashlava/${_file_name_edge}" ]]; then
+      echo "Path is valid. Lets continue." > /dev/null 2>&1
+  else
+    my_message="FATAL: Core_Reset_Bashlava_Path | ${dir_path_is}" && Print_Fatal
+  fi
 
-  _branch_dev_unique=$(cat "${_path_lib}/Application Support/${_path_last_part}")
+  # Needed when we first integrate bash to a new project
+  # set a dummy value
+  _branch_dev_unique=$(cat "${HOME}/.bashlava/${_file_name_edge}") || true
+
+  if [[ -n "${_branch_dev_unique}" ]]; then    #if not empty
+    echo "idempotent checkpoint passed" > /dev/null 2>&1
+  elif [[ -z "${_branch_dev_unique}" ]]; then    #if empty
+    echo "dummy_name" > "${HOME}/.bashlava/${_file_name_edge}"
+  else
+    my_message="FATAL: Core_Load_Vars_Edge | ${_branch_dev_unique}" && Print_Fatal
+  fi
+
+  _branch_dev_unique=$(cat "${HOME}/.bashlava/${_file_name_edge}")
   _var_name="_branch_dev_unique" _is_it_empty="${_branch_dev_unique}" && Condition_Vars_Must_Be_Not_Empty
 }
 
