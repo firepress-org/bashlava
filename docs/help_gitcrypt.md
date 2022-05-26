@@ -21,6 +21,9 @@ git-crypt 0.7.0
 
 Also install the GUI - https://gpgtools.org/
 
+gpg can have mixed up installation configs:
+https://stackoverflow.com/questions/39494631/gpg-failed-to-sign-the-data-fatal-failed-to-write-commit-object-git-2-10-0
+
 # Method #1
 
 One commun symetric key for everybody. (Less secure over time.)
