@@ -21,34 +21,23 @@ ________________________________________________________________________________
 _______________________________________________________________________________________
 PRIORITY 1 ____________________________________________________________________________
 
+TODO
+BUG: there is a dir "~" create in every project
+#HOME
+/Users/#USER
 
 TODO
+Manage SUB_DIR (ie Ghost v4 and v5)
+cmd `v` is broken
 
-Fix: Core_Load_Vars_Edge() logic
-- Issue: the space in /Application Support is causing issues
-- Now using a more basic path to store file
-- impact on edge()
-- Impacts: 💪 #4, 🧨 #9
-
+TODO
+Add Dockerfile FLAG to update version
 
 TODO
 gc(): Improve on 5 features
-
-  Logic: check if dir .git-crypt exist (DONE)
-    else warn user ==> gc docs
-
-  Rejected but not a bad idea:
-  CONFIG: is if key is: symetric OR pub/priv
-    if symetric, we need to define a custom path for the key
-    most likely define in /private/entrypoint
-    Default pub/priv
-
-  UAT - start a new git repo to test gc
-
-  UAT create key as new user on new computers to ensure how_to_use_gitcrypt.md is correct
-
+- UAT: start a new git repo to test gc
+- UAT: create key as new user on new computers to ensure how_to_use_gitcrypt.md is correct
 - Impacts: 💪 #4, 🎛️ #8, 🧠 #10
-
 
 _______________________________________________________________________________________
 _______________________________________________________________________________________
@@ -89,7 +78,6 @@ optimize my_message when calling
   Print_
   Banner_
 
-
 0o0o EDGE_EXTENTED
   edge() prompt user
 
@@ -127,7 +115,6 @@ works but not clean, but it works mdv() / Show_Docs
 0o0o pending
 - v_and_t
 - ARRAY CFG_LIST_OF_REQ_MARKDOWN + CFG_LIST_OF_REQ_COMPONENTS
-
 
 // COMMENT BLOCK //
 '
@@ -495,20 +482,21 @@ function dummy { # User_
   _in_file="./docs/DUMMY.md"
 
   # create two dummy commits in a row
-  for lineID in $(seq 1 2); do
+  for lineID in $(seq 1 1); do
     date_nano="$(date +%Y-%m-%d_%HH%Ms%S-%N)"
     _hash=$(echo "${date_nano} ${lineID}" | sha256sum | awk '{print $1}')
     _hash_four_last="${_hash: -4}"
     
     if [[ "${CFG_DUMMY_CUSTOM_MSG}" == "false" ]]; then
-      _commit_message="Dummy Commit ${lineID} - $(date +%Y-%m-%d_%HH%M_%S) - ${_hash}"
+      _commit_message="Dummy Commit ${lineID}"
     elif [[ "${CFG_DUMMY_CUSTOM_MSG}" == "true" ]]; then
       _commit_message="${CFG_DUMMY_CUSTOM_MSG_IS} ${lineID}"
     else
       my_message="FATAL: Config is broken regarding: 'CFG_TEST_SHOW_VARS'." && Print_Fatal
     fi
 
-    echo "${_commit_message}" >> "${_in_file}"
+    _commit_hash="Dummy Commit ${lineID} - $(date +%Y-%m-%d_%HH%M_%S) - ${_hash}"
+    echo "${_commit_hash}" >> "${_in_file}"
     git add -A && git commit -m "${_commit_message}"
   done
 
