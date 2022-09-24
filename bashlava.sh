@@ -21,10 +21,17 @@ ________________________________________________________________________________
 _______________________________________________________________________________________
 PRIORITY 1 ____________________________________________________________________________
 
+TODO
+BUG: there is a dir "~" create in every project
+#HOME
+/Users/#USER
 
 TODO
-Improve message dummy()
+Manage SUB_DIR (ie Ghost v4 and v5)
+cmd `v` is broken
 
+TODO
+Add Dockerfile FLAG to update version
 
 TODO
 gc(): Improve on 5 features
@@ -71,7 +78,6 @@ optimize my_message when calling
   Print_
   Banner_
 
-
 0o0o EDGE_EXTENTED
   edge() prompt user
 
@@ -109,7 +115,6 @@ works but not clean, but it works mdv() / Show_Docs
 0o0o pending
 - v_and_t
 - ARRAY CFG_LIST_OF_REQ_MARKDOWN + CFG_LIST_OF_REQ_COMPONENTS
-
 
 // COMMENT BLOCK //
 '
