@@ -21,7 +21,7 @@ ________________________________________________________________________________
 PRIORITY 1 ____________________________________________________________________________
 
 TODO
-## New Feat: I want fct v to impact Dockerfile
+## New Feat: fct `v` to update Dockerfile
 - In fct v, check if a Dockerfile is present and update version if it exist
 - use flag: _file_do_not_exist
 - Impacts: 💪 #4, 🧠 #10
@@ -331,7 +331,7 @@ function version { # User_
     Condition_Version_Must_Be_Valid
 
     ### Update version in Dockerfile
-    _file_is="Dockerfile" _file_path_is="$(pwd)/${_file_is}" && Condition_File_Must_Be_Present
+    _file_is="Dockerfile" _file_path_is="$(pwd)/${_file_is}" && Condition_File_Optionnally_Present
     if [[ "${_file_do_not_exist}" != "true" ]]; then
       sed -i '' "s|VERSION=\"[^\"]*\"|VERSION=\"${input_2}\"|" "${_file_path_is}"
     elif [[ "${_file_do_not_exist}" == "true" ]]; then
