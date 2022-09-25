@@ -21,19 +21,12 @@ ________________________________________________________________________________
 PRIORITY 1 ____________________________________________________________________________
 
 TODO
-## New Feat: fct `v` to update Dockerfile
-- In fct v, check if a Dockerfile is present and update version if it exist
-- use flag: _file_do_not_exist
-- Impacts: 💪 #4, 🧠 #10
-
-TODO
-## New Feat: I want fct v to be aware of SUB_DIR (ie Ghost v4 and v5)
-- fct `v` is not updating Dockerfile within SUB_DIR "
+## New Feat: Add SUB_DIR logic (ie Ghost v4 and v5)
+- fct v is not updating Dockerfile in SUB_DIR
 - Need to add a flag: SUB_DIR, default: none
-- In fct v, check if a Dockerfile is present and update version if it exist
 - In fct v, check SUB_DIR flag is present
-- Impacts: 🧠 #10
-
+- Then fct v will be able to update the Dockerfile in the SUB_DIR or at the root
+- Impacts: 💪 #4, 🧠 #10
 
 TODO
 BUG: there is a dir "~" create in every project
@@ -77,7 +70,6 @@ WITH THIS:
 - superlinter (includes shellcheck)
 - create ci for using shellcheck
 - execute test()
-
 
 0o0o
 Fix dependabot read-only annoyance
@@ -330,14 +322,22 @@ function version { # User_
     Condition_Attr_2_Must_Be_Provided
     Condition_Version_Must_Be_Valid
 
+    ### SUB_DIR
+    if [[ "${CFG_SUB_DIR}" != "none" ]]; then
+      _file_is="Dockerfile" _file_path_is="$(pwd)/${CFG_SUB_DIR}/${_file_is}" && Condition_File_Optionnally_Present
+    elif [[ "${CFG_SUB_DIR}" == "none" ]]; then
+      _file_is="Dockerfile" _file_path_is="$(pwd)/${_file_is}" && Condition_File_Optionnally_Present
+    else
+      my_message="FATAL: (CFG_SUB_DIR)" && Print_Fatal
+    fi
+
     ### Update version in Dockerfile
-    _file_is="Dockerfile" _file_path_is="$(pwd)/${_file_is}" && Condition_File_Optionnally_Present
     if [[ "${_file_do_not_exist}" != "true" ]]; then
       sed -i '' "s|VERSION=\"[^\"]*\"|VERSION=\"${input_2}\"|" "${_file_path_is}"
     elif [[ "${_file_do_not_exist}" == "true" ]]; then
       echo "No Dockerfile, lets continue" > /dev/null 2>&1
     else
-      my_message="FATAL: (version)" && Print_Fatal
+      my_message="FATAL: (_file_do_not_exist)" && Print_Fatal
     fi
 
     # See FLAG 902
