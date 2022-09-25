@@ -4,7 +4,7 @@
 ### Override vars from `.bl_override.sh` Get template https://github.com/firepress-org/mycrypt/blob/master/.bl_override.sh
 APP_NAME="bashlava"
 GITHUB_USER="firepress-org"
-APP_VERSION="1.50.3"
+APP_VERSION="1.51.0"
 
 ### DEFAULT CONFIGS BELOW
 
