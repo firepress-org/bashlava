@@ -2,7 +2,7 @@
 
 : '
 // COMMENT BLOCK //
-TO-DO comment section. Total of 3
+TO-DO comment section. Total of 4
 
 PINNED issues on GH
   #4 TO-DO & backlog 💪
@@ -16,19 +16,30 @@ PINNED issues on GH
 - 0o0o
 - Impacts: 💪 #4, 🎛️ #8, 🧠 #10, 🧵 #11, 🧨 #9
 
-
 _______________________________________________________________________________________
 _______________________________________________________________________________________
 PRIORITY 1 ____________________________________________________________________________
 
 TODO
-BUG: there is a dir "~" create in every project
-#HOME
-/Users/#USER
+## New Feat: I want fct v to impact Dockerfile
+- In fct v, check if a Dockerfile is present and update version if it exist
+- use flag: _file_do_not_exist
+- Impacts: 💪 #4, 🧠 #10
 
 TODO
-Manage SUB_DIR (ie Ghost v4 and v5)
-cmd `v` is broken
+## New Feat: I want fct v to be aware of SUB_DIR (ie Ghost v4 and v5)
+- fct `v` is not updating Dockerfile within SUB_DIR "
+- Need to add a flag: SUB_DIR, default: none
+- In fct v, check if a Dockerfile is present and update version if it exist
+- In fct v, check SUB_DIR flag is present
+- Impacts: 🧠 #10
+
+
+TODO
+BUG: there is a dir "~" create in every project
+observation in progress 2022-09-24_18h12
+#HOME
+/Users/#USER
 
 TODO
 Add Dockerfile FLAG to update version
@@ -318,6 +329,16 @@ function version { # User_
   if [[ "${input_2}" != "not_set" ]]; then
     Condition_Attr_2_Must_Be_Provided
     Condition_Version_Must_Be_Valid
+
+    ### Update version in Dockerfile
+    _file_is="Dockerfile" _file_path_is="$(pwd)/${_file_is}" && Condition_File_Must_Be_Present
+    if [[ "${_file_do_not_exist}" != "true" ]]; then
+      sed -i '' "s|VERSION=\"[^\"]*\"|VERSION=\"${input_2}\"|" "${_file_path_is}"
+    elif [[ "${_file_do_not_exist}" == "true" ]]; then
+      echo "No Dockerfile, lets continue" > /dev/null 2>&1
+    else
+      my_message="FATAL: (version)" && Print_Fatal
+    fi
 
     # See FLAG 902
     _file_is=${_where_to_save_version} _file_path_is="$(pwd)/${_file_is}" && Condition_File_Must_Be_Present
@@ -1016,6 +1037,7 @@ function Condition_File_Must_Be_Present {
     echo "idempotent checkpoint passed" > /dev/null 2>&1
   elif [[ ! -f "${_file_path_is}" ]]; then
     my_message="Warning: no file: ${_file_path_is}" && Print_Warning_Stop
+    _file_do_not_exist="true"
   else
     my_message="FATAL: Condition_File_Must_Be_Present | ${_file_path_is}" && Print_Fatal
   fi
