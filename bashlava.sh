@@ -2,7 +2,7 @@
 
 : '
 // COMMENT BLOCK //
-TO-DO comment section. Total of 4
+TO-DO comment section. Total of 1
 
 PINNED issues on GH
   #4 TO-DO & backlog 💪
@@ -18,30 +18,41 @@ PINNED issues on GH
 
 _______________________________________________________________________________________
 _______________________________________________________________________________________
+FEATURE _______________________________________________________________________________
+
+FEAT: tag() + release(), should be executed on main branch
+
+if on branch edge_*, add warning when using tag(), release()
+The idea is that it should be done after mrg on branch main
+Maybe I should force tag(), release() on master branch ?
+- Impacts: 🧠 #10
+
+Solution:
+Condition_Branch_Must_Be_Mainbranch
+_______________________________________________________________________________________
+_______________________________________________________________________________________
 PRIORITY 1 ____________________________________________________________________________
 
 TODO
-## New Feat: Add SUB_DIR logic (ie Ghost v4 and v5)
-- fct v is not updating Dockerfile in SUB_DIR
-- Need to add a flag: SUB_DIR, default: none
-- In fct v, check SUB_DIR flag is present
-- Then fct v will be able to update the Dockerfile in the SUB_DIR or at the root
-- Impacts: 💪 #4, 🧠 #10
-
-TODO
-BUG: there is a dir "~" create in every project
-observation in progress 2022-09-24_18h12
-#HOME
-/Users/#USER
-
-TODO
-Add Dockerfile FLAG to update version
-
-TODO
-gc(): Improve on 5 features
+gc(): git-crypt utility tests
 - UAT: start a new git repo to test gc
 - UAT: create key as new user on new computers to ensure how_to_use_gitcrypt.md is correct
 - Impacts: 💪 #4, 🎛️ #8, 🧠 #10
+
+TODO
+Create a GHA that will create an issue every mounth as a task reminder.
+
+- this should be under projet/repo "you rock"
+- Check what the latest base image for ubuntu :jammy-20220815
+- Check what the latest base image for node :
+- CVE
+- Test and restore backup
+- even stuff related to my personnal life once the process is solid
+- etc
+
+TODO
+v() is still not slick while pusing firepress/ghostfire. 
+The system shall update the "Dockerfile" and ".bl_override.sh"
 
 _______________________________________________________________________________________
 _______________________________________________________________________________________
@@ -50,7 +61,13 @@ PRIORITY 2 _____________________________________________________________________
 0o0o
   re-org *.md under dir : /prompts , /how-to, /random
 
-BUG: tag() still prompt on bashlava, but does not on project mycrypt .. ?
+0o0o
+New feat: ssq() = suggest sq
+- Create a fct that search for the same commit messages in previous commits
+- then suggestion to do git showa squash, then prompt user y/n
+
+0o0o: 
+Weird: tag() still prompt on bashlava, but does not on project mycrypt .. ?
 
 TODO
 Optimize code: Instead of creating custom var simply use %1 %2 <=dollar sign
@@ -65,7 +82,6 @@ WITH THIS:
   }
   greet "you"
 
-
 0o0o ci pipeline
 - superlinter (includes shellcheck)
 - create ci for using shellcheck
@@ -74,7 +90,6 @@ WITH THIS:
 0o0o
 Fix dependabot read-only annoyance
 https://github.com/marketplace/actions/fetch-metadata-from-dependabot-prs
-
 
 0o0o
 optimize my_message when calling
@@ -99,10 +114,6 @@ works but not clean, but it works mdv() / Show_Docs
   I also DONT want to provide two arguments when using glow
   I might simply stop using a docker container for this
   but as a priciiple, I like to call a docker container
-
-0o0o squash
-- Create a fct that search for the same commit messages in previous commits
-- then suggestion to do a squash, then prompt user y/n
 
 0o0o Show_Fct_Category_F1 , F2
 - revisit this function once all file are solid + private logic
@@ -371,6 +382,7 @@ function version { # User_
 
 function tag { # User_
   Condition_No_Commits_Pending
+  Condition_Branch_Must_Be_Mainbranch
   #Condition_Attr_2_Must_Be_Empty
   _from_fct="t"
 
@@ -427,6 +439,7 @@ function tci { # User_
 function release { # User_
   Condition_No_Commits_Pending
   Condition_Attr_2_Must_Be_Empty
+  Condition_Branch_Must_Be_Mainbranch
   _from_fct="r"
 
   # I would like to not have the v in the release https://github.com/cli/cli/issues/5609
@@ -516,7 +529,7 @@ function dummy { # User_
       my_message="FATAL: Config is broken regarding: 'CFG_TEST_SHOW_VARS'." && Print_Fatal
     fi
 
-    _commit_hash="Dummy Commit ${lineID} - $(date +%Y-%m-%d_%HH%M_%S) - ${_hash}"
+    _commit_hash="Dummy Commit - $(date +%Y-%m-%d_%HH%M_%S) - ${_hash}"
     echo "${_commit_hash}" >> "${_in_file}"
     git add -A && git commit -m "${_commit_message}"
   done
@@ -883,7 +896,7 @@ function Print_Fatal {
 #
 
 function Condition_Branch_Must_Be_Mainbranch {
-  echo "function not required yet"
+  echo "This command must be executed on the Main branch."
   _compare_me=$(git rev-parse --abbrev-ref HEAD)
   _compare_you="${CFG_DEFAULT_BRANCH}" _fct_is="Condition_Branch_Must_Be_Mainbranch"
   Condition_Vars_Must_Be_Equal
