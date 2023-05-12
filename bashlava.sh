@@ -20,24 +20,14 @@ ________________________________________________________________________________
 _______________________________________________________________________________________
 FEATURE _______________________________________________________________________________
 
-FEAT: tag() + release(), should be executed on main branch
-
-if on branch edge_*, add warning when using tag(), release()
-The idea is that it should be done after mrg on branch main
-Maybe I should force tag(), release() on master branch ?
-- Impacts: 🧠 #10
-
-Solution:
-Condition_Branch_Must_Be_Mainbranch
+FEAT: X
 _______________________________________________________________________________________
 _______________________________________________________________________________________
 PRIORITY 1 ____________________________________________________________________________
 
 TODO
-gc(): git-crypt utility tests
-- UAT: start a new git repo to test gc
-- UAT: create key as new user on new computers to ensure how_to_use_gitcrypt.md is correct
-- Impacts: 💪 #4, 🎛️ #8, 🧠 #10
+v() is still not slick while pusing firepress/ghostfire. 
+The system shall update the "Dockerfile" and ".bl_override.sh"
 
 TODO
 Create a GHA that will create an issue every mounth as a task reminder.
@@ -49,10 +39,6 @@ Create a GHA that will create an issue every mounth as a task reminder.
 - Test and restore backup
 - even stuff related to my personnal life once the process is solid
 - etc
-
-TODO
-v() is still not slick while pusing firepress/ghostfire. 
-The system shall update the "Dockerfile" and ".bl_override.sh"
 
 _______________________________________________________________________________________
 _______________________________________________________________________________________
