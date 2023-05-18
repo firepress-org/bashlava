@@ -25,6 +25,10 @@ ________________________________________________________________________________
 _______________________________________________________________________________________
 PRIORITY 1 ____________________________________________________________________________
 
+TODO
+when checking if Docker is running, lets open it `open -a docker` if its not running instead of showing a message to open it.
+
+TODO
 Faire une liste rapid tde toutes les Fct dans `utilities`
 le but est de listé toutes mes scripts tel que qobuz, youtube, nas_sync, etc
 
