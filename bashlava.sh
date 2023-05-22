@@ -26,6 +26,17 @@ ________________________________________________________________________________
 PRIORITY 1 ____________________________________________________________________________
 
 TODO
+auto message GPT
+
+based on the output of this `git status`, write a great git commit message that will help me see quickly what this git commit was all about.
+The message must be one line with a maximum of 200 characters.
+Dont identify the branch name.
+
+Here is the git status output:
+
+_commit_message_is=$git status | chatgpt
+
+TODO
 when checking if Docker is running, lets open it `open -a docker` if its not running instead of showing a message to open it.
 
 TODO
