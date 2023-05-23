@@ -25,15 +25,8 @@ ________________________________________________________________________________
 _______________________________________________________________________________________
 PRIORITY 1 ____________________________________________________________________________
 
-## New Feat: autocommit()
-
-The recent updates introduced a new feature called autocommit(). Here are the key details:
-
-- autocommit() replaces the previous function d() and utilizes chatGPT (https://github.com/0xacx/chatGPT-shell-cli) for improved functionality.
-- dummy() function is still available for generating fake commits if needed.
-- autocommit() is particularly useful when using Git repositories for backups, as it simplifies the commit message creation process.
-- These updates aim to enhance commit management and provide more flexibility in generating meaningful commit messages while maintaining the option for simplified fake commit generation.
-- Impacts: 🎛️ #8
+TODO
+Test the flow with tags ...
 
 TODO
 when checking if Docker is running, lets open it `open -a docker` if its not running instead of showing a message to open it.
@@ -517,6 +510,8 @@ function ci { # User_
 }
 
 function autocommit { # User_
+  # https://github.com/firepress-org/bashlava/pull/62
+
   Condition_Attr_2_Must_Be_Empty
   _from_fct="d"
 
