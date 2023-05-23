@@ -25,16 +25,15 @@ ________________________________________________________________________________
 _______________________________________________________________________________________
 PRIORITY 1 ____________________________________________________________________________
 
-TODO
-auto message GPT
+## New Feat: autocommit()
 
-based on the output of this `git status`, write a great git commit message that will help me see quickly what this git commit was all about.
-The message must be one line with a maximum of 200 characters.
-Dont identify the branch name.
+The recent updates introduced a new feature called autocommit(). Here are the key details:
 
-Here is the git status output:
-
-_commit_message_is=$git status | chatgpt
+- autocommit() replaces the previous function d() and utilizes chatGPT (https://github.com/0xacx/chatGPT-shell-cli) for improved functionality.
+- dummy() function is still available for generating fake commits if needed.
+- autocommit() is particularly useful when using Git repositories for backups, as it simplifies the commit message creation process.
+- These updates aim to enhance commit management and provide more flexibility in generating meaningful commit messages while maintaining the option for simplified fake commit generation.
+- Impacts: 🎛️ #8
 
 TODO
 when checking if Docker is running, lets open it `open -a docker` if its not running instead of showing a message to open it.
@@ -515,6 +514,25 @@ function ci { # User_
     1 | y | mrg) mrg;;
     *) my_message="Aborted" && Print_Gray;;
   esac
+}
+
+function autocommit { # User_
+  Condition_Attr_2_Must_Be_Empty
+  _from_fct="d"
+
+  _prompt="Based on the output of this 'git status', write a great git commit message that will help me see quickly what this git commit was all about.
+  The message must be one line with a maximum of 200 characters.
+  Dont mention anything about the branch name.
+  Dont mention anything about 'no changes added to commit'.
+  Here is the git status output:
+
+  " &&\
+  _git_status="$(git status)" &&\
+  _commit_message=$(echo "${_prompt} ${_git_status}" | chatgpt) && echo &&\
+
+  git add -A && git commit -m "${_commit_message}" &&\
+  git push &&\
+  log;
 }
 
 function dummy { # User_
