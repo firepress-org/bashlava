@@ -26,14 +26,11 @@ PRIORITY 1 _____________________________________________________________________
 
 TODO
 
-## Update: Add chatGPT-shell-cli as a dependency
-- https://github.com/0xacx/chatGPT-shell-cli
-- Minor update to test()
-- Impacts: #10 Logic & Condition 🧠
+## Update: tag()
 
-TODO
-tag() ... Im sure that is a way to bypass the prompt step
-Curious: on ghostfire it does NOT prompt but it prompt when doing DevOps on bashlava
+- Should work using: git tag <tag_name> -a -m Message
+- Curious: on ghostfire it does NOT prompt but it prompt when doing DevOps on bashlava
+- Impacts: #8 UX 🎛️
 
 TODO
 When release(), lets open the page : https://github.com/firepress-org/bashlava/releases
@@ -225,7 +222,7 @@ function edge { # User_
   git checkout -b "${_branch_dev_unique}"
   echo && echo "push ${_branch_dev_unique} to origin"
   git push --set-upstream origin "${_branch_dev_unique}" -f
-  echo && log
+  echo && git describe && log
 
   Show_Version
 
@@ -398,12 +395,13 @@ function tag { # User_
   if [[ "${CFG_USE_GPG_SIGNATURE}" == "true" ]]; then
     git tag --sign "${APP_VERSION}" -m "tag: ${APP_VERSION} using bashlava"
   elif [[ "${CFG_USE_GPG_SIGNATURE}" == "false" ]]; then
-    git tag "${APP_VERSION}"
+    #OLD git tag "${APP_VERSION}"
+    git tag "${APP_VERSION}" -a -m "${APP_VERSION}"
   else
     my_message="FATAL: tag" && Print_Fatal
   fi
 
-  git push --tags
+  git push origin --tags
   echo
   Show_Version
   Show_Tag
