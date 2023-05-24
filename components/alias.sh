@@ -17,7 +17,7 @@ l() { "log" ; }
 sq() { "squash" ; }
 s() { "show" ; }
 sv() { "Show_Version" ; }
-d() { "autocommit" ; }
+cs() { "commit_suggestion" ; }
 hash() { "git rev-parse HEAD && git rev-parse --short HEAD" ; }
 Print_Yellow() { "Print_Warning" ; }
 

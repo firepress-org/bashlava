@@ -1,59 +1,5 @@
 #!/usr/bin/env bash
 
-function qobuz {
-
-# Source the URLs
-_file_is="urls_array.sh" _file_path_is="${_path_bashlava}/private/${_file_is}" && Condition_File_Must_Be_Present
-source "${_file_path_is}"
-
-# Check if the urls array is empty
-if [ -z "${urls}" ]; then
-  my_message="The urls array is empty. Exiting." && Print_Red;
-  exit 1
-fi
-
-# Show URLs
-printf '%s\n' "${urls[@]}" && echo
-
-# Prompt the user to continue
-read -p "Do you want to continue? (y/n) " answer
-case ${answer:0:1} in
-  y|Y )
-    echo "Continuing with the following urls?"
-    ;;
-  * )
-    echo "Exiting."
-    exit 0
-    ;;
-esac
-
-DESTINATION="$DIR_DEST_QOBUZ"
-mkdir -p "$DESTINATION" && cd "$DESTINATION"
-
-# Loop through the URLs and determine the type of URL
-for url in "${urls[@]}"; do
-  if [[ $url =~ /artist/ ]]; then
-    echo "Downloading artist from $url"
-    qobuz-dl dl "$url" -q 27 --albums-only --og-cover
-  elif [[ $url =~ /album/ ]]; then
-    echo "Downloading album from $url"
-    qobuz-dl dl "$url" -q 27 --no-db --og-cover
-  elif [[ $url =~ /playlist/ ]]; then
-    echo "Downloading playlist from $url"
-    qobuz-dl dl "$url" -q 27 --no-db --og-cover
-  else
-    echo "This URL is not a standard qobuz URL: $url"
-  fi
-done
-# END
-
-# --albums-only
-# -q 5 (mp3 320 kbps)
-# -q 27 highest quality
-
-}
-
-
 function Utility_passgen {
   docker run --rm devmtl/alpine:3.11_2020-02-26_08H42s20_dec5798 sh "random7.sh"
 }

@@ -41,9 +41,6 @@ CFG_LOCK_INIT="false"
 DOCKER_IMG_FIGLET="devmtl/figlet:1.0"
 DOCKER_IMG_GLOW="devmtl/glow:1.4.1"
 
-### CUSTOM directory path (default)
-DIR_DEST_QOBUZ="/Users/unknown"
-
 ### source array. See FLAG 654
 # CFG_LIST_OF_REQ_COMPONENTS
 # CFG_LIST_OF_REQ_MARKDOWN
