@@ -5,31 +5,36 @@
 TO-DO comment section. 
 
 PINNED issues on GH
-  #4 TO-DO & backlog 💪
-  #8 UX 🎛️
-  #10 Logic & Condition 🧠
-  #11 docs 🧵
-  #9 Bugfix 🧨
+- Impacts: #8 UX 🎛️
+- Impacts: #10 Logic & Condition 🧠
+- Impacts: #11 docs 🧵
+- Impacts: #9 Bugfix 🧨
+- Impacts: #4 TO-DO & backlog 💪
 
 ## New Feat: 0o0o
 - 0o0o
 - 0o0o
-- Impacts: 💪 #4, 🎛️ #8, 🧠 #10, 🧵 #11, 🧨 #9
+- Impacts: 0o0o
 
 _______________________________________________________________________________________
 _______________________________________________________________________________________
 FEATURE _______________________________________________________________________________
 
-FEAT: Qobuz
-_______________________________________________________________________________________
+______________________________________________________________________________________
 _______________________________________________________________________________________
 PRIORITY 1 ____________________________________________________________________________
 
 TODO
-Rename autocommit() with commit_suggestion()
+
+## New Feat: Condition_Docker_Must_Run()
+
+- The script checks if the Docker daemon is running. 
+- If the Docker daemon is not running, it starts Docker auto-magically and waits for the Docker daemon to start for a maximum of 30 seconds. 
+- Impacts: #8 UX 🎛️
+- Impacts: #10 Logic & Condition 🧠
 
 TODO
-when checking if Docker is running, lets open it `open -a docker` if its not running instead of showing a message to open it.
+Add chatgpt-shell-cli as a Dependency.
 
 TODO
 tag ... Im sure that is a way to bypass the prompt step
@@ -65,6 +70,7 @@ PRIORITY 2 _____________________________________________________________________
 
 0o0o
   re-org *.md under dir : /prompts , /how-to, /random
+
 
 0o0o
 New feat: ssq() = suggest sq
@@ -826,6 +832,7 @@ function Show_Docs {
   _file_is="${_doc_name}" _file_path_is="${_path_docs}/${_doc_name}" && Condition_File_Must_Be_Present
 
   cd ${_path_docs} || { echo "FATAL: Show_Docs / cd"; exit 1; }
+  Condition_Docker_Must_Run
   docker run --rm -it -v "$(pwd)":/sandbox -w /sandbox ${DOCKER_IMG_GLOW} glow -w 110 "${_doc_name}"
   cd ${_present_path_is} || { echo "FATAL: Show_Docs / cd"; exit 1; }
 }
@@ -880,13 +887,14 @@ function Print_mdv {
 
   _present_path_is=$(pwd)
   _file_is="${input_2}" _file_path_is="${_present_path_is}/${input_2}" && Condition_File_Must_Be_Present
-
+  Condition_Docker_Must_Run
   docker run --rm -it -v "$(pwd)":/sandbox -w /sandbox ${DOCKER_IMG_GLOW} glow -w 120 "${input_2}"
 }
 
 function Print_Banner {
   _var_name="DOCKER_IMG_FIGLET" _is_it_empty="${DOCKER_IMG_FIGLET}" && Condition_Vars_Must_Be_Not_Empty
   _var_name="my_message" _is_it_empty="${my_message}" && Condition_Vars_Must_Be_Not_Empty
+  Condition_Docker_Must_Run
   docker run --rm ${DOCKER_IMG_FIGLET} ${my_message}
 }
 
@@ -1022,7 +1030,7 @@ function Condition_Version_Must_Be_Valid {
 }
 
 function Condition_Apps_Must_Be_Installed {
-  # docker running?
+  # docker installed
   _compare_me=$(docker version | grep -c "Server: Docker Desktop")
   _compare_you="1" _fct_is="Condition_Apps_Must_Be_Installed"
   Condition_Vars_Must_Be_Equal
@@ -1033,6 +1041,44 @@ function Condition_Apps_Must_Be_Installed {
   _compare_you="1" _fct_is="Condition_Apps_Must_Be_Installed"
   Condition_Vars_Must_Be_Equal
   # my_message="gh cli is installed" && Print_Gray
+}
+
+function Condition_Docker_Must_Run {
+
+# The script checks if the Docker daemon is running. 
+# If the Docker daemon is not running, it starts Docker auto-magically 
+# and waits for the Docker daemon to start for a maximum of 30 seconds. 
+
+# Check if Docker daemon is running
+if docker info >/dev/null 2>&1; then
+  echo "Good! Docker daemon is running."
+else
+  echo "Docker daemon is not running."
+
+  # Start Docker
+  if command -v docker >/dev/null; then
+    open -a Docker && echo "Docker daemon starting..."
+
+    # Wait for Docker to start (maximum 30 seconds)
+    timeout=30
+    while [ $timeout -gt 0 ]; do
+      if docker info >/dev/null 2>&1; then
+        echo "Docker daemon started."
+        break
+      fi
+      sleep 1
+      ((timeout--))
+    done
+
+    if [ $timeout -eq 0 ]; then
+      echo "Timeout: Docker daemon did not start within 30 seconds."
+      exit 1
+    fi
+  else
+    echo "Docker is not installed. Please install Docker and try again."
+    exit 1
+  fi
+fi
 }
 
 function Condition_Apps_Installed_Is_Optionnal {
