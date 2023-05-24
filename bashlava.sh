@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 : '
-// COMMENT BLOCK //
-TO-DO comment section. Total of 1
+// COMMENT BLOCK START //
+TO-DO comment section. 
 
 PINNED issues on GH
   #4 TO-DO & backlog 💪
@@ -26,10 +26,19 @@ ________________________________________________________________________________
 PRIORITY 1 ____________________________________________________________________________
 
 TODO
-Test the flow with tags ...
+Rename autocommit() with commit_suggestion()
 
 TODO
 when checking if Docker is running, lets open it `open -a docker` if its not running instead of showing a message to open it.
+
+TODO
+tag ... Im sure that is a way to bypass the prompt step
+
+TODO
+When release(), lets open the page : https://github.com/firepress-org/bashlava/releases
+
+TODO
+FEAT: Qobuz ... je me questionne si je le gere dans bashlava ou ailleurs.
 
 TODO
 Faire une liste rapid tde toutes les Fct dans `utilities`
@@ -129,7 +138,7 @@ works but not clean, but it works mdv() / Show_Docs
 0o0o dummy
 - dummy
 
-// COMMENT BLOCK //
+// COMMENT BLOCK END //
 '
 
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### #
@@ -509,25 +518,37 @@ function ci { # User_
   esac
 }
 
-function autocommit { # User_
+function commit_suggestion { # User_
   # https://github.com/firepress-org/bashlava/pull/62
 
   Condition_Attr_2_Must_Be_Empty
   _from_fct="d"
 
-  _prompt="Based on the output of this 'git status', write a great git commit message that will help me see quickly what this git commit was all about.
+  _prompt="Based on the output of this 'git status', write me five git commit messages suggestions that will help me see quickly what this git commit was all about.
   The message must be one line with a maximum of 200 characters.
-  Dont mention anything about the branch name.
-  Dont mention anything about 'no changes added to commit'.
+  Mentions which files are impacted
+  If you see 'nothing to commit, working tree clean' in the  git status output, then reply: 'nothing to commit'
+  Avoid mentionning anything about the branch name
+  Avoid mentionning anything 'untracked files'
+  Avoid mentionning anything about 'no changes added to commit'
+  Avoid mentionning anything Remove obsolete
   Here is the git status output:
 
   " &&\
   _git_status="$(git status)" &&\
-  _commit_message=$(echo "${_prompt} ${_git_status}" | chatgpt) && echo &&\
+  _commit_message=$(echo "${_prompt} ${_git_status}" | chatgpt) &&\
 
-  git add -A && git commit -m "${_commit_message}" &&\
-  git push &&\
-  log;
+  # Remove empty lines using sed
+  _clean_message=$(echo "$_commit_message" | sed '/^$/d') &&\
+
+  # Just show what chatGPT would write as our git commit
+  my_message="Commit Suggestion:" && Print_Blue &&\
+  echo "${_clean_message}"
+
+  #git add -A && git commit -m "${_commit_message}" &&\
+  #git push &&\
+  #log;
+
 }
 
 function dummy { # User_
