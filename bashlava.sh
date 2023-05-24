@@ -2,38 +2,26 @@
 
 : '
 // COMMENT BLOCK START //
-TO-DO comment section. 
 
-PINNED issues on GH
+## New Feat: 0o0o
+
+- 0o0o
+- 0o0o
 - Impacts: #8 UX 🎛️
 - Impacts: #10 Logic & Condition 🧠
 - Impacts: #11 docs 🧵
 - Impacts: #9 Bugfix 🧨
 - Impacts: #4 TO-DO & backlog 💪
 
-## New Feat: 0o0o
-- 0o0o
-- 0o0o
-- Impacts: 0o0o
-
 _______________________________________________________________________________________
-_______________________________________________________________________________________
-FEATURE _______________________________________________________________________________
-
-______________________________________________________________________________________
-_______________________________________________________________________________________
-PRIORITY 1 ____________________________________________________________________________
+FEATURES P1 ___________________________________________________________________________
 
 TODO
 
-## Update: tag()
+## Update release()
 
-- Should work using: git tag <tag_name> -a -m Message
-- Curious: on ghostfire it does NOT prompt but it prompt when doing DevOps on bashlava
+- When release(), open the page : github.com/firepress-org/bashlava/releases
 - Impacts: #8 UX 🎛️
-
-TODO
-When release(), lets open the page : https://github.com/firepress-org/bashlava/releases
 
 TODO
 FEAT: Qobuz ... je me questionne si je le gere dans bashlava ou ailleurs.
@@ -58,8 +46,7 @@ Create a GHA that will create an issue every mounth as a task reminder.
 - etc
 
 _______________________________________________________________________________________
-_______________________________________________________________________________________
-PRIORITY 2 ____________________________________________________________________________
+FEATURES P2 ___________________________________________________________________________
 
 0o0o
   re-org *.md under dir : /prompts , /how-to, /random
@@ -120,6 +107,9 @@ works but not clean, but it works mdv() / Show_Docs
 
 0o0o Show_Fct_Category_F1 , F2
 - revisit this function once all file are solid + private logic
+
+_______________________________________________________________________________________
+FEATURES P3 ___________________________________________________________________________
 
 0o0o RANDOM NOTES
 - multipass.run / shell
@@ -456,8 +446,7 @@ function release { # User_
   sleep 0.3
   Show_Version
   Show_Tag && sleep 1
-  Show_Release
-# CFG_RELEASE_webpage POPUP / add logic 0o0o
+  open https://github.com/${GITHUB_USER}/${APP_NAME}/releases
 
   Show_What_Was_Done
   _doc_name="next_move_fct_release.md" && Show_Docs
@@ -802,18 +791,6 @@ function Show_Tag {
     latest_tag="none "
   fi
   my_message="${latest_tag} < TAG     in ${CFG_DEFAULT_BRANCH}" Print_Gray
-}
-
-function Show_Release {
-
-  ### The logic is not working perfectly.
-  ### Need to add a check
-  #release_latest=$(curl -s "https://api.github.com/repos/${GITHUB_USER}/${APP_NAME}/releases/latest" | grep '"tag_name": ' | awk '{print $2}' | sed -e 's/"//g' | sed -e 's/,//g' | awk '{print $1}')
-  #_var_name="release_latest" _is_it_empty="${release_latest}" && Condition_Vars_Must_Be_Not_Empty
-
-  # This is not sophiticated perfect but good enough
-  my_message="${APP_VERSION} < RELEASE on https://github.com/${GITHUB_USER}/${APP_NAME}/releases/tag/${APP_VERSION}" && Print_Gray
-  echo
 }
 
 function Show_Docs {
