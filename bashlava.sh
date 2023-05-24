@@ -26,18 +26,14 @@ PRIORITY 1 _____________________________________________________________________
 
 TODO
 
-## New Feat: Condition_Docker_Must_Run()
-
-- The script checks if the Docker daemon is running. 
-- If the Docker daemon is not running, it starts Docker auto-magically and waits for the Docker daemon to start for a maximum of 30 seconds. 
-- Impacts: #8 UX 🎛️
+## Update: Add chatGPT-shell-cli as a dependency
+- https://github.com/0xacx/chatGPT-shell-cli
+- Minor update to test()
 - Impacts: #10 Logic & Condition 🧠
 
 TODO
-Add chatgpt-shell-cli as a Dependency.
-
-TODO
-tag ... Im sure that is a way to bypass the prompt step
+tag() ... Im sure that is a way to bypass the prompt step
+Curious: on ghostfire it does NOT prompt but it prompt when doing DevOps on bashlava
 
 TODO
 When release(), lets open the page : https://github.com/firepress-org/bashlava/releases
@@ -70,7 +66,6 @@ PRIORITY 2 _____________________________________________________________________
 
 0o0o
   re-org *.md under dir : /prompts , /how-to, /random
-
 
 0o0o
 New feat: ssq() = suggest sq
@@ -621,19 +616,19 @@ function test { # User_
   else
     my_message="FATAL: Config is broken regarding: 'CFG_TEST_SHOW_VARS'." && Print_Fatal
   fi
-
   echo
+
   Condition_Apps_Must_Be_Installed
-  my_message="Check apps required: All good!" Print_Gray     # else the Condition will stop the script
+  echo
 
   if [[ "${CFG_TEST_OPTIONAL_APPS}" == "true" ]]; then
-    my_message="Check optionnal apps:" Print_Gray
     Condition_Apps_Installed_Is_Optionnal
   elif [[ "${CFG_TEST_OPTIONAL_APPS}" == "false" ]]; then
     echo "bypassed, ok" > /dev/null
   else
     my_message="FATAL: Config is broken regarding: 'CFG_TEST_OPTIONAL_APPS'." && Print_Fatal
   fi
+  echo
 
   Core_Check_Which_File_Exist
   my_message="Check files and directories: All good!" Print_Gray     # else the Condition will stop the script
@@ -1030,17 +1025,20 @@ function Condition_Version_Must_Be_Valid {
 }
 
 function Condition_Apps_Must_Be_Installed {
+
   # docker installed
   _compare_me=$(docker version | grep -c "Server: Docker Desktop")
   _compare_you="1" _fct_is="Condition_Apps_Must_Be_Installed"
   Condition_Vars_Must_Be_Equal
-  # my_message="Docker is installed" && Print_Gray
+  which docker
 
   # gh cli installed
   _compare_me=$(which gh | grep -c "/gh")
   _compare_you="1" _fct_is="Condition_Apps_Must_Be_Installed"
   Condition_Vars_Must_Be_Equal
-  # my_message="gh cli is installed" && Print_Gray
+  which gh
+
+  my_message="Check required apps: All good!" && Print_Gray
 }
 
 function Condition_Docker_Must_Run {
@@ -1048,16 +1046,18 @@ function Condition_Docker_Must_Run {
 # The script checks if the Docker daemon is running. 
 # If the Docker daemon is not running, it starts Docker auto-magically 
 # and waits for the Docker daemon to start for a maximum of 30 seconds. 
+#
+# https://github.com/firepress-org/bashlava/pull/65
 
 # Check if Docker daemon is running
 if docker info >/dev/null 2>&1; then
-  echo "Good! Docker daemon is running."
+  echo "Good! Docker daemon is running." > /dev/null
 else
   echo "Docker daemon is not running."
 
   # Start Docker
   if command -v docker >/dev/null; then
-    open -a Docker && echo "Docker daemon starting..."
+    open -a Docker && my_message="Waiting for Docker daemon to start (max 30 sec)" && Print_Gray
 
     # Wait for Docker to start (maximum 30 seconds)
     timeout=30
@@ -1071,11 +1071,11 @@ else
     done
 
     if [ $timeout -eq 0 ]; then
-      echo "Timeout: Docker daemon did not start within 30 seconds."
+      my_message="Timeout: Docker daemon did not start within 30 seconds." && Print_Warning_Stop
       exit 1
     fi
   else
-    echo "Docker is not installed. Please install Docker and try again."
+    my_message="Docker is not installed. Please install Docker and try again." && Print_Warning_Stop
     exit 1
   fi
 fi
@@ -1091,8 +1091,7 @@ function Condition_Apps_Installed_Is_Optionnal {
     echo "${_output}"
     Condition_Vars_Must_Be_Equal
   done
-  echo
-  my_message="All apps are installed" && Print_Gray
+  my_message="Check optionnal apps: All good!" && Print_Gray
 }
 
 function Core_Check_Which_File_Exist {
@@ -1244,7 +1243,7 @@ function Core_Show_Env_Vars {
   echo
   echo "CFG_LIST_OF_REQ_COMPONENTS        > ${CFG_LIST_OF_REQ_COMPONENTS}"
   echo "CFG_LIST_OF_REQ_MARKDOWN          > ${CFG_LIST_OF_REQ_MARKDOWN}"
-  echo "CFG_LIST_OF_OPTIONAL_APPS          > ${CFG_LIST_OF_OPTIONAL_APPS}"
+  echo "CFG_LIST_OF_OPTIONAL_APPS         > ${CFG_LIST_OF_OPTIONAL_APPS}"
   echo
   echo "DOCKER_IMG_FIGLET                 > ${DOCKER_IMG_FIGLET}"
   echo "DOCKER_IMG_GLOW                   > ${DOCKER_IMG_GLOW}"
@@ -1418,7 +1417,7 @@ function main() {
   # FLAG 654
   CFG_LIST_OF_REQ_MARKDOWN=( "welcome_to_bashlava.md" "help.md" "test.md" "debug_upstream.md" )
   CFG_LIST_OF_REQ_COMPONENTS=( "alias.sh" "example.sh" "utilities.sh" "Show_Fct_Category_Filter.sh" )
-  CFG_LIST_OF_OPTIONAL_APPS=( "docker" "gh" "git-crypt" "gpg" "openssl" "sha256sum" "grep" "nano" "tldr" "shellcheck" )
+  CFG_LIST_OF_OPTIONAL_APPS=( "docker" "gh" "git-crypt" "gpg" "openssl" "sha256sum" "grep" "nano" "tldr" "shellcheck" "chatgpt" )
 
   Core_Load_Config_Default
   Core_Load_Config_Override
