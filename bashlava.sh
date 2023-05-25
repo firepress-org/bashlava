@@ -18,21 +18,33 @@ FEATURES P1 ____________________________________________________________________
 
 TODO
 
-## Update release()
+## Update version(): Fixing regex
 
-- When release(), open the page : github.com/firepress-org/bashlava/releases
+- The Dockerfile and ".bl_override.sh" should be correctly updated by the system.
+- Only the variable ARG VERSION in the Dockerfile needs to be updated, while other variables such as ARG GHOST_CLI_VERSION and ARG NODE_VERSION should remain unchanged.
 - Impacts: #8 UX 🎛️
+- Impacts: #10 Logic & Condition 🧠
 
 TODO
-FEAT: Qobuz ... je me questionne si je le gere dans bashlava ou ailleurs.
+
+## New Feat: Core_Check_Path_Is_Root
+
+- Core_Check_Path_Is_Root checks if the user is at the same level as the directory ".git" which is at the root of every git repo.
+
+## Problem
+
+- I discovered while working on the previous version() issue, that the user (me) a user made process mistake.
+- The user under sub_directory (v5). Here was trying to update the versions projet on thing were broken.
+- basalava works at the root of a git repo. 
+- Impacts: #8 UX 🎛️
+- Impacts: #10 Logic & Condition 🧠
+- Impacts: #11 docs 🧵
+- Impacts: #9 Bugfix 🧨
+- Impacts: #4 TO-DO & backlog 💪
 
 TODO
-Faire une liste rapid tde toutes les Fct dans `utilities`
+Faire une liste rapide de toutes les Fct dans `utilities`
 le but est de listé toutes mes scripts tel que qobuz, youtube, nas_sync, etc
-
-TODO
-v() is still not slick while pusing firepress/ghostfire. 
-The system shall update the "Dockerfile" and ".bl_override.sh"
 
 TODO
 Create a GHA that will create an issue every mounth as a task reminder.
@@ -340,14 +352,14 @@ function version { # User_
 
     ### Update version in Dockerfile
     if [[ "${_file_do_not_exist}" != "true" ]]; then
-      sed -i '' "s|VERSION=\"[^\"]*\"|VERSION=\"${input_2}\"|" "${_file_path_is}"
+      sed -i '' "s|ARG VERSION=\"[^\"]*\"|ARG VERSION=\"${input_2}\"|" "${_file_path_is}"
     elif [[ "${_file_do_not_exist}" == "true" ]]; then
       echo "No Dockerfile, lets continue" > /dev/null 2>&1
     else
       my_message="FATAL: (_file_do_not_exist)" && Print_Fatal
     fi
 
-    # See FLAG 902
+    ### Update version in .bl_override.sh
     _file_is=${_where_to_save_version} _file_path_is="$(pwd)/${_file_is}" && Condition_File_Must_Be_Present
     sed -i '' "s/^APP_VERSION=.*$/APP_VERSION=\"${input_2}\"/" "${_file_path_is}"
 
@@ -1195,7 +1207,7 @@ function Core_Show_Env_Vars {
 
   my_message="Check env_vars from config:" && Print_Blue
   echo
-  echo "OVERRIDE_CONFIG_FILE_NAME_IS       > ${OVERRIDE_CONFIG_FILE_NAME_IS}"
+  echo "OVERRIDE_CONFIG_FILE_NAME_IS      > ${OVERRIDE_CONFIG_FILE_NAME_IS}"
   echo
   echo "APP_NAME                          > ${APP_NAME}"
   echo "GITHUB_USER                       > ${GITHUB_USER}"
@@ -1328,7 +1340,6 @@ function Core_Load_Config_Override {
     if [[ -f "$(pwd)/${OVERRIDE_CONFIG_FILE_NAME_IS}" ]]; then
       source "${OVERRIDE_CONFIG_FILE_NAME_IS}"
       _where_to_save_version="${OVERRIDE_CONFIG_FILE_NAME_IS}"
-
     elif [[ ! -f "$(pwd)/${OVERRIDE_CONFIG_FILE_NAME_IS}" ]]; then
       my_message="WARNING: Config file (${OVERRIDE_CONFIG_FILE_NAME_IS}) is not configured." && Print_Warning
       my_message="See README for installation details."                             && Print_Warning & sleep 2
