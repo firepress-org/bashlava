@@ -6,7 +6,7 @@
 ### Reserved for the bashlava DEVs.
 APP_NAME="bashlava"
 GITHUB_USER="firepress-org"
-APP_VERSION="1.59.0"
+APP_VERSION="1.60.0"
 
 ### DEFAULT CONFIGS BELOW
 
