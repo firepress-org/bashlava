@@ -14,7 +14,7 @@ CFG_DEFAULT_DEV_BRANCH="edge"
 CFG_USER_IS="${USER}"
 
 ### Needed when projects are under sub directories
-CFG_SUB_DIR="none"
+CFG_SUB_DIR="false"
 
 ### manage your custom scripts under this directory /private/**.sh
 CFG_USE_PRIVATE_DIRECTORY="false"
