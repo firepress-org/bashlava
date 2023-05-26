@@ -3,10 +3,15 @@
 : '
 // COMMENT BLOCK START //
 
-## New Feat: 0o0o
+// requirement template //
 
+TODO
+
+## New Feat: 0o0o
 - 0o0o
 - 0o0o
+- 0o0o
+- PR https://github.com/firepress-org/ghostfire/pull/9999
 - Impacts: #8 UX 🎛️
 - Impacts: #10 Logic & Condition 🧠
 - Impacts: #11 docs 🧵
@@ -18,29 +23,34 @@ FEATURES P1 ____________________________________________________________________
 
 TODO
 
-## Update version(): Fixing regex
-
-- The Dockerfile and ".bl_override.sh" should be correctly updated by the system.
-- Only the variable ARG VERSION in the Dockerfile needs to be updated, while other variables such as ARG GHOST_CLI_VERSION and ARG NODE_VERSION should remain unchanged.
-- Impacts: #8 UX 🎛️
-- Impacts: #10 Logic & Condition 🧠
-
-TODO
-
 ## New Feat: Core_Check_Path_Is_Root
 
-- Core_Check_Path_Is_Root checks if the user is at the same level as the directory ".git" which is at the root of every git repo.
+- Core_Check_Path_Is_Root verifies if the user is at the same level as the ".git" directory, which is located at the root of every git repository.
+- Impacts: #10 Logic & Condition 🧠
 
 ## Problem
 
-- I discovered while working on the previous version() issue, that the user (me) a user made process mistake.
-- The user under sub_directory (v5). Here was trying to update the versions projet on thing were broken.
-- basalava works at the root of a git repo. 
+- While working on the previous version() issue, I realized that I made a process mistake as a user.
+- I, the user, was attempting to update the project versions under a sub-directory (v5) where things looked broken.
+- bashlava operates at the root of a git repository.
+- For the Dockerfile, add logic to manage if a sub-directory is present or not
+
+TODO
+
+## New Feat: remove requirements section  from bashlava.sh
+- Thhis will make the PR easier to read.
+- 0o0o
+- 0o0o
+- PR https://github.com/firepress-org/ghostfire/pull/9999
 - Impacts: #8 UX 🎛️
 - Impacts: #10 Logic & Condition 🧠
 - Impacts: #11 docs 🧵
 - Impacts: #9 Bugfix 🧨
 - Impacts: #4 TO-DO & backlog 💪
+
+
+TODO
+rename .bl_override.sh to .env which is the standard across open source projects
 
 TODO
 Faire une liste rapide de toutes les Fct dans `utilities`
@@ -319,6 +329,7 @@ function mrg { # User_
 
 function version { # User_
   Condition_No_Commits_Pending
+  Core_Check_Path_Is_Root
   _from_fct="v"
 
   Show_Version
@@ -342,9 +353,9 @@ function version { # User_
     Condition_Version_Must_Be_Valid
 
     ### SUB_DIR
-    if [[ "${CFG_SUB_DIR}" != "none" ]]; then
+    if [[ "${CFG_SUB_DIR}" != "false" ]]; then
       _file_is="Dockerfile" _file_path_is="$(pwd)/${CFG_SUB_DIR}/${_file_is}" && Condition_File_Optionnally_Present
-    elif [[ "${CFG_SUB_DIR}" == "none" ]]; then
+    elif [[ "${CFG_SUB_DIR}" == "false" ]]; then
       _file_is="Dockerfile" _file_path_is="$(pwd)/${_file_is}" && Condition_File_Optionnally_Present
     else
       my_message="FATAL: (CFG_SUB_DIR)" && Print_Fatal
@@ -1376,6 +1387,20 @@ function Core_Load_Private_Entrypoint {
     echo "bypassed, ok" > /dev/null
   else
     my_message="FATAL: Config is broken regarding: 'CFG_USE_PRIVATE_DIRECTORY'." && Print_Fatal
+  fi
+}
+
+function Core_Check_Path_Is_Root {
+
+# check if the user is at the same level as the ".git" directory,
+# which is located at the root of every git repository.
+# PR https://github.com/firepress-org/ghostfire/pull/9999
+
+  current_dir=$(pwd)
+  if [[ ! -d "$current_dir/.git" ]]; then
+    my_message="FATAL: The terminal prompt must be at the root of the git repo and not into a sub-directory." && Print_Fatal
+  else
+    echo "Good, we are at the root of the git repo" > /dev/null 2>&1
   fi
 }
 
