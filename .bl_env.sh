@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
-### DO NOT update these vars (`.bl_env.sh`)
-### Override vars from `.bl_override.sh` Get template https://github.com/firepress-org/mycrypt/blob/master/.bl_override.sh
+### These are the default variables for bashlava
+### To override variables, do it under `.env`
+
+### Reserved for the bashlava DEVs.
 APP_NAME="bashlava"
 GITHUB_USER="firepress-org"
 APP_VERSION="1.59.0"
@@ -50,4 +52,4 @@ DOCKER_IMG_GLOW="devmtl/glow:1.4.1"
 DEFAULT_CONFIG_FILE_NAME_IS=".bl_env.sh"
 ### DO NOT OVERRIDE
 ### You must create this file in your project
-OVERRIDE_CONFIG_FILE_NAME_IS=".bl_override.sh"
+OVERRIDE_CONFIG_FILE_NAME_IS=".env"

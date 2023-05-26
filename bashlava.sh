@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Stop commenting here! Use REQUIREMENTS.md instead
+# Stop commenting here. Use REQUIREMENTS.md
 
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### #
 #
@@ -221,7 +221,7 @@ function version { # User_
       my_message="FATAL: (_file_do_not_exist)" && Print_Fatal
     fi
 
-    ### Update version in .bl_override.sh
+    ### Update version in .env
     _file_is=${_where_to_save_version} _file_path_is="$(pwd)/${_file_is}" && Condition_File_Must_Be_Present
     sed -i '' "s/^APP_VERSION=.*$/APP_VERSION=\"${input_2}\"/" "${_file_path_is}"
 
@@ -978,13 +978,16 @@ function Core_Check_Which_File_Exist {
   if [[ "${_file_do_not_exist}" == "true" ]]; then
     my_message=".git directory does not exit" && Print_Fatal
   fi
+
+  _file_is=".env" _file_path_is="${_path_bashlava}/${_file_is}" && Condition_File_Must_Be_Present
+
 }
 
 function Condition_File_Must_Be_Present {
   if [[ -f "${_file_path_is}" ]]; then
     echo "idempotent checkpoint passed" > /dev/null 2>&1
   elif [[ ! -f "${_file_path_is}" ]]; then
-    my_message="Warning: no file: ${_file_path_is}" && Print_Warning_Stop
+    my_message="This file is missing: ${_file_path_is}" && Print_Warning_Stop
     _file_do_not_exist="true"
   else
     my_message="FATAL: Condition_File_Must_Be_Present | ${_file_path_is}" && Print_Fatal

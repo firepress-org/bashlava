@@ -8,33 +8,44 @@ REQ TEMPLATE ___________________________________________________________________
 - 0o0o
 - 0o0o
 - 0o0o
-- PR https://github.com/firepress-org/ghostfire/pull/9999
-- Impacts: #8 UX 🎛️
-- Impacts: #10 Logic & Condition 🧠
-- Impacts: #11 Documentation 🧵
-- Impacts: #9 Bugfix 🧨
-- Impacts: #4 TO-DO & backlog 💪
+- PR URL
+- Impact: #8 UX 🎛️
+- Impact: #10 Logic & Condition 🧠
+- Impact: #11 Documentation 🧵
+- Impact: #9 Bugfix 🐛
+- Impact: Code Refactoring #72 🛠️
 
 _______________________________________________________________________________________
 FEATURES P1 ___________________________________________________________________________
 
 TODO
 
-## Add file: REQUIREMENTS.md
+## Code Refactoring: Rename the file .bl_override.sh to .env
 
-- Move the documentation of requirements from the `bashlava.sh` file to a separate file called `REQUIREMENTS.md`.
-- This change will improve the cleanliness and readability of the PR.
-- Impacts: #8 UX 🎛️ 
+- Rename the file `.bl_override.sh` to `.env`, following the standard naming convention commonly used across open source projects.
+- Impacts: Code Refactoring #72 🛠️
+
+TODO
+
+## Code Refactoring: Rename the file .bl_env.sh to .default.env
+
+- 0o0o
+- 0o0o
+- 0o0o
+- PR URL
+- Impact: #8 UX 🎛️
+- Impact: #10 Logic & Condition 🧠
+- Impact: #11 Documentation 🧵
+- Impact: #9 Bugfix 🐛
+- Impact: Code Refactoring #72 🛠️
 
 TODO
 
-rename .bl_override.sh to .env which is the standard across open source projects
-
-TODO
 Faire une liste rapide de toutes les Fct dans `utilities`
 le but est de listé toutes mes scripts tel que qobuz, youtube, nas_sync, etc
 
 TODO
+
 Create a GHA that will create an issue every mounth as a task reminder.
 
 - this should be under projet/repo "you rock"
