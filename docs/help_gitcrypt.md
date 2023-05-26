@@ -76,7 +76,6 @@ encrypted: secrets/list.txt
 encrypted: secrets/token_aws.key
 encrypted: secrets/token_do.key
 
-not encrypted: .bl_override.sh
 not encrypted: .git-crypt/.gitattributes
 not encrypted: .git-crypt/keys/default/0/9D99B155628F9AC9DDD9ED8B8A4F19B6D38E7253.gpg
 not encrypted: .gitattributes

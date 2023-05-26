@@ -1,12 +1,11 @@
 # Specific to bashlava
 ############
 private
-# .bl_override.sh should be part of YOUR project
-.bl_override.sh
+# .env should be part of YOUR project
+.env
 
 # Node stuff
 ############
-.env
 .cache
 node_modules
 npm-debug
