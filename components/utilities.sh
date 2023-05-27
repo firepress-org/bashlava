@@ -7,6 +7,8 @@ function Utility_passgen {
 function Rename_MD_Files_DoubleSpaces {
 
   // TODO, prompt the user for the source_dir
+  // dry-run mode by default
+  // 
   source_dir="/Users/andy16/Documents/_my_docs/51_office_CV/vault_obsidian/_cards"
 
   # Find all .md files in the source directory and its subdirectories
