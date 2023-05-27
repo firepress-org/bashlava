@@ -18,16 +18,6 @@ REQ TEMPLATE ___________________________________________________________________
 _______________________________________________________________________________________
 FEATURES P1 ___________________________________________________________________________
 
-## Code Refactoring: Removing .bl_env.sh
-
-- Refactor the code to remove the file `.bl_env.sh` and integrate its variables directly within `bashlava.sh`.
-- Reduce the reliance on an additional file.
-- Impact: Code Refactoring #72 🛠️
-
-## Minor stuff
-
-- help cs() / Fix typo in docs/help.md
-
 ## Code Refactoring: Core_Load_Config_Override() 
 
 - Still needed?
