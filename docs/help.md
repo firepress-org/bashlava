@@ -10,7 +10,7 @@
 
 - `e` ....... | create a branch`edge`from main ........ | _standalone_
 - `c` ....... |`commit`................................ | usage: c "This feature rocks"
-- `cs` ....... |`commit_suggestion`.................... | _standalone_ suggestions made by chatGPT 3.5
+- `cs` ...... |`commit_suggestion`..................... | _standalone_ suggestions made by chatGPT 3.5
 - `sq` ...... |`squash`commits ........................ | usage: sq 3 "Add: feat xyz, issue 123"
 - `pr` ...... | create`pull request` .................. | _standalone_
 - `ci` ...... | show`ci status`on GitHub Actions ...... | _standalone_
