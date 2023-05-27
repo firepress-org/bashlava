@@ -18,6 +18,31 @@ REQ TEMPLATE ___________________________________________________________________
 _______________________________________________________________________________________
 FEATURES P1 ___________________________________________________________________________
 
+TODO
+
+## New Feat: Rename_MD_Files_DoubleSpaces()
+
+As a user, I want to run a bash script that will identify Markdown files within a specific source directory and its subdirectories. The script should check the filenames for the presence of two or more consecutive spaces and rename those files to eliminate the extra spaces.
+
+Here are the requirements for the bash script:
+
+- Omit the shebang as the script will be run directly within a terminal.
+- Scan all .md files in the source_dir and its subdirectories.
+- It should identify file names that contain two or more spaces.
+- The script should rename the files, removing the extra spaces.
+- The content within the files should be ignored.
+- The script should be compatible with iTerm2 on a Mac.
+- For example, the script should be able to identify a file named "test tqwe.md".
+- The source_dir should be set as follows: `source_dir="/Users/andy16/Documents/_my_docs/51_office_CV/vault_obsidian/_cards"`
+
+fct: Utility
+
+- PR URL
+- Impact: #8 UX 🎛️
+- Impact: #10 Logic & Condition 🧠
+
+TODO
+
 ## Code Refactoring: Core_Load_Config_Override() 
 
 - Still needed?

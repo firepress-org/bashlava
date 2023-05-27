@@ -4,6 +4,35 @@ function Utility_passgen {
   docker run --rm devmtl/alpine:3.11_2020-02-26_08H42s20_dec5798 sh "random7.sh"
 }
 
+function Rename_MD_Files_DoubleSpaces {
+
+  // TODO, prompt the user for the source_dir
+  source_dir="/Users/andy16/Documents/_my_docs/51_office_CV/vault_obsidian/_cards"
+
+  # Find all .md files in the source directory and its subdirectories
+  files=$(find "$source_dir" -type f -name "*.md" -print)
+
+  # Iterate over each file
+  while IFS= read -r file; do
+    # Extract the file name from the file path
+    filename=$(basename "$file")
+    
+    # Check if the file name contains two or more spaces
+    if [[ "$filename" =~ .*[[:space:]]{2,}.* ]]; then
+      echo "BEFORE: $filename"
+      
+      # Create a new file name by removing extra spaces
+      new_filename=$(echo "$filename" | sed -E 's/[[:space:]]{2,}/ /g')
+      
+      # Rename the file
+      mv "$file" "$(dirname "$file")/$new_filename"
+      echo "AFTER : $new_filename"
+      sleep 0.1
+    fi
+
+  done <<< "$files"
+}
+
 function Utility_Date {
   date_nano="$(date +%Y-%m-%d_%HH%M_%S-%N)"
     date_sec="$(date +%Y-%m-%d_%HH%M_%S)"
