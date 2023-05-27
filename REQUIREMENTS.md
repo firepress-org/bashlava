@@ -18,25 +18,20 @@ REQ TEMPLATE ___________________________________________________________________
 _______________________________________________________________________________________
 FEATURES P1 ___________________________________________________________________________
 
-TODO
+## Code Refactoring: Removing .bl_env.sh
 
-## Code Refactoring: Rename the file .bl_override.sh to .env
+- Refactor the code to remove the file `.bl_env.sh` and integrate its variables directly within `bashlava.sh`.
+- Reduce the reliance on an additional file.
+- Impact: Code Refactoring #72 🛠️
 
-- Rename the file `.bl_override.sh` to `.env`, following the standard naming convention commonly used across open source projects.
-- Impacts: Code Refactoring #72 🛠️
+## Minor stuff
 
-TODO
+- help cs() / Fix typo in docs/help.md
 
-## Code Refactoring: Rename the file .bl_env.sh to .default.env
+## Code Refactoring: Core_Load_Config_Override() 
 
-- 0o0o
-- 0o0o
-- 0o0o
-- PR URL
-- Impact: #8 UX 🎛️
+- Still needed?
 - Impact: #10 Logic & Condition 🧠
-- Impact: #11 Documentation 🧵
-- Impact: #9 Bugfix 🐛
 - Impact: Code Refactoring #72 🛠️
 
 TODO

@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-# Stop commenting here. Use REQUIREMENTS.md
-
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### #
 #
 # USER FACING FUNCTIONS
@@ -1180,8 +1178,55 @@ function Core_Load_Vars_Edge {
 }
 
 function Core_Load_Config_Default {
-  _file_is=".bl_env.sh" _file_path_is="${_path_bashlava}/${_file_is}" && Condition_File_Must_Be_Present
-  source "${_file_path_is}"
+  ### Default variables
+  ### To override variables, do it under .env
+
+  ### DEFAULT CONFIGS BELOW
+
+  ### branch names
+  CFG_DEFAULT_BRANCH="main"
+  CFG_DEFAULT_DEV_BRANCH="edge"
+  CFG_USER_IS="${USER}"
+
+  ### Needed when projects are under sub directories
+  CFG_SUB_DIR="false"
+
+  ### manage your custom scripts under this directory /private/**.sh
+  CFG_USE_PRIVATE_DIRECTORY="false"
+  CFG_USE_GPG_SIGNATURE="false"
+
+  ### edge
+  CFG_EDGE_EXTENTED="false"       # not coded yet
+
+  ### log()
+  CFG_LOG_LINE_NBR_SHORT="4"      # log() default line number
+  CFG_LOG_LINE_NBR_LONG="12"      # log() default line number
+
+  ### dummy()
+  CFG_DUMMY_CUSTOM_MSG="false"
+  CFG_DUMMY_CUSTOM_MSG_IS="Alt dummy message"
+
+  CFG_RELEASE_POPUP="false"       # not coded yet
+  CFG_TEST_SHOW_VARS="false"      # test extension
+  CFG_TEST_OPTIONAL_APPS="false"  # test extension
+  CFG_DEBUG_MODE="false"
+  CFG_LOCK_INIT="false"
+
+  ### docker images
+  DOCKER_IMG_FIGLET="devmtl/figlet:1.0"
+  DOCKER_IMG_GLOW="devmtl/glow:1.4.1"
+
+  ### source array. See FLAG b4f
+
+  CFG_LIST_OF_REQ_MARKDOWN=( "welcome_to_bashlava.md" "help.md" "test.md" "debug_upstream.md" )
+  CFG_LIST_OF_REQ_COMPONENTS=( "alias.sh" "example.sh" "utilities.sh" "Show_Fct_Category_Filter.sh" )
+  CFG_LIST_OF_OPTIONAL_APPS=( "docker" "gh" "git-crypt" "gpg" "openssl" "sha256sum" "grep" "nano" "tldr" "shellcheck" "chatgpt" )
+
+  ### DO NOT OVERRIDE
+  DEFAULT_CONFIG_FILE_NAME_IS=".env"
+  ### DO NOT OVERRIDE
+  ### You must create this file in your project
+  OVERRIDE_CONFIG_FILE_NAME_IS=".env"
 }
 
 function Core_Load_Config_Override {
@@ -1190,29 +1235,9 @@ function Core_Load_Config_Override {
     _where_to_save_version="${OVERRIDE_CONFIG_FILE_NAME_IS}"
     source "$(pwd)/${OVERRIDE_CONFIG_FILE_NAME_IS}"
   elif [[ ! -f "$(pwd)/${OVERRIDE_CONFIG_FILE_NAME_IS}" ]]; then
-    echo "OK: no override config. Will catch the error about 15 lines below" > /dev/null 2>&1
+    _file_is=".env" _file_path_is="${_path_bashlava}/${_file_is}" && Condition_File_Must_Be_Present
   else
     my_message="FATAL: Core_Load_Config_Override() A" && Print_Fatal
-  fi
-
-  # Logic depending on which projet we are working on
-  if [[ "${APP_NAME}" == "bashlava" ]]; then
-    #Logic for bashlava itself
-    _where_to_save_version="${DEFAULT_CONFIG_FILE_NAME_IS}"
-
-  elif [[ "${input_2}" != "bashlava" ]]; then
-    #Logic for YOUR projects (not bashlava itself)
-    if [[ -f "$(pwd)/${OVERRIDE_CONFIG_FILE_NAME_IS}" ]]; then
-      source "${OVERRIDE_CONFIG_FILE_NAME_IS}"
-      _where_to_save_version="${OVERRIDE_CONFIG_FILE_NAME_IS}"
-    elif [[ ! -f "$(pwd)/${OVERRIDE_CONFIG_FILE_NAME_IS}" ]]; then
-      my_message="WARNING: Config file (${OVERRIDE_CONFIG_FILE_NAME_IS}) is not configured." && Print_Warning
-      my_message="See README for installation details."                             && Print_Warning & sleep 2
-    else
-      my_message="FATAL: Core_Load_Config_Override() B" && Print_Fatal
-    fi
-  else
-    my_message="FATAL: Core_Load_Config_Override() C" && Print_Fatal
   fi
 }
 
@@ -1277,12 +1302,6 @@ function main() {
   _path_components="${_path_bashlava}/components" _var_name="_path_components" _is_it_empty="${_path_components}" && Condition_Vars_Must_Be_Not_Empty
 ### Set absolute path for the ./docs directory
   _path_docs="${_path_bashlava}/docs" _var_name="_path_docs" _is_it_empty="${_path_docs}" && Condition_Vars_Must_Be_Not_Empty
-
-### I can't pass an array from `.bl_env.sh` to `bashlava.sh`
-  # FLAG 654
-  CFG_LIST_OF_REQ_MARKDOWN=( "welcome_to_bashlava.md" "help.md" "test.md" "debug_upstream.md" )
-  CFG_LIST_OF_REQ_COMPONENTS=( "alias.sh" "example.sh" "utilities.sh" "Show_Fct_Category_Filter.sh" )
-  CFG_LIST_OF_OPTIONAL_APPS=( "docker" "gh" "git-crypt" "gpg" "openssl" "sha256sum" "grep" "nano" "tldr" "shellcheck" "chatgpt" )
 
   Core_Load_Config_Default
   Core_Load_Config_Override
