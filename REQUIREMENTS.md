@@ -22,6 +22,8 @@ TODO
 
 ## New Feat: Rename_MD_Files_DoubleSpaces()
 
+draft: under /components/utility
+
 As a user, I want to run a bash script that will identify Markdown files within a specific source directory and its subdirectories. The script should check the filenames for the presence of two or more consecutive spaces and rename those files to eliminate the extra spaces.
 
 Here are the requirements for the bash script:
@@ -40,6 +42,18 @@ fct: Utility
 - PR URL
 - Impact: #8 UX 🎛️
 - Impact: #10 Logic & Condition 🧠
+
+## New Feat: gpt_tot
+
+- draft: under /components/utility
+- 0o0o
+- 0o0o
+- PR URL
+- Impact: #8 UX 🎛️
+- Impact: #10 Logic & Condition 🧠
+- Impact: #11 Documentation 🧵
+- Impact: #9 Bugfix 🐛
+- Impact: Code Refactoring #72 🛠️
 
 TODO
 
