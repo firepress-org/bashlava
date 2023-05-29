@@ -47,88 +47,114 @@ IN_11A="$ACT_AS Your task is to help the user solve their problem."
 IN_11B="My Problem = I have the following problem. I think I want to break up with my girlfriend. I am 27 years old. I feel our relationship is at a stagnation point. Nothing bad has happened, but I fear we have grown apart and have different views on life. We have been a couple for 6 years."
 IN_11C='What approach should I take when I tell her I am breaking up? Could you brainstorm three distinct solutions? Please consider the 3 most important factors that will have an impact on the outcome!'
 IN_11D="Your response should be formatted in Markdown within a code block."
+bot_cli="chatgpt" # Define which CLI to use. In this case: https://github.com/0xacx/chatGPT-shell-cli
 
-# Define which CLI to use. In this case: https://github.com/0xacx/chatGPT-shell-cli
-CHATGPT_CMD="chatgpt"
+# Define prompts
+USER_1="$IN_11A $IN_11B $IN_11C $IN_11D"
+USER_2="For each of the three proposed solutions, evaluate their potential. Consider their pros and cons, initial effort needed, implementation difficulty, potential challenges, and the expected outcomes. Assign a probability of success and a confidence level to each option based on these factors. Your answer should be use bulletpoints and not numbers."
+USER_3="Please remove the two lowest-rated ideas based on $BOT_2 and keep the best suggestion. Rewrite a compressed summary. Your answer should be use bulletpoints and not numbers."
+USER_4="Please brainstorm two new creative and unique distinct solutions to the [My Problem] and include the following idea [Winning Idea] so we now have 3 ideas. Please consider the 3 most important factors that will have an impact on the outcome. Your answer should be use bulletpoints and not numbers."
+USER_5="From all the possibilities, give me one recommendation. Tell me why you recommend it and then please share the pros and cons. Your answer should be use bulletpoints and not numbers."
 
 # Function to generate output
-generate_output() {
+# A higher temperature, such as 1.0, will make the model's responses 
+# more diverse and random. On the other hand, a lower temperature, 
+# such as 0.1, will make the responses more focused and deterministic.
+ai_gen_2() {
   local input=$1
-  local output=$(echo "$input" | $CHATGPT_CMD)
+  local output=$(echo "$input" | $bot_cli --temperature 0.2)
+  echo "$output"
+}
+ai_gen_5() {
+  local input=$1
+  local output=$(echo "$input" | $bot_cli --temperature 0.5)
+  echo "$output"
+}
+ai_gen_7() {
+  local input=$1
+  local output=$(echo "$input" | $bot_cli --temperature 0.7)
+  echo "$output"
+}
+ai_gen_8() {
+  local input=$1
+  local output=$(echo "$input" | $bot_cli --temperature 0.8)
+  echo "$output"
+}
+ai_gen_9() {
+  local input=$1
+  local output=$(echo "$input" | $bot_cli --temperature 0.9)
   echo "$output"
 }
 
-# Define prompts
-PROMPT_12="For each of the three proposed solutions, evaluate their potential. Consider their pros and cons, initial effort needed, implementation difficulty, potential challenges, and the expected outcomes. Assign a probability of success and a confidence level to each option based on these factors."
-PROMPT_13="Please remove the two lowest-rated ideas based on '$OUT_12' and keep the best suggestion. Rewrite a compressed summary."
-PROMPT_14="Could you brainstorm two new creative and unique distinct solutions to the [My Problem] and include the following idea [Winning Idea] so we now have 3 ideas. Please consider the 3 most important factors that will have an impact on the outcome."
-PROMPT_15="From all the possibilities, give me one recommendation. Tell me why you recommend it and then please share the pros and cons."
-
 clear
-echo "Tree of Thoughts for: $ACT_AS"
+echo "Tree of Thoughts for:"
+echo "$USER_1" && echo
 
 # Generate outputs
-OUT_11=$(generate_output "$IN_11A $IN_11B $IN_11C $IN_11D")
+BOT_1=$(ai_gen_5 "$USER_1")
+echo
+echo "Question: $USER_1" && echo;
+echo "Answer 1: $BOT_1" && echo;
 echo -ne "Progress: 10% complete\r"
 
 retry_count=0
 while [ $retry_count -lt 5 ]; do
-  OUT_12=$(generate_output "$OUT_11 $PROMPT_12")
-  if ! echo "$OUT_12" | grep -qE "I'm sorry, but|I cannot"; then
+  BOT_2=$(ai_gen_5 "$BOT_1 $USER_2")
+  if ! echo "$BOT_2" | grep -qE "I'm sorry, but|I cannot"; then
     break
   fi
   ((retry_count++))
-  echo -ne "Retry #$retry_count for OUT_12...  \r"
+  echo -ne "Retry #$retry_count for BOT_2...  \r"
 done
+echo
+echo "Question: $USER_2" && echo;
+echo "Answer 1: $BOT_2" && echo;
 echo -ne "Progress: 30% complete\r"
 
 retry_count=0
 while [ $retry_count -lt 5 ]; do
-  OUT_13=$(generate_output "Based on '$OUT_12', $PROMPT_13")
-  if ! echo "$OUT_13" | grep -qE "I'm sorry, but|I cannot"; then
+  BOT_3=$(ai_gen_5 "Based on '$BOT_2', $USER_3")
+  if ! echo "$BOT_3" | grep -qE "I'm sorry, but|I cannot"; then
     break
   fi
   ((retry_count++))
-  echo -ne "Retry #$retry_count for OUT_13...  \r"
+  echo -ne "Retry #$retry_count for BOT_3...  \r"
 done
+echo
+echo "Question: $USER_3" && echo;
+echo "Answer 1: $BOT_3" && echo;
 echo -ne "Progress: 50% complete\r"
 
-OUT_14A=$(generate_output "$OUT_11 Winning Idea = $OUT_13 $PROMPT_14")
+BRAINSTORM_A=$(ai_gen_5 "$BOT_1 Winning Idea = $BOT_3 $USER_4")
 echo -ne "Progress: 60% complete\r"
-OUT_14B=$(generate_output "$OUT_11 Winning Idea = $OUT_13 $PROMPT_14")
+BRAINSTORM_B=$(ai_gen_7 "$BOT_1 Winning Idea = $BOT_3 $USER_4")
 echo -ne "Progress: 70% complete\r"
-OUT_14C=$(generate_output "$OUT_11 Winning Idea = $OUT_13 $PROMPT_14")
+BRAINSTORM_C=$(ai_gen_8 "$BOT_1 Winning Idea = $BOT_3 $USER_4")
 echo -ne "Progress: 80% complete\r"
-OUT_14D=$(generate_output "$OUT_11 Winning Idea = $OUT_13 $PROMPT_14")
-echo -ne "Progress: 90% complete\r"
-OUT_15=$(generate_output "$IN_11A $IN_11B My ideas are: $OUT_14A $OUT_14B $OUT_14C $OUT_14D $PROMPT_15")
+BRAINSTORM_D=$(ai_gen_9 "$BOT_1 Winning Idea = $BOT_3 $USER_4")
+echo -ne "Progress: 85% complete\r"
+BOT_4="$BRAINSTORM_A $BRAINSTORM_B $BRAINSTORM_C $BRAINSTORM_D"
+echo
+echo "Question: $USER_4" && echo;
+echo "Answer 1: $BOT_4" && echo;
+echo -ne "Progress: 90% complete\r\n"
+
+BOT_5=$(ai_gen_2 "$IN_11A $IN_11B My ideas are: $BOT_4 $USER_5")
 echo -ne "Progress: 100% complete\r\n"
 
 # Print outputs with formatted sections
-echo "OUT_11:"
-echo "$OUT_11"
+
 echo
-echo "OUT_12:"
-echo "$OUT_12"
-echo
-echo "OUT_13:"
-echo "$OUT_13"
-echo
-echo "OUT_14A:"
-echo
-echo "$OUT_14A"
-echo
-echo "OUT_14B:"
-echo "$OUT_14B"
-echo
-echo "OUT_14C:"
-echo "$OUT_14C"
-echo
-echo "OUT_14D:"
-echo "$OUT_14D"
-echo
-echo "OUT_15:"
-echo "$OUT_15"
+# echo "Question: $USER_1" && echo;
+# echo "Answer 1: $BOT_1" && echo;
+# echo "Question: $USER_2" && echo;
+# echo "Answer 2: $BOT_2" && echo;
+# echo "Question: $USER_3" && echo;
+# echo "Answer 3: $BOT_3" && echo;
+# echo "Question: $USER_4" && echo;
+# echo "Answer 4: $BOT_4" && echo;
+echo "Question: $USER_5" && echo;
+echo "Answer 5 (Final): $BOT_5" && echo;
 
 }
 

@@ -70,6 +70,11 @@ le but est de listé toutes mes scripts tel que qobuz, youtube, nas_sync, etc
 
 TODO
 
+make it easier to install.
+Ex: curl -sS https://raw.githubusercontent.com/0xacx/chatGPT-shell-cli/main/install.sh | sudo -E bash
+
+TODO
+
 Create a GHA that will create an issue every mounth as a task reminder.
 
 - this should be under projet/repo "you rock"
