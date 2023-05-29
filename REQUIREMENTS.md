@@ -46,7 +46,7 @@ fct: Utility
 ## New Feat: gpt_tot
 
 - draft: under /components/utility
-- 0o0o
+- Test this question: I left 5 clothes to dry out in the sun. It took them 5 hours to dry completely. How long would it take to dry 30 clothes?
 - 0o0o
 - PR URL
 - Impact: #8 UX 🎛️
