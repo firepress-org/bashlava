@@ -28,7 +28,6 @@ As a user, I want to run a bash script that will identify Markdown files within 
 
 Here are the requirements for the bash script:
 
-- Omit the shebang as the script will be run directly within a terminal.
 - Scan all .md files in the source_dir and its subdirectories.
 - It should identify file names that contain two or more spaces.
 - The script should rename the files, removing the extra spaces.
