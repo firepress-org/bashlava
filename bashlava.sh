@@ -335,7 +335,14 @@ function release { # User_
   esac
 }
 
-function deploy { # User_
+function deploy() {
+  current_branch=$(git rev-parse --abbrev-ref HEAD)
+  pr_exists=$(git ls-remote --exit-code --heads origin $current_branch)
+
+  if [ $? -ne 0 ]; then
+    echo "No pull request exists for the current branch"
+    return 1
+  fi
 
   echo "Do you want to update the version (y/n)?"
   read update_version
