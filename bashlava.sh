@@ -335,6 +335,56 @@ function release { # User_
   esac
 }
 
+function deploy { # User_
+
+  echo "Do you want to update the version (y/n)?"
+  read update_version
+  if [ "$update_version" = "y" ]; then
+    echo "Enter the version number:"
+    read version_number
+    version $version_number
+  fi
+
+  mrg
+  if [ $? -ne 0 ]; then
+    echo "Merge failed"
+    return 1
+  fi
+
+  if [ "$(git rev-parse --abbrev-ref HEAD)" != "mainbranch" ]; then
+    echo "Not on main branch"
+    return 1
+  fi
+
+  if [ "$update_version" = "y" ]; then
+    version
+    if [ $? -ne 0 ]; then
+      echo "Version update failed"
+      return 1
+    fi
+  fi
+
+  tag
+  if [ $? -ne 0 ]; then
+    echo "Tag update failed"
+    return 1
+  fi
+
+  release
+  if [ $? -ne 0 ]; then
+    echo "Release update failed"
+    return 1
+  fi
+
+  edge
+  if [ $? -ne 0 ]; then
+    echo "Edge update failed"
+    return 1
+  fi
+
+  echo "Deployment completed successfully"
+}
+
 function squash { # User_
   Condition_No_Commits_Pending
   Condition_Attr_2_Must_Be_Provided # how many steps
