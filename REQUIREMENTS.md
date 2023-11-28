@@ -1,7 +1,8 @@
 TODO
 
-_______________________________________________________________________________________
-REQ TEMPLATE _________________________________________________________________________
+---
+
+REQ TEMPLATE — — — — — — — — —
 
 ## New Feat: 0o0o
 
@@ -15,8 +16,30 @@ REQ TEMPLATE ___________________________________________________________________
 - Impact: #9 Bugfix 🐛
 - Impact: Code Refactoring #72 🛠️
 
-_______________________________________________________________________________________
-FEATURES P1 ___________________________________________________________________________
+---
+
+FEATURES P1 — — — — — — — — —
+
+TODO
+
+## bug release
+
+andy16@andy16:~/Documents/github_firepress/yourock2|main ⇒ bashlava.sh r  
+This command must be executed on the Main branch.
+
+- Impact: #9 Bugfix 🐛
+
+TODO
+
+## New Feat: 0o0o
+
+- Use ollama LLM Llama 2 instead of chatGPT-shell-cli
+- PR URL
+- Impact: #8 UX 🎛️
+- Impact: #10 Logic & Condition 🧠
+- Impact: #11 Documentation 🧵
+- Impact: #9 Bugfix 🐛
+- Impact: Code Refactoring #72 🛠️
 
 TODO
 
@@ -56,7 +79,7 @@ fct: Utility
 
 TODO
 
-## Code Refactoring: Core_Load_Config_Override() 
+## Code Refactoring: Core_Load_Config_Override()
 
 - Still needed?
 - Impact: #10 Logic & Condition 🧠
@@ -84,34 +107,52 @@ Create a GHA that will create an issue every mounth as a task reminder.
 - even stuff related to my personnal life once the process is solid
 - etc
 
-_______________________________________________________________________________________
-FEATURES P2 ___________________________________________________________________________
+TODO
+
+Work along https://github.com/nektos/act to minimize github actions commits
+
+TODO
+
+The command r() can be replaced with a github actions such as:
+https://github.com/marvinpinto/action-automatic-releases
+
+and will be trigged only if the branch was Tagged.
+
+TODO
+
+set of actions: https://github.com/sdras/awesome-actions
+
+---
+
+FEATURES P2 — — — — — — — — —
 
 0o0o
-  re-org *.md under dir : /prompts , /how-to, /random
+re-org \*.md under dir : /prompts , /how-to, /random
 
 0o0o
 New feat: ssq() = suggest sq
+
 - Create a fct that search for the same commit messages in previous commits
 - then suggestion to do git showa squash, then prompt user y/n
 
-0o0o: 
+0o0o:
 Weird: tag() still prompt on bashlava, but does not on project mycrypt .. ?
 
 TODO
 Optimize code: Instead of creating custom var simply use %1 %2 <=dollar sign
 
 REPLACE:
-  my_message="FATAL: {_branch_dev_unique} (local)" && Print_Fatal
+my_message="FATAL: {\_branch_dev_unique} (local)" && Print_Fatal
 WITH THIS:
-  Print_Fatal "FATAL: {_branch_dev_unique} (local)"
+Print_Fatal "FATAL: {\_branch_dev_unique} (local)"
 
-  function greet () {
-    echo "Hello @1"
-  }
-  greet "you"
+function greet () {
+echo "Hello @1"
+}
+greet "you"
 
 0o0o ci pipeline
+
 - superlinter (includes shellcheck)
 - create ci for using shellcheck
 - execute test()
@@ -121,36 +162,41 @@ Fix dependabot read-only annoyance
 https://github.com/marketplace/actions/fetch-metadata-from-dependabot-prs
 
 0o0o
-optimize my_message when calling
-  Print_
-  Banner_
+optimize my*message when calling
+Print*
+Banner\_
 
 0o0o EDGE_EXTENTED
-  edge() prompt user
+edge() prompt user
 
-  OPTIONS ARE:
-  1) CREATE edge_neW      and DELETE edge_olD (default)
-  2) CREATE edge_neW      and KEEP edge_olD
-  3) CREATE custom_neW    and DELETE edge_olD only
-  4) CREATE custom_neW    and KEEP edge_olD only
+OPTIONS ARE:
 
-  (Your branch name for edge is located .. path here )
-  - Impact on: #4, #8
+1. CREATE edge_neW and DELETE edge_olD (default)
+2. CREATE edge_neW and KEEP edge_olD
+3. CREATE custom_neW and DELETE edge_olD only
+4. CREATE custom_neW and KEEP edge_olD only
+
+(Your branch name for edge is located .. path here )
+
+- Impact on: #4, #8
 
 0o0o Show_Docs()
 works but not clean, but it works mdv() / Show_Docs
-  we cant provide an absolute path to the file because the Docker container cant the absolute path
-  I also DONT want to provide two arguments when using glow
-  I might simply stop using a docker container for this
-  but as a priciiple, I like to call a docker container
+we cant provide an absolute path to the file because the Docker container cant the absolute path
+I also DONT want to provide two arguments when using glow
+I might simply stop using a docker container for this
+but as a priciiple, I like to call a docker container
 
 0o0o Show_Fct_Category_F1 , F2
+
 - revisit this function once all file are solid + private logic
 
-_______________________________________________________________________________________
-FEATURES P3 ___________________________________________________________________________
+---
+
+FEATURES P3 — — — — — — — — —
 
 0o0o RANDOM NOTES
+
 - multipass.run / shell
 - var subtitution example
 - GH enviroment (staging, prod)
@@ -159,8 +205,10 @@ FEATURES P3 ____________________________________________________________________
 - per example: https://github.com/fatih/dotfiles
 
 0o0o pending
+
 - v_and_t
 - ARRAY CFG_LIST_OF_REQ_MARKDOWN + CFG_LIST_OF_REQ_COMPONENTS
 
 0o0o dummy
+
 - dummy
