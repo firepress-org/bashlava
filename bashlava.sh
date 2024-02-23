@@ -1269,7 +1269,7 @@ function Core_Load_Config_Default {
 
   ### log()
   CFG_LOG_LINE_NBR_SHORT="4" # log() default line number
-  CFG_LOG_LINE_NBR_LONG="12" # log() default line number
+  CFG_LOG_LINE_NBR_LONG="20" # log() default line number
 
   ### dummy()
   CFG_DUMMY_CUSTOM_MSG="false"
