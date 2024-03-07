@@ -1197,7 +1197,17 @@ function Core_Test_Env_Vars {
 }
 
 function Core_Reset_Bashlava_Path {
-  # In file ${_path_user}/bashlava_path_tmp, we set an absolute path like: '~/Users/myuser/Documents/github/firepress-org/bashlava'
+
+  # [[2024-03-07]]
+  # Donc, puisque je suis l'auteur de bashlava, je l'utilise et je l'exécute directement dans le répertoire de développement. Donc, qu'est-ce qu'il faut que je fasse ? Il faut que je crée un fichier `touch /usr/local/bin/bashlava_path`.
+  # Dans ce fichier-là, je mets le lien vers le répertoire local de l'application `/Users/andy16/Documents/github_firepress/bashlava`
+  #
+  # touch /usr/local/bin/bashlava_path
+  # code bashlava_path
+  # paste path the git repo:
+  # /Users/andy16/Documents/github_firepress/bashlava
+  #
+  # In file ${_path_user}/bashlava_path_tmp, we set an absolute path like: '/Users/jimmy/Documents/github_firepress/bashlava'
   # bashlava_path is a file on disk (not a variable)
   # It finds and configures it automatically. This way we don't have to hard code it :)
   # Don't confuse it with the symlink which is usually at "/usr/local/bin/bashlava.sh"
