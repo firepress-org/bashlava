@@ -22,6 +22,19 @@ FEATURES P1 — — — — — — — — —
 
 TODO
 
+## bug
+
+Sur mon nouvel Apple M2
+
+➜ ghostfire git:(edge_8fe) bashlava.sh pr
+/usr/local/bin/bashlava.sh: line 1206: /usr/local/bin/bashlava_path_tmp: Permission denied
+rm: /usr/local/bin/bashlava_path: No such file or directory
+/usr/local/bin/bashlava.sh: line 1209: /usr/local/bin/bashlava_path: Permission denied
+cat: /usr/local/bin/bashlava_path_tmp: No such file or directory
+rm: /usr/local/bin/bashlava_path_tmp: No such file or directory
+
+TODO
+
 ## bug release
 
 andy16@andy16:~/Documents/github_firepress/yourock2|main ⇒ bashlava.sh r  
