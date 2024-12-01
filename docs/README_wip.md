@@ -41,9 +41,9 @@ Functions organise in Namespace:
 - **create a symlink** to your PATH for both files.
 
 ```
-ln -s /Volumes/myuser/Github/firepress-org/bashlava/bashlava.sh /usr/local/bin/bashlava.sh
+ln -s /Users/andy16/Documents/github_firepress/bashlava/bashlava.sh /usr/local/bin/bashlava.sh
 
-ln -s /Volumes/myuser/Github/firepress-org/bashlava/.bashcheck.sh /usr/local/bin/.bashcheck.sh
+ln -s /Users/andy16/Documents/github_firepress/bashlava/.bashcheck.sh /usr/local/bin/.bashcheck.sh
 ```
 
 Assuming your $path is `/usr/local/bin`

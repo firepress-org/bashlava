@@ -22,16 +22,28 @@ FEATURES P1 — — — — — — — — —
 
 TODO
 
-## bug
+## gh is missing
 
-Sur mon nouvel Apple M2
+if gh is missing show` brew install gh` then `gh auth login`
 
-➜ ghostfire git:(edge_8fe) bashlava.sh pr
-/usr/local/bin/bashlava.sh: line 1206: /usr/local/bin/bashlava_path_tmp: Permission denied
-rm: /usr/local/bin/bashlava_path: No such file or directory
-/usr/local/bin/bashlava.sh: line 1209: /usr/local/bin/bashlava_path: Permission denied
-cat: /usr/local/bin/bashlava_path_tmp: No such file or directory
-rm: /usr/local/bin/bashlava_path_tmp: No such file or directory
+example:
+
+➜ ghostfire git:(edge_8fe) gh auth login
+? What account do you want to log into? GitHub.com
+? What is your preferred protocol for Git operations on this host? SSH
+? Upload your SSH public key to your GitHub account? /Users/jimmy/.ssh/id_ed25519.pub
+? Title for your SSH key: GitHub CLI
+? How would you like to authenticate GitHub CLI? Login with a web browser
+
+! First copy your one-time code: BC4F-FAC0
+Press Enter to open github.com in your browser...
+✓ Authentication complete.
+
+- gh config set -h github.com git_protocol ssh
+  ✓ Configured git protocol
+  ✓ SSH key already existed on your GitHub account: /Users/jimmy/.ssh/id_ed25519.pub
+  ✓ Logged in as pascalandy
+  ! You were already logged in to this account
 
 TODO
 
