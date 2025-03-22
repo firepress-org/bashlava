@@ -98,8 +98,10 @@ function commit { # User_
   git status && git add -A
 
   if [[ "${CFG_USE_GPG_SIGNATURE}" == "true" ]]; then
+    # Commit changes with GPG signature
     git commit -S -m "${input_2}"
   elif [[ "${CFG_USE_GPG_SIGNATURE}" == "false" ]]; then
+    # Commit changes without GPG signature
     git commit -m "${input_2}"
   else
     my_message="FATAL: tag" && Print_Fatal
