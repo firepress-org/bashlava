@@ -22,6 +22,18 @@ FEATURES P1 — — — — — — — — —
 
 TODO
 
+## New Feat: refactor
+
+based on https://github.com/todotxt/todo.txt-cli?tab=readme-ov-file
+
+- PR URL
+- Impact: #8 UX 🎛️
+- Impact: #10 Logic & Condition 🧠
+- Impact: #11 Documentation 🧵
+- Impact: #9 Bugfix 🐛
+- Impact: Code Refactoring #72 🛠️
+
+
 ## gh is missing
 
 if gh is missing show` brew install gh` then `gh auth login`
